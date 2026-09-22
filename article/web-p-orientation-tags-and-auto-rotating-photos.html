@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Orientation Tags and Auto-Rotating Photos - webp</title>
+    <meta name="description" content="The WebP image format manages camera orientation by embedding standard Exchangeable Image File Format (EXIF) metadata directly into its container structure. Rather than rotating the raw pixel data during capture, cameras write a numeric orientation flag">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-orientation-tags-and-auto-rotating-photos">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Orientation Tags and Auto-Rotating Photos - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-orientation-tags-and-auto-rotating-photos" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The WebP image format manages camera orientation by embedding standard Exchangeable Image File Format (EXIF) metadata directly into its container structure. Rather than rotating the raw pixel data during capture, cameras write a numeric orientation flag" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-orientation-tags-and-auto-rotating-photos">WebP Orientation
+Tags and Auto-Rotating Photos</h1>
+<p>The WebP image format manages camera orientation by embedding
+standard Exchangeable Image File Format (EXIF) metadata directly into
+its container structure. Rather than rotating the raw pixel data during
+capture, cameras write a numeric orientation flag into this metadata,
+which modern WebP-compliant software and web browsers read to display
+photos upright automatically. This article explains how WebP stores
+these orientation tags, how decoders process them, and how image
+optimization affects automatic rotation.</p>
+<h3 id="the-webp-container-and-the-exif-chunk">The WebP Container and
+the EXIF Chunk</h3>
+<p>Standard WebP images utilize the Resource Interchange File Format
+(RIFF) container. Basic WebP files only include image bitstreams (VP8
+for lossy or VP8L for lossless), which do not natively carry metadata.
+To handle orientation, WebP uses an Extended File Format indicated by a
+<code>VP8X</code> header chunk.</p>
+<p>When an image contains orientation data, the <code>VP8X</code> header
+sets a specific flag signaling the presence of an <code>EXIF</code>
+chunk. The orientation tag itself—technically tag <code>0x0112</code>—is
+stored within this EXIF chunk using values from 1 to 8. These values
+indicate various rotations and reflections, such as:</p>
+<ul>
+<li><strong>1:</strong> Normal (0° rotation)</li>
+<li><strong>3:</strong> Upside down (180° rotation)</li>
+<li><strong>6:</strong> Rotated 90° clockwise</li>
+<li><strong>8:</strong> Rotated 90° counter-clockwise</li>
+</ul>
+<h3 id="how-decoders-handle-automatic-rotation">How Decoders Handle
+Automatic Rotation</h3>
+<p>When an application, operating system, or web browser renders a WebP
+file, the decoding engine inspects the file headers. If the
+<code>VP8X</code> chunk confirms the existence of metadata, the decoder
+reads the <code>EXIF</code> chunk before drawing pixels to the
+screen.</p>
+<p>Modern web browsers handle this process automatically via the default
+CSS property <code>image-orientation: from-image</code>. When the
+browser encounters an orientation tag other than 1, it applies the
+corresponding affine transformation to the rendered output. This allows
+the photo to appear right-side up without permanently altering the
+underlying compressed pixel buffer.</p>
+<h3 id="encoding-and-optimization-considerations">Encoding and
+Optimization Considerations</h3>
+<p>Camera photos converted to WebP can encounter orientation issues
+depending on how the encoder processes metadata:</p>
+<ol type="1">
+<li><strong>Preserving EXIF:</strong> Command-line tools like Google's
+<code>cwebp</code> do not preserve metadata by default. To retain the
+orientation tag, the encoder must be explicitly instructed using flags
+such as <code>-metadata exif</code> or <code>-metadata all</code>. If
+metadata is stripped to save file size, the orientation tag is lost,
+causing decoders to display the image in its raw, unrotated state.</li>
+<li><strong>Applying Physical Rotation:</strong> To avoid relying on
+decoder metadata support, some optimization workflows perform a
+"lossless physical rotation" prior to or during WebP compression. This
+rewrites the actual pixel arrays to match the intended display angle and
+resets the orientation tag to 1, guaranteeing correct display across
+older or non-compliant decoders.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Serve WebP Images with HTML Picture Fallbacks - webp</title>
+    <meta name="description" content="Modern web performance relies on next-generation image formats like WebP to reduce payload sizes without sacrificing visual quality, but not all legacy environments fully support them. This guide explains how to use the HTML <picture> element to serve li">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-to-serve-web-p-images-with-html-picture-fallbacks">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Serve WebP Images with HTML Picture Fallbacks - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-to-serve-web-p-images-with-html-picture-fallbacks" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern web performance relies on next-generation image formats like WebP to reduce payload sizes without sacrificing visual quality, but not all legacy environments fully support them. This guide explains how to use the HTML <picture> element to serve li" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-serve-webp-images-with-html-picture-fallbacks">How to
+Serve WebP Images with HTML Picture Fallbacks</h1>
+<p>Modern web performance relies on next-generation image formats like
+WebP to reduce payload sizes without sacrificing visual quality, but not
+all legacy environments fully support them. This guide explains how to
+use the HTML <code>&lt;picture&gt;</code> element to serve lightweight
+WebP images to compatible modern browsers while automatically providing
+robust JPEG or PNG fallbacks for unsupported browsers.</p>
+<h3 id="the-mechanics-of-the-picture-element">The Mechanics of the
+<code>&lt;picture&gt;</code> Element</h3>
+<p>The HTML <code>&lt;picture&gt;</code> element is a wrapper that
+contains one or more <code>&lt;source&gt;</code> tags followed by a
+single mandatory <code>&lt;img&gt;</code> tag. Unlike standard image
+tags that offer a single source file, the <code>&lt;picture&gt;</code>
+element allows developers to define multiple candidate resources. The
+browser evaluates these candidates sequentially from top to bottom and
+loads the first resource it natively supports.</p>
+<h3 id="basic-syntax-for-format-switching">Basic Syntax for Format
+Switching</h3>
+<p>To serve WebP with a fallback, specify the WebP asset inside a
+<code>&lt;source&gt;</code> element and define its MIME type using the
+<code>type</code> attribute. Place the fallback format (such as JPEG or
+PNG) inside the nested <code>&lt;img&gt;</code> tag:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> srcset</span><span class="op">=</span><span class="st">&quot;image.webp&quot;</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;image.jpg&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;A descriptive description of the image&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="ot"> height</span><span class="op">=</span><span class="st">&quot;600&quot;</span><span class="ot"> loading</span><span class="op">=</span><span class="st">&quot;lazy&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span></code></pre></div>
+<h3 id="how-the-browser-handles-the-fallback">How the Browser Handles
+the Fallback</h3>
+<p>When a browser encounters this markup, it performs the following
+steps:</p>
+<ol type="1">
+<li><strong>Format Evaluation:</strong> The browser checks the
+<code>type="image/webp"</code> attribute on the
+<code>&lt;source&gt;</code> tag. If the browser supports WebP decoding,
+it selects <code>image.webp</code> and ignores any subsequent
+sources.</li>
+<li><strong>Fallback Execution:</strong> If the browser does not
+recognize or support the <code>image/webp</code> MIME type, it skips
+that <code>&lt;source&gt;</code> tag and advances to the next
+element.</li>
+<li><strong>Rendering:</strong> The browser reaches the
+<code>&lt;img&gt;</code> tag and loads <code>image.jpg</code>.</li>
+</ol>
+<p>The nested <code>&lt;img&gt;</code> element is mandatory. While the
+<code>&lt;source&gt;</code> tags supply alternative sources, the
+<code>&lt;img&gt;</code> tag provides the actual rendering box, handles
+accessibility through the <code>alt</code> attribute, and dictates
+layout dimensions via <code>width</code> and <code>height</code>
+attributes.</p>
+<h3 id="combining-webp-with-responsive-resolutions">Combining WebP with
+Responsive Resolutions</h3>
+<p>The <code>&lt;picture&gt;</code> element can simultaneously handle
+format switching and responsive sizing across different screen densities
+and viewport widths by utilizing the <code>srcset</code> and
+<code>sizes</code> attributes:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">&lt;!-- WebP sources for different display resolutions --&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ot">    type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="ot"> </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ot">    srcset</span><span class="op">=</span><span class="st">&quot;image-small.webp 400w, image-large.webp 800w&quot;</span><span class="ot"> </span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ot">    sizes</span><span class="op">=</span><span class="st">&quot;(max-width: 600px) 400px, 800px&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">&lt;!-- Fallback JPEG sources --&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> </span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ot">    type</span><span class="op">=</span><span class="st">&quot;image/jpeg&quot;</span><span class="ot"> </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ot">    srcset</span><span class="op">=</span><span class="st">&quot;image-small.jpg 400w, image-large.jpg 800w&quot;</span><span class="ot"> </span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="ot">    sizes</span><span class="op">=</span><span class="st">&quot;(max-width: 600px) 400px, 800px&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">&lt;!-- Universal fallback --&gt;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;image-large.jpg&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;A descriptive description of the image&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;800&quot;</span><span class="ot"> height</span><span class="op">=</span><span class="st">&quot;600&quot;</span><span class="ot"> loading</span><span class="op">=</span><span class="st">&quot;lazy&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span></code></pre></div>
+<h3 id="key-implementation-best-practices">Key Implementation Best
+Practices</h3>
+<ul>
+<li><strong>Order Matters:</strong> Always place cutting-edge formats
+(like AVIF or WebP) in <code>&lt;source&gt;</code> tags above older
+formats. Browsers select the first compatible option they parse.</li>
+<li><strong>Keep Dimensions on the <code>&lt;img&gt;</code>
+Tag:</strong> Apply <code>width</code>, <code>height</code>, and CSS
+styling directly to the <code>&lt;img&gt;</code> element. Do not apply
+dimension attributes to <code>&lt;source&gt;</code> tags. This reserves
+space before the image loads and prevents Cumulative Layout Shift
+(CLS).</li>
+<li><strong>Accurate MIME Types:</strong> Always declare the
+<code>type</code> attribute accurately (e.g.,
+<code>type="image/webp"</code>). Without the <code>type</code>
+attribute, the browser must download the file header to determine
+support, nullifying performance benefits.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

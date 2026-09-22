@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Using OffscreenCanvas to Decode WebP Off UI Thread - webp</title>
+    <meta name="description" content="Modern web browsers fully support decoding and manipulating WebP image data off the main UI thread using OffscreenCanvas combined with Web Workers and the createImageBitmap API. By moving both the decompression of compressed image formats and subsequent">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/using-offscreen-canvas-to-decode-web-p-off-ui-thread">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Using OffscreenCanvas to Decode WebP Off UI Thread - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/using-offscreen-canvas-to-decode-web-p-off-ui-thread" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern web browsers fully support decoding and manipulating WebP image data off the main UI thread using OffscreenCanvas combined with Web Workers and the createImageBitmap API. By moving both the decompression of compressed image formats and subsequent" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="using-offscreencanvas-to-decode-webp-off-ui-thread">Using
+OffscreenCanvas to Decode WebP Off UI Thread</h1>
+<p>Modern web browsers fully support decoding and manipulating WebP
+image data off the main UI thread using <code>OffscreenCanvas</code>
+combined with Web Workers and the <code>createImageBitmap</code> API. By
+moving both the decompression of compressed image formats and subsequent
+pixel-level operations into background threads, web applications can
+eliminate frame drops and maintain responsive user interfaces during
+heavy image-processing tasks.</p>
+<h3 id="the-decoding-mechanism">The Decoding Mechanism</h3>
+<p>Browsers do not require the DOM or the standard HTML
+<code>&lt;img&gt;</code> element to decompress WebP data. Inside a Web
+Worker, WebP binary data can be fetched via <code>fetch()</code> as an
+<code>ArrayBuffer</code> or a <code>Blob</code>.</p>
+<p>Once the data is retrieved, the <code>createImageBitmap()</code>
+global function decodes the WebP format asynchronously:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">&#39;image.webp&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> blob <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">blob</span>()<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> imageBitmap <span class="op">=</span> <span class="cf">await</span> <span class="fu">createImageBitmap</span>(blob)<span class="op">;</span></span></code></pre></div>
+<p>Because <code>createImageBitmap</code> runs entirely within the
+worker context, decoding the WebP image does not block the main
+execution thread.</p>
+<h3 id="manipulating-pixels-with-offscreencanvas">Manipulating Pixels
+with OffscreenCanvas</h3>
+<p>Once decoded into an <code>ImageBitmap</code>, the data can be
+rendered and altered using an <code>OffscreenCanvas</code>. This object
+can either be instantiated directly inside the worker via
+<code>new OffscreenCanvas(width, height)</code> or transferred from the
+main thread using <code>canvas.transferControlToOffscreen()</code>.</p>
+<p>Inside the worker, a rendering context (<code>2d</code> or
+<code>webgl</code>) is extracted from the
+<code>OffscreenCanvas</code>:</p>
+<ol type="1">
+<li><strong>Rendering:</strong> Draw the decoded
+<code>ImageBitmap</code> using
+<code>ctx.drawImage(imageBitmap, 0, 0)</code>.</li>
+<li><strong>Accessing Pixels:</strong> Extract raw RGBA pixel arrays
+with <code>ctx.getImageData(0, 0, width, height)</code>.</li>
+<li><strong>Manipulation:</strong> Directly modify the
+<code>Uint8ClampedArray</code> to apply filters, transformations, edge
+detection, or custom algorithms.</li>
+<li><strong>Updating:</strong> Write the manipulated pixels back onto
+the canvas with <code>ctx.putImageData()</code>.</li>
+</ol>
+<h3 id="exporting-and-displaying-results">Exporting and Displaying
+Results</h3>
+<p>After manipulation is complete, the worker can output the data
+without involving the main thread in rendering overhead:</p>
+<ul>
+<li><strong>Transfer to Main Canvas:</strong> Call
+<code>canvas.transferToImageBitmap()</code> to generate a lightweight
+bitmap that can be posted back to the main thread via
+<code>postMessage()</code> and rendered instantly.</li>
+<li><strong>Re-encoding:</strong> Use
+<code>canvas.convertToBlob({ type: 'image/webp' })</code> to compress
+the manipulated image data back into a WebP file directly within the
+worker, making it ready for storage or network upload.</li>
+</ul>
+<p>This architecture ensures that network fetching, WebP decoding,
+graphical transformations, and re-encoding occur completely off the main
+thread.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

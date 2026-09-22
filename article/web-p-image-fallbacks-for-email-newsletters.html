@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Image Fallbacks for Email Newsletters - webp</title>
+    <meta name="description" content="Using WebP images in email campaigns significantly reduces file sizes, leading to faster load times and higher engagement. However, email client support for WebP remains inconsistent, with desktop platforms like Microsoft Outlook and older mobile clients">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-image-fallbacks-for-email-newsletters">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Image Fallbacks for Email Newsletters - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-image-fallbacks-for-email-newsletters" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Using WebP images in email campaigns significantly reduces file sizes, leading to faster load times and higher engagement. However, email client support for WebP remains inconsistent, with desktop platforms like Microsoft Outlook and older mobile clients" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-image-fallbacks-for-email-newsletters">WebP Image Fallbacks
+for Email Newsletters</h1>
+<p>Using WebP images in email campaigns significantly reduces file
+sizes, leading to faster load times and higher engagement. However,
+email client support for WebP remains inconsistent, with desktop
+platforms like Microsoft Outlook and older mobile clients unable to
+render the format. This guide covers reliable fallback
+strategies—including the HTML5 <code>&lt;picture&gt;</code> element,
+Microsoft Outlook conditional comments, and CSS overrides—to guarantee
+your newsletters display crisp visuals across every inbox without broken
+image icons.</p>
+<h2 id="why-webp-requires-fallbacks-in-email">Why WebP Requires
+Fallbacks in Email</h2>
+<p>WebP offers superior lossless and lossy compression compared to
+traditional PNG and JPEG formats. While modern web browsers and clients
+like Apple Mail and Gmail (via proxy) support WebP, standalone desktop
+applications—most notably Microsoft Outlook on Windows (which uses the
+Microsoft Word rendering engine)—do not. If an email client encounters a
+WebP image it cannot parse, it displays a broken image icon. Fallbacks
+ensure that an alternative JPEG or PNG is served whenever WebP
+compatibility is absent.</p>
+<h2 id="strategy-1-the-html5-picture-element">Strategy 1: The HTML5
+<code>&lt;picture&gt;</code> Element</h2>
+<p>The most robust method for modern webmail and mobile clients is the
+HTML5 <code>&lt;picture&gt;</code> tag. This element allows you to
+define multiple image sources, letting the client pick the first
+supported format while defaulting to an <code>&lt;img&gt;</code> tag for
+unsupported environments.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> srcset</span><span class="op">=</span><span class="st">&quot;https://example.com/image.webp&quot;</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;https://example.com/image.jpg&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;Newsletter Feature&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;600&quot;</span><span class="ot"> height</span><span class="op">=</span><span class="st">&quot;300&quot;</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;display: block; width: 100%; max-width: 600px; height: auto;&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>In this setup, clients that understand the
+<code>&lt;picture&gt;</code> tag and support WebP will display
+<code>image.webp</code>. Clients that do not support
+<code>&lt;picture&gt;</code> or WebP safely ignore the
+<code>&lt;source&gt;</code> tag and render the standard JPEG defined in
+the <code>&lt;img&gt;</code> fallback.</p>
+<h2 id="strategy-2-mso-conditional-comments-for-outlook">Strategy 2: MSO
+Conditional Comments for Outlook</h2>
+<p>Microsoft Outlook for Windows does not recognize the HTML5
+<code>&lt;picture&gt;</code> tag correctly and may collapse or hide the
+element entirely. To ensure complete compatibility with Outlook, wrap
+the <code>&lt;picture&gt;</code> element inside conditional comments
+that hide it from Outlook, while serving a standard table-based JPEG
+directly to Microsoft clients.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--[if mso]&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;img src=&quot;https://example.com/image.jpg&quot; alt=&quot;Newsletter Feature&quot; width=&quot;600&quot; height=&quot;300&quot; border=&quot;0&quot; style=&quot;display: block;&quot;&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;![endif]--&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--[if !mso]&gt;&lt;!--&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> srcset</span><span class="op">=</span><span class="st">&quot;https://example.com/image.webp&quot;</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;https://example.com/image.jpg&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;Newsletter Feature&quot;</span><span class="ot"> width</span><span class="op">=</span><span class="st">&quot;600&quot;</span><span class="ot"> height</span><span class="op">=</span><span class="st">&quot;300&quot;</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;display: block; width: 100%; max-width: 600px; height: auto;&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--&lt;![endif]--&gt;</span></span></code></pre></div>
+<p>This ensures that Outlook strictly receives a traditional
+<code>&lt;img&gt;</code> tag pointing to a supported format, eliminating
+rendering errors completely.</p>
+<h2
+id="strategy-3-progressive-enhancement-with-css-backgrounds">Strategy 3:
+Progressive Enhancement with CSS Backgrounds</h2>
+<p>For decorative imagery or hero banners where images are applied via
+CSS, use progressive enhancement. Set the default background image to a
+PNG or JPEG, then use CSS classes or media queries to apply the WebP
+version where supported.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="dt">&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.hero-banner</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&#39;https://example.com/hero.jpg&#39;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="im">@supports</span> <span class="fu">(</span><span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&#39;https://example.com/hero.webp&#39;</span><span class="fu">))</span> {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">.hero-banner</span> {</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&#39;https://example.com/hero.webp&#39;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;hero-banner&quot;</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;width: 100%; height: 300px; background-size: cover;&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>Clients that do not support <code>@supports</code> or WebP will
+safely display the initial JPEG asset.</p>
+<h2 id="strategy-4-dynamic-cdn-content-negotiation">Strategy 4: Dynamic
+CDN Content Negotiation</h2>
+<p>If altering template code across hundreds of campaigns is
+impractical, manage fallbacks at the server or CDN level. Content
+Delivery Networks (CDNs) like Cloudflare, Cloudinary, or Fastly can
+inspect incoming HTTP request headers—specifically the
+<code>Accept</code> header.</p>
+<p>When an email client requests
+<code>https://example.com/image.jpg</code>:</p>
+<ul>
+<li>If the <code>Accept</code> header includes <code>image/webp</code>,
+the CDN dynamically serves a WebP payload while keeping the file
+extension identical.</li>
+<li>If the client does not send WebP compatibility in the header, the
+CDN delivers the original JPEG or PNG.</li>
+</ul>
+<p><em>Note:</em> Because major services like Gmail route images through
+an image proxy, the proxy's server headers dictate what is delivered.
+Gmail's proxy supports WebP, meaning dynamic conversion handles Gmail
+automatically without additional markup.</p>
+<h2 id="core-best-practices-for-implementation">Core Best Practices for
+Implementation</h2>
+<ol type="1">
+<li><strong>Always Optimize Fallbacks:</strong> Do not let standard
+JPEG/PNG fallbacks bloat your template. Compress fallback files using
+standard optimization tools so users who do not receive WebP still
+experience reasonable load times.</li>
+<li><strong>Include Fixed Dimensions:</strong> Always declare explicit
+<code>width</code> and <code>height</code> attributes on the fallback
+<code>&lt;img&gt;</code> tag to prevent layout shifts while the image
+loads.</li>
+<li><strong>Always Include Alt Text:</strong> Ensure the underlying
+<code>&lt;img&gt;</code> element contains descriptive <code>alt</code>
+text. If image rendering fails or is turned off by user preference, the
+layout remains informative and accessible.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

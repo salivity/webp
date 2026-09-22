@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can You Rename a WebP File to JPG? - webp</title>
+    <meta name="description" content="Renaming a WebP file to end in .jpg will generally allow it to open and display correctly in modern web browsers, but it does not actually convert the underlying image data. Modern web browsers rely on the file's internal binary signature (magic bytes) a">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-you-rename-a-web-p-file-to-jpg">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can You Rename a WebP File to JPG? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-you-rename-a-web-p-file-to-jpg" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Renaming a WebP file to end in .jpg will generally allow it to open and display correctly in modern web browsers, but it does not actually convert the underlying image data. Modern web browsers rely on the file's internal binary signature (magic bytes) a" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-you-rename-a-webp-file-to-jpg">Can You Rename a WebP File to
+JPG?</h1>
+<p>Renaming a WebP file to end in <code>.jpg</code> will generally allow
+it to open and display correctly in modern web browsers, but it does not
+actually convert the underlying image data. Modern web browsers rely on
+the file's internal binary signature (magic bytes) and MIME types rather
+than the file extension alone to determine how to render it. While this
+workaround works inside a browser window, it creates significant
+compatibility issues with desktop software, operating systems, and web
+servers that strictly require standard JPEG encoding.</p>
+<h3 id="how-modern-browsers-handle-the-renamed-file">How Modern Browsers
+Handle the Renamed File</h3>
+<p>When you drag and drop a renamed WebP file (e.g.,
+<code>image.jpg</code>) into Google Chrome, Mozilla Firefox, Microsoft
+Edge, or Apple Safari, the browser performs a process known as MIME
+sniffing. Instead of trusting the <code>.jpg</code> extension, the
+browser inspects the first few bytes of the file's binary data.</p>
+<p>A WebP file always begins with the RIFF container header and the
+identifier <code>WEBP</code>. Upon detecting this signature, the browser
+invokes its built-in WebP decoding engine rather than its JPEG decoder.
+As a result, the image renders on your screen without any visible visual
+errors.</p>
+<h3 id="why-renaming-file-extensions-causes-problems">Why Renaming File
+Extensions Causes Problems</h3>
+<p>Although browsers are forgiving, simply changing the extension does
+not convert the file format. This practice creates hidden issues across
+other platforms:</p>
+<ul>
+<li><strong>Desktop Image Viewers:</strong> Operating systems like
+Windows and macOS, as well as native photo viewers, often rely solely on
+file extensions. Opening a WebP file disguised as a JPEG in standard
+image viewers frequently results in an error message stating that the
+file format is unsupported or corrupted.</li>
+<li><strong>Photo Editing Software:</strong> Applications such as older
+versions of Adobe Photoshop or basic graphic design tools will attempt
+to parse the file using a JPEG parser. Because the internal data
+structure does not match JPEG specifications, the software will refuse
+to open the file.</li>
+<li><strong>Websites and CMS Uploads:</strong> If you upload the renamed
+file to a Content Management System (like WordPress) or a social media
+platform, the platform may validate the file against its extension. If
+the server fails to detect the real format, it may reject the upload or
+serve it with an incorrect <code>Content-Type</code> HTTP header,
+breaking the image for other users.</li>
+</ul>
+<h3 id="the-correct-way-to-get-a-jpg">The Correct Way to Get a JPG</h3>
+<p>If you need an image in the JPEG format for compatibility, you must
+convert the data rather than rename the file extension.</p>
+<ol type="1">
+<li><strong>Use an Image Editor:</strong> Open the WebP file in an
+editor that natively supports WebP (such as GIMP, modern Photoshop, or
+Paint on Windows 11) and choose <strong>File &gt; Export As</strong> or
+<strong>Save As</strong>, selecting JPEG from the format menu.</li>
+<li><strong>Use an Online Converter:</strong> Upload the WebP to a
+trusted web-based conversion tool to generate an authentic JPEG
+file.</li>
+<li><strong>Use Browser Extensions:</strong> If you frequently save
+images from the web, install a browser extension that allows you to
+right-click an image and save it directly as a PNG or JPG.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

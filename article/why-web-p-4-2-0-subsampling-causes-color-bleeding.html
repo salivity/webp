@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why WebP 4:2:0 Subsampling Causes Color Bleeding - webp</title>
+    <meta name="description" content="Chroma subsampling is a compression method that discards color detail while preserving brightness, designed originally for natural photography and video. When applied to WebP interface assets—such as UI buttons, icons, and text—traditional 4:2:0 subs">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-web-p-4-2-0-subsampling-causes-color-bleeding">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why WebP 4:2:0 Subsampling Causes Color Bleeding - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-web-p-4-2-0-subsampling-causes-color-bleeding" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Chroma subsampling is a compression method that discards color detail while preserving brightness, designed originally for natural photography and video. When applied to WebP interface assets—such as UI buttons, icons, and text—traditional 4:2:0 subs" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-webp-420-subsampling-causes-color-bleeding">Why WebP 4:2:0
+Subsampling Causes Color Bleeding</h1>
+<p>Chroma subsampling is a compression method that discards color detail
+while preserving brightness, designed originally for natural photography
+and video. When applied to WebP interface assets—such as UI buttons,
+icons, and text—traditional 4:2:0 subsampling often introduces
+noticeable color bleeding, smearing, and fringing. This article explains
+the technical mechanics of 4:2:0 subsampling, why graphical interfaces
+suffer from its implementation in WebP, and how to prevent visual
+degradation.</p>
+<h3 id="understanding-420-chroma-subsampling">Understanding 4:2:0 Chroma
+Subsampling</h3>
+<p>Digital images typically use the RGB color space, where red, green,
+and blue components exist at full resolution. To reduce file sizes,
+lossy image formats often convert RGB into the YUV (YCbCr) color space,
+which separates:</p>
+<ul>
+<li><strong>Y (Luma):</strong> Brightness and achromatic detail.</li>
+<li><strong>Cb / Cr (Chroma):</strong> Color difference components.</li>
+</ul>
+<p>Because the human visual system is far more sensitive to variations
+in brightness than variations in color, encoders can discard chroma data
+without a perceived drop in photographic quality.</p>
+<p>In a 4:2:0 subsampling scheme, luma is preserved at full resolution
+(1:1), but chroma is downsampled by half both horizontally and
+vertically. A 2×2 block of four pixels shares a single pair of Cb and Cr
+values. This reduces the total color resolution to just 25% of the
+original image data.</p>
+<h3 id="why-interface-assets-break-under-420">Why Interface Assets Break
+Under 4:2:0</h3>
+<p>While photographic content contains soft transitions and natural
+noise that conceal downscaled color data, user interface (UI) assets
+have fundamentally different properties:</p>
+<ol type="1">
+<li><strong>High-Contrast, Sharp Edges:</strong> UI elements frequently
+feature hard, pixel-aligned boundaries, such as a bright red
+call-to-action button on a clean white background, or colored text on a
+dark container.</li>
+<li><strong>Saturated Flat Colors:</strong> Icons and interface surfaces
+often rely on uniform, high-saturation fills rather than smooth
+continuous tones.</li>
+</ol>
+<p>When a 4:2:0 encoder processes a sharp boundary between two distinct,
+saturated colors (or a saturated color and a neutral background), the
+2×2 averaging window spans across the boundary. The distinct chroma
+values of both sides are blended together into a single averaged value
+for that block.</p>
+<h3 id="the-mechanism-of-color-bleeding">The Mechanism of Color
+Bleeding</h3>
+<p>Color bleeding becomes visible during the decoding and upsampling
+phase:</p>
+<ol type="1">
+<li><strong>Chroma Averaging at Encoding:</strong> The sharp transition
+is flattened into an averaged color block that spans across the edge
+defined by the luma channel.</li>
+<li><strong>Reconstruction via Interpolation:</strong> When a browser
+decodes the WebP asset, it must reconstruct full-resolution chroma
+values to convert back to RGB for display. Decoders use interpolation
+filters (such as bilinear or bicubic filtering) to expand the
+downsampled color grid.</li>
+<li><strong>Luma/Chroma Misalignment:</strong> Because the luma edge
+remains razor-sharp while the chroma edge is softened and broadened by
+interpolation, the reconstructed color physically spills outside the
+boundary of the shape.</li>
+</ol>
+<p>This mismatch produces visual artifacts:</p>
+<ul>
+<li><strong>Chroma Fringing:</strong> Colored "halos" appear around text
+or icon borders.</li>
+<li><strong>Desaturation at Edges:</strong> Crisp borders lose their
+punch as their color data is diluted by adjacent background pixels.</li>
+<li><strong>Smearing:</strong> Thin colored lines (1 to 2 pixels wide)
+can completely lose their distinct hue or appear doubled.</li>
+</ul>
+<h3 id="webp-lossy-vs-interface-design">WebP Lossy vs. Interface
+Design</h3>
+<p>Lossy WebP is derived from the VP8 video codec, which fundamentally
+relies on YUV 4:2:0 subsampling by default. Encoding an interface asset
+as a standard lossy WebP forces flat-color vector graphics into a
+video-oriented compression pipeline.</p>
+<h3 id="solutions-to-prevent-color-bleeding-in-webp">Solutions to
+Prevent Color Bleeding in WebP</h3>
+<p>To maintain crisp edges and prevent bleeding on interface
+graphics:</p>
+<ul>
+<li><strong>Use WebP Lossless:</strong> WebP Lossless operates directly
+in the RGB color space and does not use chroma subsampling. It is often
+smaller than lossy WebP for flat-color UI graphics and icons while
+preserving pixel-perfect edges.</li>
+<li><strong>Enable Sharp YUV Conversion:</strong> If using lossy
+encoding through tools like <code>cwebp</code>, the
+<code>-sharp_yuv</code> flag uses an iterative optimization algorithm
+that minimizes chroma-to-luma transition errors, significantly reducing
+edge bleeding.</li>
+<li><strong>Encode as 4:4:4 WebP:</strong> Using full-resolution chroma
+(4:4:4) preserves all color detail at the cost of a slightly larger file
+size, eliminating downsampling artifacts entirely.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

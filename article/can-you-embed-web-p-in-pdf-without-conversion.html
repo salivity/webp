@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can You Embed WebP in PDF Without Conversion? - webp</title>
+    <meta name="description" content="WebP images cannot be embedded directly into a PDF document as visible page elements without prior conversion. The official PDF specification does not support the WebP compression format, meaning standard PDF viewers cannot parse or display raw WebP data">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-you-embed-web-p-in-pdf-without-conversion">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can You Embed WebP in PDF Without Conversion? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-you-embed-web-p-in-pdf-without-conversion" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP images cannot be embedded directly into a PDF document as visible page elements without prior conversion. The official PDF specification does not support the WebP compression format, meaning standard PDF viewers cannot parse or display raw WebP data" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-you-embed-webp-in-pdf-without-conversion">Can You Embed WebP
+in PDF Without Conversion?</h1>
+<p>WebP images cannot be embedded directly into a PDF document as
+visible page elements without prior conversion. The official PDF
+specification does not support the WebP compression format, meaning
+standard PDF viewers cannot parse or display raw WebP data. To display a
+WebP image inside a PDF, the file must first be converted into a
+natively supported format, such as JPEG, JPEG 2000, or a
+Flate-compressed raster bitmap.</p>
+<h3 id="the-pdf-standard-and-supported-formats">The PDF Standard and
+Supported Formats</h3>
+<p>The PDF standard (ISO 32000) defines exact image compression filters
+that PDF readers must recognize. These native filters include:</p>
+<ul>
+<li><strong>DCTDecode:</strong> Standard JPEG compression</li>
+<li><strong>JPXDecode:</strong> JPEG 2000 compression</li>
+<li><strong>FlateDecode:</strong> Lossless zlib/deflate compression
+(used for PNG-style raster images)</li>
+<li><strong>CCITTFaxDecode and JBIG2Decode:</strong> Formats designed
+for monochrome images</li>
+</ul>
+<p>Because WebP is not listed among the recognized image compression
+filters in either PDF 1.7 or PDF 2.0, a PDF reader has no built-in
+mechanism to decode and render a raw WebP stream on a page.</p>
+<h3 id="how-pdf-tools-handle-webp-files">How PDF Tools Handle WebP
+Files</h3>
+<p>When a PDF editor, virtual printer, or document generation library
+(such as ReportLab, PDFKit, or Adobe Acrobat) allows you to insert a
+WebP file, it does not embed the native WebP file directly. Instead, the
+application automatically performs an internal conversion during the
+build process:</p>
+<ol type="1">
+<li>The software decodes the WebP file into raw pixel data in
+memory.</li>
+<li>It re-encodes the pixel data into a standard PDF-compliant
+format—typically JPEG for lossy WebP files or Flate/raw bitmap for
+lossless WebP files.</li>
+<li>The newly encoded stream is written into the PDF's image
+object.</li>
+</ol>
+<p>This process ensures that any standard PDF reader can open and view
+the document, but it means the original WebP data is not retained in its
+native form on the page.</p>
+<h3 id="the-exception-file-attachments">The Exception: File
+Attachments</h3>
+<p>The only way to embed an unconverted WebP file directly into a PDF is
+as an arbitrary file attachment (<code>EmbeddedFiles</code> stream). In
+this scenario, the WebP file remains bit-for-bit identical to the
+original and is stored within the PDF container. However, it exists
+solely as an attachment for the user to extract or download; it will not
+render visually as an image on the document pages.</p>
+<h3 id="best-practices-for-using-webp-in-pdf-workflows">Best Practices
+for Using WebP in PDF Workflows</h3>
+<p>Because conversion must happen at some stage, you should handle the
+conversion deliberately to maintain image quality and optimize file
+size:</p>
+<ul>
+<li><strong>For photographic images:</strong> Convert lossy WebP files
+to high-quality JPEG or JPEG 2000 before embedding.</li>
+<li><strong>For graphics and illustrations:</strong> Convert lossless
+WebP files with transparency to PNG, which translates directly to a PDF
+image object with an Alpha Soft Mask (SMask).</li>
+<li><strong>Automated pipelines:</strong> If using automated document
+generation, use an imaging library to convert WebP inputs to standard
+streams explicitly, preventing unexpected bloat caused by uncompressed
+fallback streams.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

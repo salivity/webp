@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can Corrupt WebP Headers Crash Outdated Browsers? - webp</title>
+    <meta name="description" content="Corrupted WebP image headers pose a tangible stability and security risk to outdated web browsers, frequently triggering application crashes, memory exhaustion, or infinite execution loops. When legacy rendering engines and unpatched image-decoding libra">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-corrupt-web-p-headers-crash-outdated-browsers">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can Corrupt WebP Headers Crash Outdated Browsers? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-corrupt-web-p-headers-crash-outdated-browsers" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Corrupted WebP image headers pose a tangible stability and security risk to outdated web browsers, frequently triggering application crashes, memory exhaustion, or infinite execution loops. When legacy rendering engines and unpatched image-decoding libra" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-corrupt-webp-headers-crash-outdated-browsers">Can Corrupt
+WebP Headers Crash Outdated Browsers?</h1>
+<p>Corrupted WebP image headers pose a tangible stability and security
+risk to outdated web browsers, frequently triggering application
+crashes, memory exhaustion, or infinite execution loops. When legacy
+rendering engines and unpatched image-decoding libraries encounter
+malformed container metadata or conflicting byte counts, deficient
+error-handling routines and improper bounds checking often fail to
+fail-safe, leaving the browser client susceptible to denial-of-service
+conditions.</p>
+<h3 id="the-structure-of-webp-headers">The Structure of WebP
+Headers</h3>
+<p>WebP files rely on the Resource Interchange File Format (RIFF)
+container structure. A standard WebP file begins with a 12-byte header
+containing the <code>RIFF</code> four-character code (FourCC), a 32-bit
+integer indicating the total file payload size, and the
+<code>WEBP</code> signature. Following this header are individual chunks
+such as <code>VP8</code> (lossy compression), <code>VP8L</code>
+(lossless compression), or <code>VP8X</code> (extended features like
+animation, alpha channels, and metadata).</p>
+<p>Image decoders, primarily based on underlying libraries like Google’s
+<code>libwebp</code>, parse these headers sequentially to allocate
+memory and configure the rendering pipeline before decoding the actual
+pixel bitstream.</p>
+<h3 id="how-corrupt-headers-trigger-infinite-loops">How Corrupt Headers
+Trigger Infinite Loops</h3>
+<p>Infinite loops occur when a parser misinterprets chunk length data
+while traversing the file. In older browser builds, header-parsing
+algorithms frequently relied on rudimentary <code>while</code> loops to
+step through container chunks until the end of the file or an
+<code>EOF</code> marker was reached.</p>
+<p>A corrupt header can exploit this logic in several ways:</p>
+<ul>
+<li><strong>Zero-Length Chunks:</strong> If a header declares a chunk
+size of zero bytes, an unhardened parser may read the chunk, fail to
+advance the read pointer, and re-evaluate the exact same byte offset
+indefinitely.</li>
+<li><strong>Integer Wrap-Arounds:</strong> Setting a 32-bit chunk size
+close to the maximum value (<code>0xFFFFFFFF</code>) can cause an
+unsigned integer overflow when the parser computes the offset of the
+next chunk. The resulting offset wraps back toward the beginning of the
+file, causing cyclic reading loops.</li>
+<li><strong>Malformed Frame Payloads:</strong> In animated WebP files
+managed under the <code>ANIM</code> and <code>ANMF</code> chunks,
+corrupt timing or loop-count flags paired with improper frame-offset
+definitions can cause the frame-scheduler loop to execute endlessly
+without yielding execution to the browser’s main rendering thread.</li>
+</ul>
+<h3 id="the-mechanics-of-browser-crashes">The Mechanics of Browser
+Crashes</h3>
+<p>Crashes stemming from corrupted WebP headers typically involve memory
+mismanagement:</p>
+<ol type="1">
+<li><strong>Heap and Stack Buffer Overflows:</strong> Corrupt headers
+that misreport the dimensions of the canvas (such as declaring a 1x1
+image while the inner bitstream carries dimensions of 4000x4000) lead to
+mismatched memory allocations. When the decoder writes incoming pixel
+buffers into undersized memory targets, adjacent heap memory is
+overwritten, causing segmentation faults or potential code
+execution.</li>
+<li><strong>Out-of-Memory (OOM) Termination:</strong> Specifying
+astronomically large dimensions in the <code>VP8X</code> or
+<code>VP8</code> header (up to the maximum WebP limit of 16383×16383
+pixels) forces legacy decoders to attempt massive memory allocations
+immediately. If the browser or the underlying operating system cannot
+allocate the requested space, the process crashes.</li>
+<li><strong>Null Pointer Dereferences:</strong> When mandatory header
+fields are truncated or missing, older implementations may assume
+pointer allocations succeeded without performing explicit null checks,
+attempting to read invalid memory addresses as soon as image processing
+begins.</li>
+</ol>
+<h3 id="legacy-environments-vs-modern-safeguards">Legacy Environments
+vs. Modern Safeguards</h3>
+<p>Modern web browsers isolate image decoding routines inside strictly
+sandboxed utility processes and employ hardened versions of
+<code>libwebp</code> subjected to extensive continuous fuzz testing. In
+modern engines, malformed headers are recognized early, leading to an
+immediate decode failure and an empty image placeholder without
+disrupting the parent application.</p>
+<p>Outdated browsers—particularly older versions of Google Chrome,
+Mozilla Firefox, Apple Safari, and unmaintained embedded Android
+WebViews—frequently lack these container validation updates and
+sandboxing barriers. In these legacy environments, a single corrupted
+WebP header embedded on a web page can freeze the main thread via an
+infinite loop or terminate the browser process entirely.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

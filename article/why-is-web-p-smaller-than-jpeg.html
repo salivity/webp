@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Is WebP Smaller Than JPEG? - webp</title>
+    <meta name="description" content="WebP achieves substantially smaller file sizes than JPEG by employing modern predictive coding techniques originally designed for video compression, utilizing flexible block partitioning, and applying superior entropy encoding. While JPEG treats images a">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-is-web-p-smaller-than-jpeg">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Is WebP Smaller Than JPEG? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-is-web-p-smaller-than-jpeg" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP achieves substantially smaller file sizes than JPEG by employing modern predictive coding techniques originally designed for video compression, utilizing flexible block partitioning, and applying superior entropy encoding. While JPEG treats images a" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-is-webp-smaller-than-jpeg">Why Is WebP Smaller Than
+JPEG?</h1>
+<p>WebP achieves substantially smaller file sizes than JPEG by employing
+modern predictive coding techniques originally designed for video
+compression, utilizing flexible block partitioning, and applying
+superior entropy encoding. While JPEG treats images as isolated 8x8
+pixel blocks converted via the Discrete Cosine Transform, WebP analyzes
+spatial patterns across surrounding pixels to predict content before
+compressing only the residual error. This architectural shift enables
+WebP to deliver equivalent visual fidelity at 25% to 34% smaller file
+sizes on average.</p>
+<h2 id="predictive-intra-frame-coding">Predictive Intra-Frame
+Coding</h2>
+<p>The primary architectural advantage of WebP stems from its derivation
+from the VP8 video codec. WebP uses intra-frame predictive coding, which
+treats an image like a single keyframe in a video stream.</p>
+<p>Instead of encoding every pixel from scratch, the encoder divides the
+image into macroblocks and predicts the pixel values of the current
+block based on neighboring, previously decoded blocks directly above and
+to the left. The encoder supports several prediction modes:</p>
+<ul>
+<li><strong>Horizontal Prediction:</strong> Extrapolates columns across
+the block using the pixel values immediately to the left.</li>
+<li><strong>Vertical Prediction:</strong> Extrapolates rows downward
+using the pixel values directly above the block.</li>
+<li><strong>DC (Average) Prediction:</strong> Fills the block with the
+mean value of the neighboring top and left pixels.</li>
+<li><strong>TrueMotion Prediction:</strong> Uses both the neighboring
+pixels and the corner pixel to model subtle directional gradients across
+the block.</li>
+</ul>
+<p>Once a prediction is calculated, WebP subtracts it from the actual
+pixel data. The encoder only needs to compress the difference—termed the
+residual error. Because well-predicted blocks leave minimal residual
+data, the amount of information requiring compression is drastically
+reduced compared to JPEG's approach of encoding raw pixel values.</p>
+<h2 id="variable-block-partitioning">Variable Block Partitioning</h2>
+<p>JPEG divides images into a rigid, fixed grid of 8x8 pixel blocks
+across the entire frame. This rigid structure forces uniform processing
+regardless of whether a region contains high-frequency detail or a flat,
+uniform background.</p>
+<p>WebP utilizes 16x16 pixel macroblocks that can be adaptively divided
+into smaller sub-blocks down to 4x4 pixels:</p>
+<ul>
+<li><strong>Smooth Regions:</strong> In flat areas like skies or blurred
+backgrounds, WebP uses large 16x16 macroblocks with a single prediction
+mode, saving significant header and transform overhead.</li>
+<li><strong>Detailed Regions:</strong> In high-contrast areas with sharp
+edges or intricate textures, WebP subdivides macroblocks into sixteen
+4x4 sub-blocks, applying distinct prediction modes to each to capture
+detail accurately.</li>
+</ul>
+<p>This spatial adaptability prevents the format from wasting data bits
+on low-complexity image regions while preserving clarity where it
+matters most.</p>
+<h2 id="advanced-transform-and-quantization">Advanced Transform and
+Quantization</h2>
+<p>After prediction produces the residual error, WebP transforms the
+spatial data into frequency components to discard information
+imperceptible to the human eye.</p>
+<p>While JPEG relies on the classical Discrete Cosine Transform (DCT),
+lossy WebP implements an integer-based approximation of the discrete
+cosine transform (specifically an 8-bit, 4x4 transform known as the
+Walsh-Hadamard Transform for certain luminance components alongside
+standard 4x4 DCT approximations).</p>
+<p>Integer transforms avoid the floating-point rounding errors common in
+legacy JPEG encoders, preventing drift and rounding artifacts between
+different operating systems and decoders. Furthermore, WebP segments the
+image into up to four distinct complexity segments, assigning
+independent quantization parameters to each segment to tailor
+compression intensity precisely across varied image textures.</p>
+<h2 id="modern-entropy-encoding-arithmetic-vs-huffman">Modern Entropy
+Encoding: Arithmetic vs. Huffman</h2>
+<p>The final step in both codecs is entropy encoding, which translates
+processed symbols into bits.</p>
+<p>JPEG historically relies on Huffman coding, a technique that maps
+symbols to integer bit lengths (e.g., 1 bit, 2 bits, 3 bits). Because an
+individual symbol cannot be represented by a fractional number of bits,
+Huffman coding regularly rounds up bit lengths, resulting in
+mathematical inefficiency.</p>
+<p>WebP replaces Huffman coding with a boolean arithmetic encoder (an
+implementation of arithmetic coding). Arithmetic coding maps an entire
+sequence of symbols to a single arbitrary-precision fractional value
+between 0 and 1. This permits the storage of high-probability symbols at
+fractional-bit costs (such as 0.3 bits per symbol), allowing WebP to
+reach compression ratios much closer to the theoretical Shannon entropy
+limit.</p>
+<h2 id="artifact-mitigation-and-edge-retention">Artifact Mitigation and
+Edge Retention</h2>
+<p>When JPEG files are compressed aggressively, the rigid 8x8 grid
+manifests as visible block boundaries—commonly known as "blocking
+artifacts"—alongside high-frequency "ringing" around hard edges.</p>
+<p>WebP mitigates these compression flaws through an integrated, in-loop
+deblocking filter. Because the filter operates within the decoding loop,
+subsequent block predictions leverage the filtered pixels, preventing
+boundary discrepancies from compounding across the image. The result is
+a smoother degradation curve at low bitrates, retaining structural
+cohesion and edge clarity where standard JPEG degrades into fragmented
+blocks.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Migration Cuts Cloud Storage Costs - webp</title>
+    <meta name="description" content="Migrating legacy image libraries from formats like JPEG and PNG to WebP significantly lowers cloud storage and data delivery expenses. Because WebP provides superior lossy and lossless compression, converted assets occupy a fraction of their original foo">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-migration-cuts-cloud-storage-costs">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Migration Cuts Cloud Storage Costs - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-migration-cuts-cloud-storage-costs" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Migrating legacy image libraries from formats like JPEG and PNG to WebP significantly lowers cloud storage and data delivery expenses. Because WebP provides superior lossy and lossless compression, converted assets occupy a fraction of their original foo" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-migration-cuts-cloud-storage-costs">How WebP Migration
+Cuts Cloud Storage Costs</h1>
+<p>Migrating legacy image libraries from formats like JPEG and PNG to
+WebP significantly lowers cloud storage and data delivery expenses.
+Because WebP provides superior lossy and lossless compression, converted
+assets occupy a fraction of their original footprint. This article
+explains how transitioning your digital media to WebP reduces primary
+storage utilization, shrinks egress and CDN expenses, lowers backup
+overhead, and optimizes long-term asset management.</p>
+<h3
+id="superior-compression-directly-reduces-storage-footprint">Superior
+Compression Directly Reduces Storage Footprint</h3>
+<p>The primary driver of cost savings is WebP’s compression efficiency.
+WebP lossless images are generally 26% smaller than standard PNGs, while
+WebP lossy images are 25% to 34% smaller than comparable JPEGs at
+equivalent visual quality.</p>
+<p>When you apply this compression across terabytes or petabytes of
+legacy assets stored in cloud object storage—such as Amazon S3, Google
+Cloud Storage, or Azure Blob Storage—the overall stored volume drops
+significantly. Cloud providers bill storage based on gigabytes stored
+per month; a consistent 30% reduction in total data volume results in an
+immediate and corresponding drop in your baseline monthly storage
+bill.</p>
+<h3 id="lower-data-transfer-and-egress-fees">Lower Data Transfer and
+Egress Fees</h3>
+<p>Cloud billing consists of both "at-rest" storage and "in-transit"
+data transfer (egress). Every time an image is requested by a user,
+mobile app, or content delivery network (CDN), the cloud provider
+charges for the data leaving the data center.</p>
+<p>Because WebP assets are markedly smaller, serving them consumes
+substantially less bandwidth. This yields two financial benefits:</p>
+<ul>
+<li><strong>Reduced Origin Egress:</strong> CDNs pull smaller payloads
+from your origin storage during cache misses, minimizing cloud-to-CDN
+transfer charges.</li>
+<li><strong>Lower CDN Delivery Fees:</strong> If you pay for edge
+bandwidth delivery, distributing smaller files directly cuts your total
+edge transfer charges.</li>
+</ul>
+<h3
+id="compounded-savings-in-backups-and-multi-region-replication">Compounded
+Savings in Backups and Multi-Region Replication</h3>
+<p>Many enterprise architectures employ cross-region replication (CRR)
+for high availability or maintain automated snapshots and versioning for
+disaster recovery.</p>
+<p>In these environments, data storage costs are multiplied:</p>
+<ul>
+<li>A 10 TB legacy library replicated across two additional regions is
+billed as 30 TB of storage, plus the inter-region transfer costs
+required to sync the files.</li>
+<li>Compressing that library to 7 TB with WebP reduces the total
+replicated footprint to 21 TB.</li>
+</ul>
+<p>By minimizing the primary data size, you automatically reduce
+replication bandwidth charges, multi-region storage fees, and snapshot
+costs.</p>
+<h3 id="managing-conversion-overhead-for-maximum-roi">Managing
+Conversion Overhead for Maximum ROI</h3>
+<p>To realize maximum cost savings after a migration, legacy files must
+be properly handled. Storing both the original legacy formats and the
+new WebP versions concurrently will temporarily increase storage
+costs.</p>
+<p>To maximize return on investment:</p>
+<ul>
+<li><strong>Archive or Purge Legacy Assets:</strong> Once converted,
+delete legacy files or transition the original master copies to
+lower-cost archival tiers, such as AWS S3 Glacier or Google Cloud
+Coldline.</li>
+<li><strong>Automate Lifecycle Rules:</strong> Implement cloud lifecycle
+rules that automatically expire raw staging assets generated during the
+conversion pipeline.</li>
+<li><strong>Adopt Dynamic Serving:</strong> Use image processing
+pipelines that generate and cache WebP files on-demand rather than
+converting entire inactive archives upfront, ensuring compute costs are
+only spent on actively requested assets.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

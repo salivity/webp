@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can WebP Use 4:4:4 Chroma Subsampling? - webp</title>
+    <meta name="description" content="WebP handles color resolution differently depending on whether you use lossy or lossless compression. Standard lossy WebP strictly enforces 4:2:0 chroma subsampling and cannot encode using 4:4:4. However, you can achieve full color fidelity and razor-sha">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-web-p-use-4-4-4-chroma-subsampling">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can WebP Use 4:4:4 Chroma Subsampling? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-web-p-use-4-4-4-chroma-subsampling" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP handles color resolution differently depending on whether you use lossy or lossless compression. Standard lossy WebP strictly enforces 4:2:0 chroma subsampling and cannot encode using 4:4:4. However, you can achieve full color fidelity and razor-sha" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-webp-use-444-chroma-subsampling">Can WebP Use 4:4:4 Chroma
+Subsampling?</h1>
+<p>WebP handles color resolution differently depending on whether you
+use lossy or lossless compression. Standard lossy WebP strictly enforces
+4:2:0 chroma subsampling and cannot encode using 4:4:4. However, you can
+achieve full color fidelity and razor-sharp color edges by utilizing
+WebP’s lossless or near-lossless modes, which operate in the
+full-resolution ARGB color space without discarding color data.</p>
+<h3 id="lossy-webp-is-restricted-to-420">Lossy WebP Is Restricted to
+4:2:0</h3>
+<p>Lossy WebP is built directly on the VP8 video codec standard. The VP8
+bitstream format only supports the YUV 4:2:0 pixel format. In 4:2:0
+subsampling, chroma (color) data is downsampled to half the horizontal
+and vertical resolution of the luma (brightness) data.</p>
+<p>Because of this architectural limitation, it is impossible to encode
+a native lossy WebP file using 4:4:4 chroma subsampling. On graphics
+with high-contrast colored borders—such as bright red text on a black
+background, pixel art, or interface screenshots—lossy WebP will
+inevitably exhibit color bleeding, blurriness, or halo artifacts around
+edges.</p>
+<h3 id="improving-edge-quality-with-sharp-yuv">Improving Edge Quality
+with Sharp YUV</h3>
+<p>If you must use lossy WebP due to strict file size constraints, you
+can minimize color bleeding using the Sharp YUV feature
+(<code>-sharp_yuv</code> in <code>cwebp</code>).</p>
+<p>Standard RGB-to-YUV conversion downsamples color channels linearly,
+which exaggerates color bleeding on sharp boundaries. The Sharp YUV
+algorithm optimizes this conversion iteratively to minimize perceived
+edge distortion. While the output remains 4:2:0, the resulting edges
+appear significantly crisper than with standard conversion
+algorithms.</p>
+<h3 id="achieving-444-quality-via-lossless-webp">Achieving 4:4:4 Quality
+via Lossless WebP</h3>
+<p>To get true, uncompressed color resolution equivalent to 4:4:4 in
+WebP, you must use lossless compression.</p>
+<p>Lossless WebP does not rely on the VP8 video container; instead, it
+uses a dedicated compression engine operating in the ARGB color space.
+Every pixel retains its complete color information, eliminating color
+fringing entirely. For graphics, flat-color illustrations, and
+typography, lossless WebP provides pristine edges at smaller file sizes
+than standard PNGs.</p>
+<h3 id="the-near-lossless-compromise">The Near-Lossless Compromise</h3>
+<p>When true lossless files are too large, but lossy 4:2:0 blur is
+unacceptable, libwebp offers a "near-lossless" mode
+(<code>-near_lossless</code> in <code>cwebp</code>).</p>
+<p>Near-lossless mode adjusts pixel values slightly to enhance
+compression efficiency while remaining inside the lossless ARGB
+pipeline. Because it does not downsample to 4:2:0, sharp color
+transitions remain intact while yielding file sizes closer to
+traditional lossy formats.</p>
+<h3 id="modern-alternatives-for-lossy-444">Modern Alternatives for Lossy
+4:4:4</h3>
+<p>If your workflow strictly requires lossy compression with 4:4:4
+chroma subsampling, newer image formats are better suited than WebP:</p>
+<ul>
+<li><strong>AVIF:</strong> Based on the AV1 video codec, AVIF natively
+supports lossy 4:4:4, 4:2:2, and 4:2:0 profiles, making it ideal for
+high-contrast UI graphics where low file size is critical.</li>
+<li><strong>JPEG XL:</strong> Operates natively in full color resolution
+(without subsampling by default) during lossy compression, preserving
+color borders without blur.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

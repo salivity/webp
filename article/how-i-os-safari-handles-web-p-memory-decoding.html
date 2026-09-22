@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How iOS Safari Handles WebP Memory Decoding - webp</title>
+    <meta name="description" content="This article provides an overview of how iOS Safari manages system memory when decoding multiple WebP files simultaneously. It examines the distinction between compressed file sizes and uncompressed bitmap representations, WebKit’s integration with App">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-i-os-safari-handles-web-p-memory-decoding">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How iOS Safari Handles WebP Memory Decoding - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-i-os-safari-handles-web-p-memory-decoding" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of how iOS Safari manages system memory when decoding multiple WebP files simultaneously. It examines the distinction between compressed file sizes and uncompressed bitmap representations, WebKit’s integration with App" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-ios-safari-handles-webp-memory-decoding">How iOS Safari
+Handles WebP Memory Decoding</h1>
+<p>This article provides an overview of how iOS Safari manages system
+memory when decoding multiple WebP files simultaneously. It examines the
+distinction between compressed file sizes and uncompressed bitmap
+representations, WebKit’s integration with Apple’s native ImageIO
+framework, the triggers for memory pressure warnings, and the browser's
+eviction and process-termination safeguards.</p>
+<h2 id="compressed-size-vs-decoded-bitmap-memory">Compressed Size vs.
+Decoded Bitmap Memory</h2>
+<p>A common misconception in web development is that lightweight WebP
+files consume minimal RAM. While WebP offers superior compression over
+the network compared to JPEG or PNG, memory usage during rendering
+depends entirely on image dimensions, not file size.</p>
+<p>When Safari loads a WebP image, WebKit must decompress the image data
+into a raw bitmap buffer to pass it to the GPU. This decoded bitmap
+typically requires 4 bytes per pixel (representing 8 bits each for Red,
+Green, Blue, and Alpha channels). For example, a 2000×2000 pixel WebP
+image may only weigh 150 KB over the network, but its uncompressed
+footprint in RAM is calculated as:</p>
+<p><code>2000 * 2000 * 4 bytes = 16,000,000 bytes (~15.25 MB)</code></p>
+<p>When a webpage loads dozens of such images simultaneously, the
+decoded image cache quickly scales into hundreds of megabytes, creating
+an immediate strain on iOS devices with limited unified memory.</p>
+<h2 id="the-imageio-pipeline-and-lazy-decoding">The ImageIO Pipeline and
+Lazy Decoding</h2>
+<p>iOS Safari delegates the decoding of WebP files to Apple's
+system-level <code>ImageIO</code> framework. To mitigate sudden memory
+spikes, WebKit implements just-in-time (lazy) decoding:</p>
+<ol type="1">
+<li><strong>Header Parsing:</strong> Safari parses the WebP metadata to
+determine its intrinsic dimensions and calculate page layout without
+decoding the full pixel data.</li>
+<li><strong>Viewport-Aware Decoding:</strong> WebKit prioritizes
+decoding only the images currently inside or directly adjacent to the
+active viewport.</li>
+<li><strong>Hardware Acceleration:</strong> ImageIO attempts to leverage
+hardware-accelerated decoding pipelines where available, offloading
+decompression tasks from the main thread to optimize frame rates.</li>
+</ol>
+<p>Despite these measures, rapid scrolling or complex layouts containing
+dozens of visible WebP assets force ImageIO to decode numerous assets in
+parallel, triggering a rapid spike in memory allocation.</p>
+<h2 id="memory-pressure-and-cache-purging">Memory Pressure and Cache
+Purging</h2>
+<p>iOS enforces strict memory constraints across all applications via
+its kernel-level process monitor, <code>jetsam</code>. Safari operates
+within a multi-process architecture where web content runs in an
+isolated <code>WebContent</code> process.</p>
+<p>When decoding dozens of WebP files pushes the <code>WebContent</code>
+process toward its memory ceiling:</p>
+<ol type="1">
+<li><strong>Decoded Cache Invalidation:</strong> Safari receives a
+memory pressure notification and immediately purges decoded bitmap
+buffers for off-screen images. The browser retains only the original
+compressed data in disk or network cache.</li>
+<li><strong>Re-decoding Overhead:</strong> If a user scrolls back to
+previously viewed images, Safari must decompress the WebP files a second
+time. This can cause visible checkerboarding, frame drops, or brief
+layout stutters.</li>
+<li><strong>Downsampling Safeguards:</strong> In severe
+memory-constrained states, WebKit may downsample large images
+automatically, reducing visual fidelity to maintain process
+stability.</li>
+</ol>
+<h2 id="webprocess-termination-jetsam-crashes">WebProcess Termination
+(Jetsam Crashes)</h2>
+<p>If the cumulative memory consumed by decoded WebP bitmaps, JavaScript
+heaps, and the DOM exceeds the hard threshold assigned by
+<code>jetsam</code>, the operating system abruptly terminates the
+<code>WebContent</code> process.</p>
+<p>To the end user, this failure manifests as:</p>
+<ul>
+<li>The webpage spontaneously going blank.</li>
+<li>The browser displaying the prompt: <em>"This webpage was reloaded
+because it was using significant memory."</em></li>
+<li>Images failing to render, displaying missing-image placeholders or
+solid black rectangles.</li>
+</ul>
+<h2 id="best-practices-for-managing-webp-on-ios">Best Practices for
+Managing WebP on iOS</h2>
+<p>To prevent memory-related crashes in iOS Safari when displaying
+numerous WebP files:</p>
+<ul>
+<li><strong>Right-Size Dimensions:</strong> Never serve images larger
+than their maximum display size. Relying on CSS to scale down oversized
+bitmaps still forces Safari to decode the full-resolution image into
+memory.</li>
+<li><strong>Implement Native Lazy Loading:</strong> Use
+<code>loading="lazy"</code> on image elements to prevent off-screen WebP
+files from entering the decoding pipeline prematurely.</li>
+<li><strong>Virtualize Long Lists:</strong> In image-heavy galleries,
+unmount off-screen DOM nodes dynamically to ensure WebKit permanently
+disposes of out-of-view image resources.</li>
+<li><strong>Utilize Responsive Images:</strong> Use the
+<code>&lt;picture&gt;</code> element with appropriate
+<code>srcset</code> and <code>sizes</code> attributes so lower-RAM
+devices (such as base-model iPhones or older iPads) download smaller
+pixel dimensions.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

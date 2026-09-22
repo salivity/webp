@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can WebP Lossless Store Scientific Raster Data? - webp</title>
+    <meta name="description" content="WebP lossless can technically store non-visual scientific raster data like digital elevation models (DEMs), but it requires data transformation and comes with structural limitations. Because the WebP container is natively designed for 8-bit-per-channel R">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-web-p-lossless-store-scientific-raster-data">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can WebP Lossless Store Scientific Raster Data? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-web-p-lossless-store-scientific-raster-data" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP lossless can technically store non-visual scientific raster data like digital elevation models (DEMs), but it requires data transformation and comes with structural limitations. Because the WebP container is natively designed for 8-bit-per-channel R" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-webp-lossless-store-scientific-raster-data">Can WebP
+Lossless Store Scientific Raster Data?</h1>
+<p>WebP lossless can technically store non-visual scientific raster data
+like digital elevation models (DEMs), but it requires data
+transformation and comes with structural limitations. Because the WebP
+container is natively designed for 8-bit-per-channel RGBA imagery,
+high-precision scientific measurements—which typically use 16-bit
+integers or 32-bit floating-point values—must be packed across multiple
+color channels. While lossless compression preserves exact numerical
+data without the destructive artifacts of lossy formats, WebP lacks
+native support for geospatial metadata and floating-point types, making
+it useful as a lightweight web-delivery mechanism rather than a standard
+scientific format.</p>
+<p>Scientific rasters rely on precise numerical ranges rather than
+visible color spectrums. A typical elevation model uses single-band
+16-bit signed integers or 32-bit floating-point numbers to represent
+height values above sea level. Standard WebP specifications do not
+accommodate single-channel floating-point arrays. To store this data in
+WebP, the high-precision scalar values must be mathematically split
+across the red, green, blue, and alpha channels using byte-packing or
+custom encoding algorithms (such as the Mapbox Terrain-RGB
+specification, which converts elevation into an equation mapped across
+RGB bytes).</p>
+<p>Using WebP lossless is mandatory when storing packed scientific
+rasters. Lossy WebP relies on discrete cosine transforms or spatial
+approximation, which alters pixel values slightly to optimize for human
+vision. In scientific rasters, even a single-value shift in an encoded
+byte introduces catastrophic calculation errors or severe stair-stepping
+visual glitches in 3D terrain rendering. WebP lossless relies on LZ77
+compression, color cache indexes, and entropy coding, ensuring that
+every packed byte is decoded with zero data degradation.</p>
+<p>Despite this capability, WebP presents distinct disadvantages for
+scientific applications:</p>
+<ul>
+<li><strong>Suboptimal Compression on Packed Floats:</strong> WebP’s
+spatial predictors assume continuous visual gradients. Splitting 32-bit
+floats across 8-bit channels often causes the lower-order byte channels
+to appear as high-frequency noise, which significantly undermines the
+efficiency of WebP's entropy encoding.</li>
+<li><strong>Lack of Geospatial Metadata:</strong> Native GIS formats
+like GeoTIFF incorporate internal tags for coordinate reference systems
+(CRS), bounding box coordinates, and nodata values. WebP supports XMP
+metadata, but standard scientific analysis tools rarely parse geospatial
+projections from WebP containers natively.</li>
+<li><strong>Limited Toolchain Integration:</strong> Software like QGIS,
+ArcGIS, and specialized scientific libraries (such as NetCDF or GDAL)
+are optimized for formats like Cloud Optimized GeoTIFF (COG), Zarr, or
+HDF5. Reading packed WebP rasters requires custom shader logic or
+client-side decompression pipelines.</li>
+</ul>
+<p>WebP lossless functions reliably as a low-bandwidth, web-facing
+transport format for rendering digital elevation models in browser-based
+3D maps via WebGL. However, for core analytical storage, archival
+purposes, and native processing in scientific software, specialized
+formats like GeoTIFF or formats utilizing LERC (Limited Error Raster
+Compression) remain the appropriate standard.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

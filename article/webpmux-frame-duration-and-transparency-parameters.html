@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webpmux Frame Duration and Transparency Parameters - webp</title>
+    <meta name="description" content="This guide explains how to configure individual frame durations and transparency behaviors in animated WebP files using Google's webpmux command-line utility. By leveraging specific arguments inside the -frame flag, you can customize frame timing in mill">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/webpmux-frame-duration-and-transparency-parameters">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Webpmux Frame Duration and Transparency Parameters - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/webpmux-frame-duration-and-transparency-parameters" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to configure individual frame durations and transparency behaviors in animated WebP files using Google's webpmux command-line utility. By leveraging specific arguments inside the -frame flag, you can customize frame timing in mill" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webpmux-frame-duration-and-transparency-parameters">Webpmux
+Frame Duration and Transparency Parameters</h1>
+<p>This guide explains how to configure individual frame durations and
+transparency behaviors in animated WebP files using Google's
+<code>webpmux</code> command-line utility. By leveraging specific
+arguments inside the <code>-frame</code> flag, you can customize frame
+timing in milliseconds, specify whether previous frame data is preserved
+or cleared, and control alpha blending modes for accurate transparent
+rendering.</p>
+<h2 id="the--frame-syntax-structure">The <code>-frame</code> Syntax
+Structure</h2>
+<p>In <code>webpmux</code>, all frame-level playback and visual
+properties are set sequentially through the <code>-frame</code> option.
+The full parameter syntax for each frame is:</p>
+<pre class="text"><code>-frame file_name +x_offset+y_offset+duration+dispose_method+blend_method</code></pre>
+<p>The parameters controlling duration, canvas clearing, and alpha
+transparency are <code>duration</code>, <code>dispose_method</code>, and
+<code>blend_method</code>.</p>
+<h2 id="controlling-frame-duration">Controlling Frame Duration</h2>
+<p>Frame duration is controlled by the third argument following the
+offsets:</p>
+<ul>
+<li><strong>Parameter:</strong> <code>+duration</code></li>
+<li><strong>Format:</strong> An integer representing time in
+milliseconds (ms).</li>
+<li><strong>Behavior:</strong> A value of <code>+100</code> displays the
+frame for 100ms (10 frames per second), while <code>+40</code> displays
+it for 40ms (25 frames per second). Each frame added to the sequence can
+possess an independent duration value to create variable frame rate
+animations.</li>
+</ul>
+<h2 id="controlling-transparency-and-disposal-modes">Controlling
+Transparency and Disposal Modes</h2>
+<p>Two distinct parameters govern how transparent pixels and frame
+transitions interact on the canvas: <code>dispose_method</code> and
+<code>blend_method</code>.</p>
+<h3 id="1-disposal-method-dispose_method">1. Disposal Method
+(<code>dispose_method</code>)</h3>
+<p>The disposal method specifies how the canvas area occupied by the
+current frame is treated after its duration expires, before the next
+frame is rendered. This is crucial for animations with transparent
+backgrounds.</p>
+<ul>
+<li><code>+b</code> (Do Not Dispose / None): Preserves the current frame
+on the canvas. The next frame renders directly on top of the existing
+content.</li>
+<li><code>+d</code> (Dispose to Background): Clears the rectangular area
+of the current frame back to the background color (fully transparent by
+default) before drawing the next frame. This prevents "ghosting"
+artifacts where transparent areas of a new frame accidentally reveal
+parts of previous frames.</li>
+</ul>
+<h3 id="2-blend-method-blend_method">2. Blend Method
+(<code>blend_method</code>)</h3>
+<p>The blend method dictates how the current frame's transparent and
+semi-transparent pixels interact with the pixels already present on the
+canvas.</p>
+<ul>
+<li><code>+m</code> (Alpha Blend): Blends the new frame with the canvas
+beneath it using standard alpha compositing. Semi-transparent pixels
+will show the underlying frame's colors through them.</li>
+<li><code>-m</code> (Do Not Blend): Overwrites the destination canvas
+completely within the frame boundary. Transparent or semi-transparent
+pixels in the new frame will completely replace whatever was on the
+canvas rather than mixing with it.</li>
+</ul>
+<h2 id="example-command">Example Command</h2>
+<p>The following command assembles two frames where
+<code>frame1.webp</code> displays for 200ms without disposal, and
+<code>frame2.webp</code> displays for 500ms, clears the background upon
+completion, and renders without alpha blending:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">webpmux</span> <span class="at">-frame</span> frame1.webp +0+0+200+b+m <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">-frame</span> frame2.webp +0+0+500+d-m <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">-loop</span> 0 <span class="at">-bgcolor</span> 0x00000000 <span class="at">-o</span> output.webp</span></code></pre></div>
+<p>In this command, <code>+200+b+m</code> sets a 200ms duration, retains
+the image content (<code>+b</code>), and enables alpha blending
+(<code>+m</code>). The second frame uses <code>+500+d-m</code> to
+display for 500ms, clear to transparent background on completion
+(<code>+d</code>), and overwrite existing canvas pixels without alpha
+blending (<code>-m</code>).</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

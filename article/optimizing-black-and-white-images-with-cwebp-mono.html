@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimizing Black-and-White Images with cwebp -mono - webp</title>
+    <meta name="description" content="The cwebp command-line tool provides the -mono flag to aggressively compress bilevel (pure black-and-white) images into the WebP format. By forcing the encoder into a single-bit color model, -mono strips extraneous color channels, minimizes spatial predi">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/optimizing-black-and-white-images-with-cwebp-mono">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Optimizing Black-and-White Images with cwebp -mono - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/optimizing-black-and-white-images-with-cwebp-mono" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The cwebp command-line tool provides the -mono flag to aggressively compress bilevel (pure black-and-white) images into the WebP format. By forcing the encoder into a single-bit color model, -mono strips extraneous color channels, minimizes spatial predi" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="optimizing-black-and-white-images-with-cwebp--mono">Optimizing
+Black-and-White Images with cwebp -mono</h1>
+<p>The <code>cwebp</code> command-line tool provides the
+<code>-mono</code> flag to aggressively compress bilevel (pure
+black-and-white) images into the WebP format. By forcing the encoder
+into a single-bit color model, <code>-mono</code> strips extraneous
+color channels, minimizes spatial prediction overhead, and maximizes
+entropy coding efficiency. This article explains the underlying
+mechanisms the <code>-mono</code> flag uses to reduce file sizes for
+line art, scanned documents, and monochrome graphics without sacrificing
+visual fidelity.</p>
+<h2 id="elimination-of-color-channels-and-metadata">Elimination of Color
+Channels and Metadata</h2>
+<p>Standard WebP images utilize either ARGB color space for lossless
+compression or YUV420 for lossy compression. In both cases, the
+container allocates data structures to track variations in hue,
+saturation, and luminance across pixels.</p>
+<p>When you pass the <code>-mono</code> flag to <code>cwebp</code>, the
+encoder treats the image strictly as a 1-bit monochrome bitmap. It
+discards unnecessary chrominance data (the U and V components in lossy
+mode) and collapses the three-channel RGB data into a binary luminance
+state (0 for black, 255 for white). By eliminating chromatic channels
+and associated color profiling metadata, the encoder dramatically
+reduces the baseline header size and per-pixel data allocations before
+compression even begins.</p>
+<h2 id="streamlining-lossless-transforms">Streamlining Lossless
+Transforms</h2>
+<p>WebP lossless compression relies on several specialized
+transformation steps to decorrelate image data before entropy
+encoding:</p>
+<ul>
+<li><strong>Predictor Transform:</strong> Estimates pixel values based
+on neighboring pixels.</li>
+<li><strong>Color Transform:</strong> Decorrelates green, red, and blue
+channels (Subtract Green).</li>
+<li><strong>Color Indexing Transform:</strong> Groups colors into a
+palette if the unique color count is small.</li>
+</ul>
+<p>For general images, calculating the optimal parameters for these
+transforms requires significant computational overhead and yields
+complex transformation maps. Under <code>-mono</code>, the palette is
+inherently constrained to exactly two values. The encoder avoids
+calculating complex cross-channel correlations and minimizes the palette
+table to a 1-bit lookup index. The predictor transform simplifies
+because neighbor pixel predictions only need to determine a binary
+transition (black-to-white or white-to-black), reducing the complexity
+of the residual data that must be stored.</p>
+<h2 id="enhanced-entropy-coding">Enhanced Entropy Coding</h2>
+<p>WebP lossless relies on a combination of LZ77 backward referencing
+and canonical Huffman coding. The efficiency of these algorithms depends
+on data entropy—the fewer unique symbols present, the more compact the
+Huffman trees become.</p>
+<p>Because <code>-mono</code> reduces the image to a two-symbol
+alphabet, the Huffman tree depth is minimal. Sequences of identical
+pixels (such as large expanses of white background on a scanned page)
+convert into exceptionally long LZ77 run-length matches. These long
+matches are encoded with tiny bit footprints, producing compression
+ratios that significantly outperform standard multi-shade grayscale
+encoding.</p>
+<h2 id="binary-thresholding-and-artifact-prevention">Binary Thresholding
+and Artifact Prevention</h2>
+<p>In standard encoding pipelines, converting grayscale or anti-aliased
+black-and-white art can introduce subtle compression ringing or false
+gradients around hard edges. The <code>-mono</code> flag acts as a
+strict threshold filter during the conversion phase. Any subtle gray
+artifacts, scanner noise, or slight anti-aliasing pixels are pushed into
+either pure black or pure white.</p>
+<p>This strict binarization prevents the lossy DCT/VP8 encoding process
+(or lossless color-cache mechanisms) from allocating bits to
+intermediate shades. By sharpening every boundary into a hard edge
+represented by a single bit, <code>-mono</code> ensures maximum clarity
+for text and linework while achieving the smallest possible output
+footprint.</p>
+<h2 id="recommended-usage">Recommended Usage</h2>
+<p>To get the most out of the <code>-mono</code> flag, pair it with the
+lossless switch (<code>-lossless</code>) and maximum compression effort
+(<code>-z 9</code> or <code>-m 6</code>):</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-mono</span> <span class="at">-lossless</span> <span class="at">-z</span> 9 input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<p>This configuration ensures exact bit-for-bit fidelity for line
+drawings, blueprints, and digital documentation while leveraging WebP’s
+most compact bilevel compression pipeline.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Does WebP Handle Transparency in Lossy vs Lossless? - webp</title>
+    <meta name="description" content="WebP supports full 8-bit alpha transparency across both lossy and lossless modes, but the underlying mechanisms differ fundamentally. In lossless mode, transparency is interwoven directly into the image’s primary RGBA color stream. In lossy mode, becau">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-does-web-p-handle-transparency-in-lossy-vs-lossless">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Does WebP Handle Transparency in Lossy vs Lossless? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-does-web-p-handle-transparency-in-lossy-vs-lossless" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP supports full 8-bit alpha transparency across both lossy and lossless modes, but the underlying mechanisms differ fundamentally. In lossless mode, transparency is interwoven directly into the image’s primary RGBA color stream. In lossy mode, becau" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-does-webp-handle-transparency-in-lossy-vs-lossless">How Does
+WebP Handle Transparency in Lossy vs Lossless?</h1>
+<p>WebP supports full 8-bit alpha transparency across both lossy and
+lossless modes, but the underlying mechanisms differ fundamentally. In
+lossless mode, transparency is interwoven directly into the image’s
+primary RGBA color stream. In lossy mode, because standard VP8
+compression only handles YUV color channels, transparency must be
+isolated and stored as a separate sub-stream inside a dedicated
+container chunk.</p>
+<h2 id="lossless-webp-integrated-rgba-stream">Lossless WebP: Integrated
+RGBA Stream</h2>
+<p>Lossless WebP (VP8L) treats the alpha channel as an equal component
+alongside the red, green, and blue color channels.</p>
+<ul>
+<li><strong>Unified Encoding:</strong> All four channels (ARGB) are
+packed and encoded together in the primary bitstream. The compression
+pipeline applies entropy coding, spatial predictors, color caching, and
+color transforms across the entire pixel quadruple simultaneously.</li>
+<li><strong>Exact Preservation:</strong> Every alpha value from 0 (fully
+transparent) to 255 (fully opaque) is preserved with bit-level
+accuracy.</li>
+<li><strong>Zero-Alpha Optimization:</strong> By default, WebP lossless
+encoders discard invisible RGB values underneath 100% transparent pixels
+(setting them to neutral values or matching adjacent pixels) to maximize
+compression efficiency, though this behavior can be toggled if raw RGB
+preservation is required.</li>
+</ul>
+<h2 id="lossy-webp-the-alph-chunk-pipeline">Lossy WebP: The ALPH Chunk
+Pipeline</h2>
+<p>Standard lossy WebP relies on the VP8 video codec standard, which
+operates exclusively in the Y’CbCr (YUV 4:2:0) color space and lacks
+native support for an alpha channel. To support transparency without
+altering the core VP8 specification, the container architecture
+separates transparency into a distinct stage:</p>
+<ul>
+<li><strong>Extended Container (VP8X):</strong> A lossy image containing
+transparency switches from the basic file layout to an extended RIFF
+container with a <code>VP8X</code> header.</li>
+<li><strong>Independent Sub-Stream (<code>ALPH</code> Chunk):</strong>
+The alpha channel is stripped from the RGB channels before lossy
+compression and stored in a separate <code>ALPH</code> chunk preceding
+the main <code>VP8 </code> chunk.</li>
+<li><strong>Compression of the Alpha Plane:</strong> The data in the
+<code>ALPH</code> chunk is itself compressed using WebP's lossless
+algorithm (predictive filtering combined with entropy encoding) rather
+than lossy VP8 transforms.</li>
+<li><strong>Optional Preprocessing:</strong> Lossy mode allows optional
+alpha quantization or level reduction to decrease the size of the alpha
+bitstream further, though this remains visually smooth due to spatial
+filtering (Horizontal, Vertical, or Gradient filters) applied before
+encoding.</li>
+</ul>
+<h2 id="practical-differences-and-trade-offs">Practical Differences and
+Trade-Offs</h2>
+<p>The divergent architectures create specific trade-offs when
+optimizing web assets:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Lossless WebP Transparency</th>
+<th>Lossy WebP Transparency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Storage Method</strong></td>
+<td>Embedded directly within the <code>VP8L</code> stream</td>
+<td>Stored in an external <code>ALPH</code> chunk</td>
+</tr>
+<tr>
+<td><strong>Alpha Fidelity</strong></td>
+<td>Strictly lossless (bit-for-bit identical)</td>
+<td>Lossless compression of alpha, with optional
+filtering/quantization</td>
+</tr>
+<tr>
+<td><strong>Color Fidelity</strong></td>
+<td>100% original color and edge fidelity</td>
+<td>Color bleeding or blurring can occur near transparent edges due to
+4:2:0 chroma subsampling</td>
+</tr>
+<tr>
+<td><strong>Best Use Case</strong></td>
+<td>UI icons, vector-like art, sharp-edged graphics, and text</td>
+<td>Photographic elements, cutouts with soft feathering, or complex
+transparent textures</td>
+</tr>
+</tbody>
+</table>
+<p>Lossy WebP offers a massive file-size advantage over formats like PNG
+for photographic transparent cutouts. However, fine lines and hard-edged
+graphic boundaries can exhibit minor haloing or color fringing because
+the color channels undergo lossy 4:2:0 subsampling, while the
+transparency mask remains sharply defined. For graphic assets demanding
+crisp boundaries, lossless mode avoids this discrepancy entirely.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

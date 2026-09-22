@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lossless WebP vs Indexed PNG for Game Sprites - webp</title>
+    <meta name="description" content="This article examines how lossless WebP compresses geometric game sprites compared to indexed PNG formats. While indexed PNG has long been the standard for low-color, sharp-edged game art due to its palette-based structure and Deflate compression, lossle">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/lossless-web-p-vs-indexed-png-for-game-sprites">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lossless WebP vs Indexed PNG for Game Sprites - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/lossless-web-p-vs-indexed-png-for-game-sprites" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how lossless WebP compresses geometric game sprites compared to indexed PNG formats. While indexed PNG has long been the standard for low-color, sharp-edged game art due to its palette-based structure and Deflate compression, lossle" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="lossless-webp-vs-indexed-png-for-game-sprites">Lossless WebP vs
+Indexed PNG for Game Sprites</h1>
+<p>This article examines how lossless WebP compresses geometric game
+sprites compared to indexed PNG formats. While indexed PNG has long been
+the standard for low-color, sharp-edged game art due to its
+palette-based structure and Deflate compression, lossless WebP
+introduces modern transform pipelines, 2D spatial predictors, and
+dynamic color caching. Understanding how both formats handle palette
+mapping, pattern repetition, and entropy coding reveals why WebP
+consistently achieves smaller file sizes on geometric game assets
+without sacrificing pixel accuracy.</p>
+<h3 id="characteristics-of-geometric-game-sprites">Characteristics of
+Geometric Game Sprites</h3>
+<p>Geometric game sprites typically feature hard outlines, uniform color
+fills, repeating tile patterns, and limited color palettes. Unlike
+photographic imagery, these assets have steep color gradients and abrupt
+transitions between transparent and opaque pixels. Efficient compression
+for this type of imagery relies on two factors: minimizing the bit-depth
+needed to represent color values and eliminating redundant spatial
+data.</p>
+<h3 id="how-indexed-png-compresses-sprites">How Indexed PNG Compresses
+Sprites</h3>
+<p>Indexed PNG reduces file size primarily by converting 24-bit RGB or
+32-bit RGBA color data into an indexed palette (typically 1 to 8 bits,
+supporting up to 256 colors). Each pixel stores an index value pointing
+to a color table rather than the complete RGBA definition.</p>
+<p>Once converted to index values, PNG applies a two-stage compression
+process:</p>
+<ol type="1">
+<li><strong>Delta Filtering:</strong> PNG filters pixel data row by row
+using one of five predictive filter types (None, Sub, Up, Average,
+Paeth). For geometric sprites, horizontal and vertical runs of identical
+colors produce long sequences of zeroes or identical differences,
+reducing data entropy.</li>
+<li><strong>Deflate Compression:</strong> The filtered byte stream is
+compressed using standard Deflate, a combination of LZ77 dictionary
+matching and Huffman entropy coding. LZ77 identifies repeated sequences
+of pixel indices—such as repeating horizontal lines—and replaces them
+with backward references.</li>
+</ol>
+<p>While efficient, PNG's filter algorithms operate strictly along
+scanlines (1D prediction), limiting their ability to compress diagonal
+lines or complex 2D geometric patterns.</p>
+<h3 id="how-lossless-webp-compresses-sprites">How Lossless WebP
+Compresses Sprites</h3>
+<p>Lossless WebP uses a more advanced preprocessing pipeline
+specifically engineered to minimize entropy before the final compression
+pass. When compressing geometric sprites, WebP applies several distinct
+transforms:</p>
+<ul>
+<li><strong>Palette Transform:</strong> If an image contains 256 or
+fewer unique colors, WebP maps the image to an indexed palette,
+mirroring PNG's primary advantage.</li>
+<li><strong>Spatial Predictor Transform:</strong> Unlike PNG’s basic
+scanline filters, WebP divides the image into sub-blocks and uses 14
+different 2D spatial predictors. These predictors analyze pixels above,
+to the left, and diagonally adjacent to the target pixel. For geometric
+sprites with angled borders, isometric angles, or grid layouts, 2D
+prediction significantly reduces residual variance compared to PNG's 1D
+filters.</li>
+<li><strong>Color Cache Code:</strong> WebP maintains a running cache of
+recently used colors. When a geometric sprite alternates between a small
+set of colors (such as checkerboards, borders, or dithering), WebP emits
+a single cache index rather than full pixel definitions or standard
+dictionary matches.</li>
+<li><strong>Subtract Green Transform:</strong> For sprites that retain
+full RGBA channels, this decorrelates red and blue values relative to
+green, lowering color variance across flat surfaces.</li>
+</ul>
+<p>Following these transforms, WebP encodes the data using a custom
+variant of LZ77 coupled with localized canonical Huffman coding. WebP
+can partition the image into distinct entropy domains, allowing
+different compression dictionaries for complex geometric regions versus
+large solid-color backgrounds.</p>
+<h3 id="direct-comparison-on-geometric-data">Direct Comparison on
+Geometric Data</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Indexed PNG</th>
+<th style="text-align: left;">Lossless WebP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Color Indexing</strong></td>
+<td style="text-align: left;">Static palette (up to 8-bit/256
+colors)</td>
+<td style="text-align: left;">Dynamic palette transform combined with
+color cache</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Prediction Model</strong></td>
+<td style="text-align: left;">1D scanline filters (5 modes)</td>
+<td style="text-align: left;">2D block-based spatial predictors (14
+modes)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Entropy Encoding</strong></td>
+<td style="text-align: left;">Standard Deflate (LZ77 + Huffman)</td>
+<td style="text-align: left;">Localized LZ77 variant with multi-domain
+Huffman trees</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Alpha Transparency</strong></td>
+<td style="text-align: left;">Single-color transparency or tRNS palette
+chunk</td>
+<td style="text-align: left;">Fully integrated into prediction and
+entropy pipelines</td>
+</tr>
+</tbody>
+</table>
+<h3 id="compression-efficiency-summary">Compression Efficiency
+Summary</h3>
+<p>For geometric game sprites, lossless WebP generally produces files
+that are 15% to 30% smaller than optimized indexed PNGs.</p>
+<p>Indexed PNG performs best on purely horizontal and vertical shapes
+where 1D filtering and LZ77 run-length matches are optimal. However,
+when geometric sprites introduce diagonal edges, isometric perspectives,
+or high-contrast dithering, PNG's 1D prediction breaks down, leaving
+higher residual entropy for Deflate to process.</p>
+<p>Lossless WebP handles these patterns more effectively because its 2D
+spatial predictors and dynamic color cache detect recurring geometric
+arrangements across both dimensions, yielding superior compression
+density for game sprite sheets and UI textures.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

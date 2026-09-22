@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Compression Gains by File Size and Resolution - webp</title>
+    <meta name="description" content="WebP is widely recognized for outperforming traditional formats like JPEG and PNG, but its compression efficiency varies significantly depending on dimensions and raw data volume. While it typically offers 25% to 35% smaller footprints across the board,">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-compression-gains-by-file-size-and-resolution">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Compression Gains by File Size and Resolution - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-compression-gains-by-file-size-and-resolution" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP is widely recognized for outperforming traditional formats like JPEG and PNG, but its compression efficiency varies significantly depending on dimensions and raw data volume. While it typically offers 25% to 35% smaller footprints across the board," />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-compression-gains-by-file-size-and-resolution">WebP
+Compression Gains by File Size and Resolution</h1>
+<p>WebP is widely recognized for outperforming traditional formats like
+JPEG and PNG, but its compression efficiency varies significantly
+depending on dimensions and raw data volume. While it typically offers
+25% to 35% smaller footprints across the board, WebP delivers its
+greatest relative and absolute byte savings on medium-to-high-resolution
+images ranging between 1 megapixel (1024x768) and 8 megapixels (4K),
+with source file sizes between 200 KB and 3 MB. Conversely, tiny assets
+and extreme high-resolution graphics hit diminishing returns, making
+understanding these exact operational thresholds critical for web
+performance optimization.</p>
+<h3 id="the-optimal-resolution-threshold">The Optimal Resolution
+Threshold</h3>
+<p>The greatest compression advantage for lossy WebP occurs at
+resolutions starting at <strong>1024x768 pixels (roughly 0.8 to 1
+megapixel) and extending through standard display resolutions like
+1920x1080 (2 megapixels) and 2560x1440 (3.7 megapixels)</strong>.</p>
+<p>WebP relies on the VP8 video codec’s intra-frame prediction, which
+breaks images down into 16x16 and 4x4 pixel macroblocks. The algorithm
+determines pixel values based on neighboring blocks, allowing it to
+predict patterns, gradients, and smooth areas across a large surface
+area. When an image has at least 1 megapixel of data, the macroblock
+prediction engine has sufficient contextual spatial data to discard
+high-frequency redundancies effectively without inducing obvious
+blur.</p>
+<p>In this range, WebP routinely trims 30% to 40% of the byte weight
+compared to MozJPEG or standard JPEG at visually identical perceptual
+quality (SSIM/PSNR).</p>
+<h3 id="the-ideal-file-size-threshold">The Ideal File Size
+Threshold</h3>
+<p>The sweet spot for absolute file size reduction sits between
+<strong>200 KB and 2 MB</strong> in equivalent JPEG or PNG form:</p>
+<ul>
+<li><strong>Under 50 KB:</strong> The relative percentage savings can
+still reach 20%, but the absolute gain is negligible (saving only 5 to
+10 KB). Furthermore, WebP’s container overhead (RIFF headers and VP8
+chunk data) begins to degrade the compression ratio.</li>
+<li><strong>200 KB to 2 MB:</strong> This is where the format yields
+maximum return on investment. A standard 1.2 MB high-resolution product
+photograph or full-bleed banner can frequently be compressed to 350–450
+KB with no discernible loss in fidelity, delivering massive bandwidth
+and Core Web Vitals improvements.</li>
+<li><strong>Above 5 MB:</strong> While WebP continues to compress
+efficiently on very large files, AVIF or modern JPEG XL encoders begin
+to surpass WebP’s older 8-bit VP8 architecture in high-dynamic-range and
+fine-detail retention.</li>
+</ul>
+<h3 id="lossless-webp-vs-png-thresholds">Lossless WebP vs. PNG
+Thresholds</h3>
+<p>For graphics requiring lossless compression—such as UI elements,
+diagrams, and transparent illustrations—the threshold shifts lower:</p>
+<ul>
+<li><strong>Resolution:</strong> Greatest gains appear between
+<strong>400x400 pixels and 1600x1600 pixels</strong>.</li>
+<li><strong>File Size:</strong> Assets in the <strong>50 KB to 500
+KB</strong> range show the strongest improvement, typically rendering
+26% smaller than heavily optimized PNGs (such as those processed with
+OptiPNG or pngquant).</li>
+<li><strong>Alpha Channel Efficiency:</strong> WebP’s dedicated lossless
+compression for alpha channels creates disproportionately large savings
+on transparent assets over 500x500 pixels compared to 32-bit
+PNG-24.</li>
+</ul>
+<h3 id="where-webp-fails-to-show-gains">Where WebP Fails to Show
+Gains</h3>
+<p>WebP exhibits distinct lower limits where conversion provides
+negative or negligible value:</p>
+<ol type="1">
+<li><strong>Tiny Icons and Avatars (&lt; 1–2 KB or under 64x64
+pixels):</strong> The RIFF container overhead adds fixed metadata
+weight. At these micro-scales, an optimized 8-bit PNG, SVG, or
+CSS-rendered asset often yields a smaller footprint than WebP.</li>
+<li><strong>Extremely Low Quantization Demands:</strong> At ultra-high
+quality settings (Q95–Q100), WebP’s compression advantage over modern
+JPEG encoders collapses because the VP8 transform blocks begin storing
+disproportionate high-frequency residual data.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

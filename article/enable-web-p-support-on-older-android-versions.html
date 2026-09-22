@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enable WebP Support on Older Android Versions - webp</title>
+    <meta name="description" content="This article explains how to configure Android applications to load and render WebP image assets across legacy Android versions. While modern Android natively supports WebP, older releases lack full compatibility—particularly for lossless compression,">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/enable-web-p-support-on-older-android-versions">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Enable WebP Support on Older Android Versions - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/enable-web-p-support-on-older-android-versions" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how to configure Android applications to load and render WebP image assets across legacy Android versions. While modern Android natively supports WebP, older releases lack full compatibility—particularly for lossless compression," />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="enable-webp-support-on-older-android-versions">Enable WebP
+Support on Older Android Versions</h1>
+<p>This article explains how to configure Android applications to load
+and render WebP image assets across legacy Android versions. While
+modern Android natively supports WebP, older releases lack full
+compatibility—particularly for lossless compression, transparency, and
+animation. By following the configurations outlined below, you can
+implement third-party decoding libraries and build configurations to
+ensure WebP assets display reliably across older API levels.</p>
+<h3 id="native-android-webp-compatibility-baseline">Native Android WebP
+Compatibility Baseline</h3>
+<p>Native support for WebP varies significantly by Android API
+level:</p>
+<ul>
+<li><strong>Android 4.0 (API 14) to Android 4.1 (API 16):</strong>
+Native support is limited exclusively to lossy WebP images without an
+alpha channel.</li>
+<li><strong>Android 4.2.1 (API 17) to Android 8.1 (API 27):</strong>
+Native support added for lossless and transparent (alpha) WebP
+images.</li>
+<li><strong>Android 9.0 (API 28)+:</strong> Native support added for
+animated WebP images via <code>ImageDecoder</code>.</li>
+</ul>
+<p>If your application targets devices running below API 17, or requires
+animated WebP playback on devices below API 28, native
+<code>BitmapFactory</code> decoders will fail or return
+<code>null</code>.</p>
+<hr />
+<h3 id="configuration-1-backporting-support-via-fresco">Configuration 1:
+Backporting Support via Fresco</h3>
+<p>The most robust method for rendering WebP on older Android versions
+is utilizing Facebook's Fresco library. Fresco includes native C++
+decoders that bypass the operating system's native limitations.</p>
+<h4 id="1-add-gradle-dependencies">1. Add Gradle Dependencies</h4>
+<p>In your module-level <code>build.gradle</code> file, include the core
+Fresco dependency alongside the specific WebP decoders:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>dependencies <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    implementation <span class="st">&#39;com.facebook.fresco:fresco:3.1.3&#39;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// For WebP support on Android versions below API 14:</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    implementation <span class="st">&#39;com.facebook.fresco:webpsupport:3.1.3&#39;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// For animated WebP support on Android versions below API 28:</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    implementation <span class="st">&#39;com.facebook.fresco:animated-webp:3.1.3&#39;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="2-initialize-the-library">2. Initialize the Library</h4>
+<p>Initialize Fresco inside your custom <code>Application</code> class
+before loading any views:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyApplication <span class="kw">extends</span> Application <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">onCreate</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">super</span><span class="op">.</span><span class="fu">onCreate</span><span class="op">();</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        Fresco<span class="op">.</span><span class="fu">initialize</span><span class="op">(</span><span class="kw">this</span><span class="op">);</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="3-render-via-simpledraweeview">3. Render via
+SimpleDraweeView</h4>
+<p>Use Fresco’s custom view in place of standard <code>ImageView</code>
+components:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">com.facebook.fresco.SimpleDraweeView</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="ot">android:id=</span><span class="st">&quot;@+id/webp_image_view&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="ot">android:layout_width=</span><span class="st">&quot;wrap_content&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">android:layout_height=</span><span class="st">&quot;wrap_content&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">fresco:actualImageScaleType=</span><span class="st">&quot;centerCrop&quot;</span> /&gt;</span></code></pre></div>
+<hr />
+<h3 id="configuration-2-webp-decoding-via-glide">Configuration 2: WebP
+Decoding via Glide</h3>
+<p>If you use Glide, modern versions automatically handle static WebP on
+devices running API 17 and above. To add animated WebP support on older
+versions, integrate a specialized WebP decoder integration.</p>
+<h4 id="1-add-the-webp-decoder-library">1. Add the WebP Decoder
+Library</h4>
+<p>Add the dependency to your <code>build.gradle</code> file:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dependencies <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    implementation <span class="st">&#39;com.github.zjupure:webpdecoder:2.6.4.16.0&#39;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    implementation <span class="st">&#39;com.github.bumptech.glide:glide:4.16.0&#39;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    annotationProcessor <span class="st">&#39;com.github.bumptech.glide:compiler:4.16.0&#39;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="2-configure-glideapp-module">2. Configure GlideApp Module</h4>
+<p>Register the WebP integration module to intercept WebP drawables:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@GlideModule</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyAppGlideModule <span class="kw">extends</span> AppGlideModule <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">registerComponents</span><span class="op">(</span><span class="at">@NonNull</span> <span class="bu">Context</span> context<span class="op">,</span> <span class="at">@NonNull</span> Glide glide<span class="op">,</span> <span class="at">@NonNull</span> <span class="bu">Registry</span> registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Register WebP decoder to handle animated and static WebP formats</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        registry<span class="op">.</span><span class="fu">prepend</span><span class="op">(</span><span class="bu">InputStream</span><span class="op">.</span><span class="fu">class</span><span class="op">,</span> Drawable<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">new</span> <span class="fu">ByteBufferWebpDecoder</span><span class="op">(</span>context<span class="op">));</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="3-load-assets">3. Load Assets</h4>
+<p>Load WebP images from resources or assets directly:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>GlideApp<span class="op">.</span><span class="fu">with</span><span class="op">(</span>context<span class="op">)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">load</span><span class="op">(</span><span class="st">&quot;file:///android_asset/sample.webp&quot;</span><span class="op">)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">into</span><span class="op">(</span>imageView<span class="op">);</span></span></code></pre></div>
+<hr />
+<h3 id="build-configuration-considerations">Build Configuration
+Considerations</h3>
+<p>When packing WebP assets directly into the <code>res/drawable</code>
+or <code>assets</code> directories:</p>
+<ol type="1">
+<li><p><strong>AAPT Compression:</strong> Ensure AAPT does not alter
+WebP assets during compilation. Add the following to your module-level
+<code>build.gradle</code>:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>android <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    aaptOptions <span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        noCompress <span class="st">&quot;webp&quot;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<li><p><strong>ABI Architectures:</strong> Because libraries like Fresco
+and custom decoders use native code (<code>libwebp.so</code>) to decode
+WebP on older OS versions, ensure you include the appropriate native
+ABIs in your build:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>android <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    defaultConfig <span class="op">{</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        ndk <span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            abiFilters <span class="st">&quot;armeabi-v7a&quot;</span><span class="op">,</span> <span class="st">&quot;arm64-v8a&quot;</span><span class="op">,</span> <span class="st">&quot;x86&quot;</span><span class="op">,</span> <span class="st">&quot;x86_64&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

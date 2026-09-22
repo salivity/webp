@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why WebP Is a Distribution Format Not an Editing Master - webp</title>
+    <meta name="description" content="WebP was developed by Google to streamline web performance by reducing image file sizes without noticeable drops in visual quality for end users. While it excels at delivering lightweight assets across browsers and mobile applications, it is not designed">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-web-p-is-a-distribution-format-not-an-editing-master">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why WebP Is a Distribution Format Not an Editing Master - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-web-p-is-a-distribution-format-not-an-editing-master" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP was developed by Google to streamline web performance by reducing image file sizes without noticeable drops in visual quality for end users. While it excels at delivering lightweight assets across browsers and mobile applications, it is not designed" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-webp-is-a-distribution-format-not-an-editing-master">Why
+WebP Is a Distribution Format Not an Editing Master</h1>
+<p>WebP was developed by Google to streamline web performance by
+reducing image file sizes without noticeable drops in visual quality for
+end users. While it excels at delivering lightweight assets across
+browsers and mobile applications, it is not designed to serve as an
+editing master format. An editing master requires maximum data
+retention, wide color fidelity, and structural flexibility for repeated
+adjustments, whereas WebP prioritizes aggressive data discarding and
+flattening to achieve minimal transfer sizes.</p>
+<h3 id="what-defines-an-editing-master-vs-a-distribution-format">What
+Defines an Editing Master vs. a Distribution Format?</h3>
+<p>An editing master is the pristine, authoritative source file of an
+image. Master formats, such as RAW, TIFF, PSD, or OpenEXR, preserve the
+maximum possible visual information, multi-layer structures, masks, and
+high dynamic range data. They exist so creators can make non-destructive
+modifications over time without degrading image quality.</p>
+<p>A distribution format, on the other hand, is the final endpoint of a
+production pipeline. Formats like WebP, JPEG, and AVIF are intended
+solely for delivery to the viewer. Their primary goal is fast loading,
+efficient bandwidth usage, and broad platform compatibility.</p>
+<h3 id="limitations-of-8-bit-color-depth">Limitations of 8-Bit Color
+Depth</h3>
+<p>A major technical barrier preventing WebP from functioning as an
+editing master is its bit depth. WebP is restricted to 8-bit color per
+channel.</p>
+<p>While 8-bit color is sufficient for standard displays, it provides
+only 256 tonal values per channel (Red, Green, Blue). Professional
+master files typically use 10-bit, 12-bit, 14-bit, or 16-bit color. High
+bit depths allow editors to perform aggressive tone mapping, exposure
+adjustments, and color grading without causing color banding or
+posterization. Converting an image to WebP permanently clips this extra
+color information, making subsequent tone adjustments prone to visual
+artifacts.</p>
+<h3 id="generational-loss-and-re-compression">Generational Loss and
+Re-compression</h3>
+<p>WebP predominantly uses lossy compression based on the VP8 video
+codec, discarding high-frequency detail that the human eye is less
+likely to notice.</p>
+<p>If a lossy WebP image is opened, modified, and saved again as a WebP,
+it undergoes generational loss. Each successive save cycle re-compresses
+the existing compression artifacts, compounding the degradation until
+visible blockiness, blurring, and color shifts ruin the asset. True
+master formats use lossless compression or uncompressed data to ensure
+that opening and saving the file multiple times causes zero mathematical
+change to the pixels.</p>
+<h3 id="lack-of-layer-and-metadata-support">Lack of Layer and Metadata
+Support</h3>
+<p>Professional editing environments rely on non-destructive elements,
+including:</p>
+<ul>
+<li>Individual raster and vector layers</li>
+<li>Layer masks and clipping paths</li>
+<li>Smart objects and live filters</li>
+<li>Text layers and typographic data</li>
+</ul>
+<p>WebP is a flattened output format. It cannot store layer hierarchies,
+adjustment layers, or vector assets. Once exported to WebP, all
+composite elements are merged into a single pixel grid. Reversing edits,
+altering individual elements, or changing text after saving to WebP is
+impossible without manually retouching the flattened pixels.</p>
+<h3 id="chroma-subsampling">Chroma Subsampling</h3>
+<p>Lossy WebP commonly utilizes 4:2:0 chroma subsampling to drastically
+reduce file sizes. This technique preserves full-resolution brightness
+(luma) while reducing the color (chroma) resolution by half both
+horizontally and vertically.</p>
+<p>While 4:2:0 subsampling is rarely noticeable in standard web browsing
+scenarios, it destroys the fine edge data required for precise
+selections, compositing, and professional graphic design. Edits applied
+to a chroma-subsampled image often yield blurred colored borders around
+sharp objects.</p>
+<h3 id="the-correct-production-pipeline">The Correct Production
+Pipeline</h3>
+<p>To preserve quality while maintaining web performance, WebP should
+always be placed at the very end of the digital asset lifecycle:</p>
+<ol type="1">
+<li><strong>Capture:</strong> Capture source assets in RAW or
+uncompressed formats.</li>
+<li><strong>Master:</strong> Perform compositing, retouching, and color
+grading in a high-bit-depth master format like PSD, PSB, or 16-bit
+TIFF.</li>
+<li><strong>Archive:</strong> Store the master file as the single source
+of truth.</li>
+<li><strong>Distribute:</strong> Export an optimized WebP copy
+specifically targeted for the target display dimensions and web delivery
+constraints.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

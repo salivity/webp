@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How 4x4 Integer DCT Simplifies WebP Hardware - webp</title>
+    <meta name="description" content="WebP image compression relies on a 4x4 integer Discrete Cosine Transform (DCT) derived from the VP8 video codec to convert spatial pixel data into frequency representations. This specific transform architecture drastically streamlines hardware accelerati">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-4-x-4-integer-dct-simplifies-web-p-hardware">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How 4x4 Integer DCT Simplifies WebP Hardware - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-4-x-4-integer-dct-simplifies-web-p-hardware" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP image compression relies on a 4x4 integer Discrete Cosine Transform (DCT) derived from the VP8 video codec to convert spatial pixel data into frequency representations. This specific transform architecture drastically streamlines hardware accelerati" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-4x4-integer-dct-simplifies-webp-hardware">How 4x4 Integer
+DCT Simplifies WebP Hardware</h1>
+<p>WebP image compression relies on a 4x4 integer Discrete Cosine
+Transform (DCT) derived from the VP8 video codec to convert spatial
+pixel data into frequency representations. This specific transform
+architecture drastically streamlines hardware acceleration by
+eliminating floating-point math, minimizing silicon footprint, and
+optimizing parallel data flow. By substituting complex approximations
+with exact integer operations on small data blocks, modern hardware can
+decode and encode WebP images with high throughput, low power draw, and
+consistent cross-platform accuracy.</p>
+<h2 id="elimination-of-floating-point-units">Elimination of
+Floating-Point Units</h2>
+<p>Traditional image formats, such as standard JPEG, historically rely
+on floating-point DCT formulations or variable fixed-point
+approximations. These require specialized Floating-Point Units (FPUs) or
+complex rounding logic, which consume significant power and silicon
+space. WebP's 4x4 transform operates strictly using integer arithmetic
+consisting entirely of additions, subtractions, and bit-shift
+operations.</p>
+<p>Because the algorithm is mathematically exact using integers, it
+completely avoids drift—a phenomenon where different processors produce
+slightly different pixel outputs due to divergent floating-point
+rounding. For hardware designers, this means decoding blocks require
+only basic arithmetic logic units (ALUs), drastically simplifying the
+datapath.</p>
+<h2 id="native-alignment-with-simd-and-registers">Native Alignment with
+SIMD and Registers</h2>
+<p>The 4x4 matrix dimensions map cleanly to modern processor registers
+and SIMD (Single Instruction, Multiple Data) execution pipelines. A
+single 4x4 block of 16-bit intermediate values requires only 32 bytes of
+storage.</p>
+<p>This footprint aligns with standard 128-bit and 256-bit vector
+registers found in architectures like ARM NEON, Intel AVX, and dedicated
+GPU execution units. Hardware decoders can load an entire 4x4 block into
+two 128-bit registers, execute the row-wise transform, transpose the
+intermediate results using fast in-register shuffles, and compute the
+column-wise transform without stalling for external memory access.</p>
+<h2 id="reduced-gate-count-and-silicon-footprint">Reduced Gate Count and
+Silicon Footprint</h2>
+<p>Hardware implementations prioritize minimizing gate count to keep
+manufacturing costs low and maximize energy efficiency. Transforming an
+8x8 block typically requires substantially more arithmetic steps and
+routing complexity than transforming smaller sub-blocks.</p>
+<p>WebP’s 4x4 integer transform uses a lightweight butterfly algorithm
+that dramatically lowers the required operations per pixel. This reduced
+complexity enables hardware engineers to synthesize compact decoding
+engines on Application-Specific Integrated Circuits (ASICs) and
+Field-Programmable Gate Arrays (FPGAs). Because the logic gates required
+are minimal, WebP acceleration can easily be integrated into
+space-constrained mobile System-on-Chips (SoCs) and digital signal
+processors (DSPs).</p>
+<h2 id="decreased-on-chip-memory-buffering">Decreased On-Chip Memory
+Buffering</h2>
+<p>Larger transforms require larger line buffers and internal SRAM
+caches to hold pixel data prior to transformation. A 4x4 transform
+requires the hardware to store only four scanlines of local pixel data
+at any given stage of the intra-prediction and transform pipeline.</p>
+<p>By shrinking the required local buffer size, the 4x4 integer DCT
+lowers on-chip SRAM requirements and decreases memory bus traffic. This
+localized memory access pattern guarantees high cache-hit rates, reduces
+latency, and ensures that the hardware decoder continuously streams
+decompressed image data to the display controller with minimal
+delay.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

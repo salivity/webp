@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Fallback Workflow for Legacy Browsers - webp</title>
+    <meta name="description" content="Serving WebP images dramatically reduces payload sizes and improves page load times, but older legacy browsers do not natively support the format. This article outlines the recommended fallback workflow to serve WebP images to modern browsers while relia">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-fallback-workflow-for-legacy-browsers">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Fallback Workflow for Legacy Browsers - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-fallback-workflow-for-legacy-browsers" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Serving WebP images dramatically reduces payload sizes and improves page load times, but older legacy browsers do not natively support the format. This article outlines the recommended fallback workflow to serve WebP images to modern browsers while relia" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-fallback-workflow-for-legacy-browsers">WebP Fallback
+Workflow for Legacy Browsers</h1>
+<p>Serving WebP images dramatically reduces payload sizes and improves
+page load times, but older legacy browsers do not natively support the
+format. This article outlines the recommended fallback workflow to serve
+WebP images to modern browsers while reliably delivering legacy formats
+like JPEG or PNG to unsupported clients. By combining semantic HTML,
+server-side content negotiation, and CSS feature detection, you can
+ensure universal compatibility without sacrificing performance.</p>
+<h3 id="1-the-html5-picture-element">1. The HTML5
+<code>&lt;picture&gt;</code> Element</h3>
+<p>The most robust and standard client-side method is using the HTML5
+<code>&lt;picture&gt;</code> element. It allows you to define multiple
+source files, letting the browser choose the first format it
+supports.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> srcset</span><span class="op">=</span><span class="st">&quot;image.webp&quot;</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;image.jpg&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;Description of the image&quot;</span><span class="ot"> loading</span><span class="op">=</span><span class="st">&quot;lazy&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span></code></pre></div>
+<p><strong>How it works:</strong></p>
+<ul>
+<li>The browser evaluates the <code>&lt;source&gt;</code> tags from top
+to bottom.</li>
+<li>If the browser supports <code>image/webp</code>, it downloads and
+displays <code>image.webp</code>.</li>
+<li>If it does not support WebP, or if it is an older browser that does
+not recognize <code>&lt;picture&gt;</code>, it falls back to the
+standard <code>&lt;img&gt;</code> tag with the JPEG/PNG source.</li>
+<li>Attributes like <code>alt</code>, <code>loading</code>,
+<code>width</code>, and <code>height</code> must always be placed on the
+nested <code>&lt;img&gt;</code> tag.</li>
+</ul>
+<h3 id="2-server-side-content-negotiation">2. Server-Side Content
+Negotiation</h3>
+<p>If you manage a large legacy codebase or cannot modify HTML markup to
+use <code>&lt;picture&gt;</code>, server-side content negotiation is the
+preferred alternative. This approach serves WebP dynamically under the
+same file URL based on HTTP headers.</p>
+<p><strong>Implementation Workflow:</strong></p>
+<ol type="1">
+<li><strong>Inspect the <code>Accept</code> Header:</strong> When a
+client requests an image, check if the request header includes
+<code>image/webp</code>.</li>
+<li><strong>Serve the Supported Format:</strong>
+<ul>
+<li>If <code>image/webp</code> is present and a <code>.webp</code>
+version exists on the server, return the WebP file.</li>
+<li>If <code>image/webp</code> is missing, return the original
+<code>.jpg</code> or <code>.png</code> file.</li>
+</ul></li>
+<li><strong>Include the <code>Vary</code> Header:</strong> Always send
+the <code>Vary: Accept</code> response header. This prevents CDNs and
+intermediate caches from serving a cached WebP image to a legacy browser
+that subsequently requests the same URL.</li>
+</ol>
+<h3 id="3-handling-css-background-images">3. Handling CSS Background
+Images</h3>
+<p>The <code>&lt;picture&gt;</code> element only applies to inline
+images. For background images defined in CSS, use feature detection via
+Modernizr or native CSS <code>@supports</code>.</p>
+<p><strong>Modernizr Approach:</strong> Modernizr runs a small
+JavaScript check to see if WebP is supported and appends a
+<code>.webp</code> or <code>.no-webp</code> class to the
+<code>&lt;html&gt;</code> element.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.hero</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;hero.jpg&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">.webp</span> <span class="fu">.hero</span> {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;hero.webp&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>CSS <code>@supports</code> Approach:</strong> For browsers
+that support modern CSS features, you can check format decoding directly
+in stylesheets:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.hero</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;hero.jpg&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">@supports</span> <span class="fu">(</span><span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;test.webp&quot;</span><span class="fu">))</span> {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.hero</span> {</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;hero.webp&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="4-build-time-asset-generation">4. Build-Time Asset
+Generation</h3>
+<p>A seamless fallback workflow requires automating image generation
+during your build step:</p>
+<ul>
+<li>Keep original, high-resolution source files (PNG or TIFF) in your
+source directory.</li>
+<li>Use tools like Sharp, ImageMin, or Webpack/Vite plugins to
+simultaneously generate optimized WebP and fallback JPEG/PNG
+variants.</li>
+<li>Maintain identical dimensions, aspect ratios, and naming conventions
+(e.g., <code>banner.webp</code> and <code>banner.jpg</code>) to prevent
+layout shifts.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

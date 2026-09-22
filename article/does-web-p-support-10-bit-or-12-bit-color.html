@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Does WebP Support 10-Bit or 12-Bit Color? - webp</title>
+    <meta name="description" content="This article examines whether the WebP image format can natively encode 10-bit or 12-bit color channels. It covers the underlying architecture that governs WebP bit-depth capabilities, explains why higher color depths are not supported in the format's cu">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/does-web-p-support-10-bit-or-12-bit-color">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Does WebP Support 10-Bit or 12-Bit Color? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/does-web-p-support-10-bit-or-12-bit-color" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines whether the WebP image format can natively encode 10-bit or 12-bit color channels. It covers the underlying architecture that governs WebP bit-depth capabilities, explains why higher color depths are not supported in the format's cu" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="does-webp-support-10-bit-or-12-bit-color">Does WebP Support
+10-Bit or 12-Bit Color?</h1>
+<p>This article examines whether the WebP image format can natively
+encode 10-bit or 12-bit color channels. It covers the underlying
+architecture that governs WebP bit-depth capabilities, explains why
+higher color depths are not supported in the format's current
+specification, and outlines alternative modern image formats available
+for projects requiring deep color or High Dynamic Range (HDR)
+workflows.</p>
+<h3 id="native-bit-depth-limitations-of-webp">Native Bit-Depth
+Limitations of WebP</h3>
+<p>The short answer is no. A WebP file cannot natively encode 10-bit or
+12-bit color channels. The WebP specification strictly limits color
+channel precision to 8 bits per channel.</p>
+<p>WebP utilizes two primary compression methods, neither of which
+supports high bit-depth color:</p>
+<ul>
+<li><strong>Lossy WebP:</strong> Built upon the VP8 video codec's
+intra-frame encoding system. VP8 is fundamentally constrained to an
+8-bit YUV 4:2:0 profile. As a result, lossy WebP cannot exceed 8 bits of
+data per channel (256 tonal levels per channel).</li>
+<li><strong>Lossless WebP:</strong> Uses a dedicated format developed by
+Google based on spatial transformations and entropy coding. This
+pipeline is hardcoded to work strictly with 8-bit ARGB color
+components.</li>
+</ul>
+<p>Even when embedding ICC color profiles for wide color spaces (such as
+Display P3 or Adobe RGB), the underlying data remains quantized to 8
+bits. This limitation often causes visible banding (color stepping) in
+subtle gradients when trying to reproduce wide color gamuts or HDR
+imagery.</p>
+<h3 id="why-higher-bit-depths-are-not-supported">Why Higher Bit Depths
+Are Not Supported</h3>
+<p>WebP was created primarily to optimize web performance by replacing
+older 8-bit formats like JPEG and PNG with smaller file sizes. When the
+specification was finalized, consumer displays and web browsers were
+overwhelmingly limited to standard dynamic range (SDR) and standard sRGB
+8-bit outputs. Incorporating 10-bit or 12-bit profiles would have
+introduced significant decoding overhead and compatibility issues across
+mobile and desktop hardware at that time.</p>
+<h3 id="alternatives-for-10-bit-and-12-bit-images">Alternatives for
+10-Bit and 12-Bit Images</h3>
+<p>If your workflow requires 10-bit, 12-bit, or floating-point color
+channels to support HDR or prevent gradient banding, you must use
+alternative modern formats:</p>
+<ul>
+<li><strong>AVIF (AV1 Image File Format):</strong> Derived from the AV1
+video standard, AVIF natively supports 8-bit, 10-bit, and 12-bit color
+depths, along with full HDR signaling and wide browser
+compatibility.</li>
+<li><strong>JPEG XL:</strong> Designed to replace legacy JPEG, it
+natively supports high bit depths up to 32 bits per channel, including
+full float values for professional photography and HDR mastering.</li>
+<li><strong>HEIC / HEIF:</strong> Utilizes the HEVC (H.265) video
+standard and natively supports 10-bit and 12-bit color, commonly used
+across Apple ecosystems.</li>
+<li><strong>PNG:</strong> Supports standard 16-bit integer color depth
+per channel (lossless), though it lacks the modern compression
+efficiency of AVIF or JPEG XL.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

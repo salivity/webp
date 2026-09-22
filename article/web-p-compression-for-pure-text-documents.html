@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Compression for Pure Text Documents - webp</title>
+    <meta name="description" content="When applied to pure text documents, WebP compression efficiency depends heavily on whether lossy or lossless compression is used. Because WebP is primarily engineered for photographic and graphical raster images, using it on high-contrast, black-and-whi">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-compression-for-pure-text-documents">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Compression for Pure Text Documents - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-compression-for-pure-text-documents" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When applied to pure text documents, WebP compression efficiency depends heavily on whether lossy or lossless compression is used. Because WebP is primarily engineered for photographic and graphical raster images, using it on high-contrast, black-and-whi" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-compression-for-pure-text-documents">WebP Compression for
+Pure Text Documents</h1>
+<p>When applied to pure text documents, WebP compression efficiency
+depends heavily on whether lossy or lossless compression is used.
+Because WebP is primarily engineered for photographic and graphical
+raster images, using it on high-contrast, black-and-white text yields
+mixed results: lossy WebP degrades text legibility and generates
+compression artifacts, while lossless WebP achieves competitive file
+sizes compared to standard raster formats like PNG. However, any
+raster-based format, including WebP, remains fundamentally inefficient
+for text compared to native character-encoded formats like PDF or
+compressed plain text.</p>
+<h3 id="lossy-webp-poor-efficiency-and-severe-artifacts">Lossy WebP:
+Poor Efficiency and Severe Artifacts</h3>
+<p>Lossy WebP relies on the VP8 video codec's spatial prediction and
+Discrete Cosine Transform (DCT) algorithms. These algorithms excel at
+compressing smooth gradients and photographic scenes, but they struggle
+with pure text:</p>
+<ul>
+<li><strong>High-Frequency Transitions:</strong> Pure text documents
+consist almost entirely of abrupt transitions between high-contrast
+boundaries (typically black text on a white background). DCT cannot
+easily represent these hard edges without a high number of
+coefficients.</li>
+<li><strong>Ringing Artifacts:</strong> In an attempt to reduce file
+size, lossy WebP introduces halos, blurring, and "mosquito noise"
+directly surrounding the glyphs.</li>
+<li><strong>Inflated File Sizes for Legibility:</strong> To eliminate
+these artifacts and keep text legible, the compression quality must be
+set to near-maximum levels (typically 90% or higher), which eliminates
+most compression savings and results in files that are often larger than
+optimized lossless alternatives.</li>
+</ul>
+<h3 id="lossless-webp-high-raster-efficiency">Lossless WebP: High Raster
+Efficiency</h3>
+<p>Lossless WebP uses techniques such as transform domain operations,
+color cache lookup, and LZ77-style backward referencing combined with
+entropy coding. For pure text documents, lossless WebP performs
+exceptionally well within the category of raster image formats:</p>
+<ul>
+<li><strong>Repetitive Patterns:</strong> Documents have vast areas of
+solid background colors and recurring letter shapes. The LZ77-based
+reference matching in WebP quickly identifies and indexes these
+duplicate pixel arrays.</li>
+<li><strong>Edge Preservation:</strong> Because no frequency transforms
+are used, text stays crisp and readable at 100% fidelity.</li>
+<li><strong>Comparison to PNG:</strong> Lossless WebP generally
+compresses rasterized text documents 20% to 30% more effectively than
+standard 24-bit or 32-bit PNG files due to its more modern entropy
+coding.</li>
+</ul>
+<p>However, against an indexed 1-bit or 8-bit PNG specifically optimized
+for monochrome text, WebP’s advantage diminishes, as WebP lacks a native
+1-bit monochrome storage mode.</p>
+<h3 id="webp-vs-dedicated-document-compression">WebP vs. Dedicated
+Document Compression</h3>
+<p>While WebP handles rendered text better than JPEG, it is inefficient
+compared to technologies built specifically for document storage:</p>
+<ol type="1">
+<li><strong>Pixel Storage vs. Character Encoding:</strong> A single page
+of raw text contains roughly 500 to 800 words and consumes only 3 to 5
+kilobytes as plain text. When rendered into an image, that same page
+requires millions of pixels. Even compressed with lossless WebP, the
+file typically ranges from 50 KB to 200 KB—orders of magnitude larger
+than a text or vector-based file.</li>
+<li><strong>Dedicated Document Formats:</strong> Archival document
+formats such as JBIG2 (used inside PDFs) utilize pattern-matching
+compression specifically tailored for bi-level text. JBIG2 recognizes
+recurring characters as symbols, storing a single representation of a
+letter and mapping its coordinates across the page. WebP does not
+perform symbol-level recognition, making it considerably less efficient
+than JBIG2 for monochrome scans.</li>
+</ol>
+<h3 id="summary">Summary</h3>
+<p>For pure text documents, lossy WebP should be avoided entirely due to
+edge distortion and poor rate-distortion performance. Lossless WebP is
+an effective choice if the document must be preserved strictly as a
+raster image, outperforming legacy formats like unoptimized PNG and
+JPEG. Despite this, WebP remains an suboptimal choice compared to native
+document formats like PDF, plain text with gzip compression, or 1-bit
+JBIG2 encoding.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Detect WebP Support Using JavaScript - webp</title>
+    <meta name="description" content="Detecting client-side WebP decoding support ensures web applications deliver optimized media without breaking visual presentation on unsupported clients. While modern browsers almost universally support WebP, client-side feature detection is still essent">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-to-detect-web-p-support-using-java-script">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Detect WebP Support Using JavaScript - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-to-detect-web-p-support-using-java-script" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Detecting client-side WebP decoding support ensures web applications deliver optimized media without breaking visual presentation on unsupported clients. While modern browsers almost universally support WebP, client-side feature detection is still essent" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-detect-webp-support-using-javascript">How to Detect WebP
+Support Using JavaScript</h1>
+<p>Detecting client-side WebP decoding support ensures web applications
+deliver optimized media without breaking visual presentation on
+unsupported clients. While modern browsers almost universally support
+WebP, client-side feature detection is still essential for edge cases,
+legacy environments, and specific WebP sub-formats like lossless or
+animated images. JavaScript provides several APIs to detect this
+support, primarily through the HTMLImageElement decoding method, the
+Canvas API, and the ImageBitmap API.</p>
+<h3 id="1-the-htmlimageelement-and-decode-api">1. The HTMLImageElement
+and <code>decode()</code> API</h3>
+<p>The standard and most accurate approach to detect WebP decoding is
+creating an in-memory <code>HTMLImageElement</code>, loading a minimal
+WebP data URI, and using the asynchronous <code>decode()</code>
+method.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">checkWebPSupport</span>() {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span><span class="bu">window</span><span class="op">.</span><span class="at">HTMLImageElement</span> <span class="op">||</span> <span class="op">!</span><span class="bu">HTMLImageElement</span><span class="op">.</span><span class="at">prototype</span><span class="op">.</span><span class="at">decode</span>) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> img <span class="op">=</span> <span class="kw">new</span> <span class="fu">Image</span>()<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  img<span class="op">.</span><span class="at">src</span> <span class="op">=</span> <span class="st">&#39;data:image/webp;base64,UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAwA0JaQAA3AA/vuUAAA=&#39;</span><span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> {</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> img<span class="op">.</span><span class="fu">decode</span>()<span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">catch</span> {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>If the environment does not support <code>img.decode()</code>, you
+can fall back to standard <code>onload</code> and <code>onerror</code>
+event listeners on the <code>Image</code> object.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">checkWebPSupportFallback</span>(callback) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> img <span class="op">=</span> <span class="kw">new</span> <span class="fu">Image</span>()<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  img<span class="op">.</span><span class="at">onload</span> <span class="op">=</span> () <span class="kw">=&gt;</span> <span class="fu">callback</span>(img<span class="op">.</span><span class="at">width</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> img<span class="op">.</span><span class="at">height</span> <span class="op">&gt;</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  img<span class="op">.</span><span class="at">onerror</span> <span class="op">=</span> () <span class="kw">=&gt;</span> <span class="fu">callback</span>(<span class="kw">false</span>)<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  img<span class="op">.</span><span class="at">src</span> <span class="op">=</span> <span class="st">&#39;data:image/webp;base64,UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAwA0JaQAA3AA/vuUAAA=&#39;</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="2-the-canvas-api-todataurl">2. The Canvas API
+(<code>toDataURL</code>)</h3>
+<p>The HTMLCanvasElement provides a synchronous method for detecting
+WebP encoding and decoding via the <code>toDataURL()</code> method. When
+requesting an unsupported MIME type, the browser defaults to exporting
+as <code>image/png</code>.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">checkWebPCanvasSupport</span>() {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> canvas <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">&#39;canvas&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>canvas<span class="op">.</span><span class="at">getContext</span> <span class="op">||</span> <span class="op">!</span>canvas<span class="op">.</span><span class="fu">getContext</span>(<span class="st">&#39;2d&#39;</span>)) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> canvas<span class="op">.</span><span class="fu">toDataURL</span>(<span class="st">&#39;image/webp&#39;</span>)<span class="op">.</span><span class="fu">indexOf</span>(<span class="st">&#39;data:image/webp&#39;</span>) <span class="op">===</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><em>Note:</em> While this method is fast and synchronous, it strictly
+detects if the canvas can export (encode) to WebP. In most consumer
+browsers, export support matches decoding support, but discrepancies can
+occur on constrained devices.</p>
+<h3 id="3-the-createimagebitmap-api">3. The
+<code>createImageBitmap()</code> API</h3>
+<p>The <code>createImageBitmap()</code> API provides a high-performance,
+asynchronous mechanism to decode image payloads, and it functions inside
+Web Workers where DOM elements like <code>HTMLImageElement</code> are
+unavailable.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">checkWebPWithImageBitmap</span>() {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="kw">typeof</span> createImageBitmap <span class="op">!==</span> <span class="st">&#39;function&#39;</span>) {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Base64-decoded minimal 1x1 WebP binary blob</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> webpData <span class="op">=</span> <span class="bu">Uint8Array</span><span class="op">.</span><span class="fu">from</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">atob</span>(<span class="st">&#39;UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAwA0JaQAA3AA/vuUAAA=&#39;</span>)<span class="op">,</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    c <span class="kw">=&gt;</span> c<span class="op">.</span><span class="fu">charCodeAt</span>(<span class="dv">0</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  )<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> blob <span class="op">=</span> <span class="kw">new</span> <span class="bu">Blob</span>([webpData]<span class="op">,</span> { <span class="dt">type</span><span class="op">:</span> <span class="st">&#39;image/webp&#39;</span> })<span class="op">;</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> {</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> bitmap <span class="op">=</span> <span class="cf">await</span> <span class="fu">createImageBitmap</span>(blob)<span class="op">;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    bitmap<span class="op">.</span><span class="fu">close</span>()<span class="op">;</span> <span class="co">// Clean up memory</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">catch</span> {</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Using <code>createImageBitmap</code> is the preferred method for
+performance-sensitive applications, background threads, and Service
+Workers handling image routing.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

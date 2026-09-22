@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Handles Noise and Chromatic Aberration - webp</title>
+    <meta name="description" content="Converting RAW camera files to the WebP format introduces distinct compression behaviors depending on whether lossy or lossless encoding is used. While RAW data naturally contains high-frequency sensor noise and optical chromatic aberration, WebP's under">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-handles-noise-and-chromatic-aberration">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Handles Noise and Chromatic Aberration - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-handles-noise-and-chromatic-aberration" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Converting RAW camera files to the WebP format introduces distinct compression behaviors depending on whether lossy or lossless encoding is used. While RAW data naturally contains high-frequency sensor noise and optical chromatic aberration, WebP's under" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-handles-noise-and-chromatic-aberration">How WebP
+Handles Noise and Chromatic Aberration</h1>
+<p>Converting RAW camera files to the WebP format introduces distinct
+compression behaviors depending on whether lossy or lossless encoding is
+used. While RAW data naturally contains high-frequency sensor noise and
+optical chromatic aberration, WebP's underlying VP8-derived lossy
+algorithms and proprietary lossless spatial transformations process
+these artifacts very differently. Lossy WebP tends to suppress or smear
+fine noise and color fringing through aggressive chroma subsampling and
+in-loop filtering, whereas lossless WebP preserves them entirely at the
+cost of significantly lower compression efficiency.</p>
+<h3 id="chromatic-aberration-in-webp-conversions">Chromatic Aberration
+in WebP Conversions</h3>
+<p>Chromatic aberration manifests as high-contrast color
+fringing—typically purple, green, or magenta—along sharp transition
+boundaries where light wavelengths fail to focus on the same focal
+plane.</p>
+<p>In lossy WebP encoding, chromatic aberration is heavily impacted by
+standard YUV 4:2:0 chroma subsampling. Because 4:2:0 subsampling reduces
+the horizontal and vertical resolution of color channels (U and V) by
+half relative to luminance (Y), fine color fringes lose their positional
+sharpness. The encoder averages color information across 2x2 pixel
+grids, which can either:</p>
+<ul>
+<li>Soften the perceived sharpness of the fringing, effectively blending
+the artifact into adjacent neutral tones.</li>
+<li>Cause noticeable color bleeding, where strong lateral aberration
+spills over high-contrast edges into areas that should otherwise be
+neutral.</li>
+</ul>
+<p>Furthermore, lossy WebP’s spatial quantization discards
+high-frequency details in the chroma channels first. Unless encoded at
+near-maximum quality settings (Q90+), subtle longitudinal chromatic
+aberration often gets quantized into flat, desaturated patches.</p>
+<p>In lossless WebP encoding, the image retains its native RGB color
+space without chroma subsampling. Chromatic aberration is preserved
+pixel-for-pixel. However, sharp, non-correlated color shifts reduce the
+efficiency of WebP’s color cross-channel transforms (such as the
+"Subtract Green" transform), leading to larger file sizes than if
+optical corrections were applied during the RAW development phase.</p>
+<h3 id="high-frequency-noise-behavior">High-Frequency Noise
+Behavior</h3>
+<p>RAW camera conversions, especially from high-ISO captures, contain
+significant luminance and chrominance noise. Because noise consists of
+pseudo-random, non-redundant pixel variance, it presents distinct
+challenges for image encoders.</p>
+<p>Lossy WebP relies on 4x4 sub-block Discrete Cosine Transforms (DCT)
+paired with an adaptive in-loop deblocking filter inherited from the VP8
+video codec:</p>
+<ul>
+<li><strong>Smoothing and Grain Loss:</strong> WebP’s in-loop filter is
+designed to smooth block boundaries and low-variance gradients.
+High-frequency luminance noise is frequently interpreted as
+high-frequency residual error, which the quantizer suppresses. This
+produces a "plastic" or overly smoothed appearance in shadow areas,
+replacing natural film-like grain with soft, splotchy
+macro-patches.</li>
+<li><strong>Chroma Noise Attenuation:</strong> Chrominance noise
+(colored speckles) is particularly diminished due to 4:2:0 subsampling
+and coarse chroma quantization, which can inadvertently clean up ugly
+color noise while simultaneously degrading legitimate fine color
+detail.</li>
+<li><strong>Bitrate Penalty:</strong> Attempting to preserve raw grain
+requires pushing the lossy quality slider above Q85–Q90. At these
+levels, the encoder must dedicate a disproportionate amount of data to
+encode random noise residuals, leading to an exponential increase in
+file size.</li>
+</ul>
+<p>Lossless WebP handles high-frequency noise through entropy encoding
+and spatial prediction:</p>
+<ul>
+<li><strong>Compression Degradation:</strong> Lossless WebP relies
+heavily on predicting a pixel's value based on its neighboring pixels
+(using directional predictors). High-frequency noise breaks spatial
+coherence, causing predictors to fail.</li>
+<li><strong>File Bloat:</strong> When predictors fail, the encoder must
+store high-entropy residual data. Un-denoised RAW exports encoded to
+lossless WebP often result in file sizes that rival or exceed
+uncompressed formats, as the algorithm struggles to find repeating
+patterns within random sensor grain.</li>
+</ul>
+<h3 id="optimal-conversion-practices">Optimal Conversion Practices</h3>
+<p>To maximize WebP’s compression efficiency and maintain visual
+fidelity from RAW conversions:</p>
+<ol type="1">
+<li><strong>Correct Chromatic Aberration at the RAW Stage:</strong> Lens
+profile corrections and lateral/longitudinal fringe removal should
+always be applied in the RAW converter before exporting. Removing
+fringing eliminates false chroma edges that waste bits.</li>
+<li><strong>Apply Targeted High-Frequency Denoising:</strong> Light
+luminance denoising applied prior to WebP encoding stabilizes the
+spatial predictors for lossless mode and prevents blotchy artifacting in
+lossy mode.</li>
+<li><strong>Select Format by Texture Goals:</strong> If sensor grain
+retention is critical, use lossy WebP at very high quality targets
+(Q90–Q95) with preprocessing grain synthesis, or deliver lossless WebP
+only after baseline denoising has eliminated random sensor read
+noise.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Compression for Line Art Without Haloing - webp</title>
+    <meta name="description" content="WebP can preserve fine line drawings without introducing severe haloing, but only when configured correctly using its lossless compression mode. While lossy WebP encoding frequently causes ringing artifacts and visible halos along high-contrast edges, lo">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-compression-for-line-art-without-haloing">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Compression for Line Art Without Haloing - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-compression-for-line-art-without-haloing" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP can preserve fine line drawings without introducing severe haloing, but only when configured correctly using its lossless compression mode. While lossy WebP encoding frequently causes ringing artifacts and visible halos along high-contrast edges, lo" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-compression-for-line-art-without-haloing">WebP Compression
+for Line Art Without Haloing</h1>
+<p>WebP can preserve fine line drawings without introducing severe
+haloing, but only when configured correctly using its lossless
+compression mode. While lossy WebP encoding frequently causes ringing
+artifacts and visible halos along high-contrast edges, lossless WebP
+bypasses the transform algorithms responsible for these flaws.
+Understanding how WebP handles edge transitions determines whether fine
+line art retains crisp boundaries or suffers from compression-induced
+visual noise.</p>
+<h3 id="why-haloing-occurs-in-lossy-webp">Why Haloing Occurs in Lossy
+WebP</h3>
+<p>Haloing, or ringing, is a visual artifact common in transform-based
+lossy compression. Lossy WebP is based on the VP8 video codec, which
+breaks images into discrete macroblocks and applies a discrete
+cosine-like transform to compress image data.</p>
+<p>Fine line drawings consist of high-contrast, abrupt transitions
+between pixels—such as black ink against a white canvas. In lossy
+compression, these rapid shifts represent high spatial frequencies. When
+the encoder discards fine high-frequency details to save file size, it
+produces the Gibbs phenomenon: an oscillation error around sharp edges
+that manifests as faint, glowing halos or smudges parallel to the lines.
+Furthermore, lossy WebP typically applies 4:2:0 chroma subsampling,
+which halves color resolution and further degrades edge sharpness when
+colored lines or backgrounds are involved.</p>
+<h3 id="the-lossless-webp-solution">The Lossless WebP Solution</h3>
+<p>Lossless WebP completely eliminates haloing. Instead of using
+block-based discrete transforms and lossy quantization, lossless WebP
+relies on advanced transformation techniques, including spatial
+prediction, color space transforms, and local entropy coding via
+LZ77.</p>
+<p>Because lossless WebP does not discard high-frequency data, the
+mathematical integrity of sharp edges is preserved at the pixel level.
+Fine lines, hatching, and technical line art remain perfectly sharp,
+with zero ringing, ghosting, or haloing artifacts. For graphic
+illustrations with limited color palettes, lossless WebP often achieves
+file sizes comparable to, or smaller than, heavily compressed lossy
+files while maintaining absolute clarity.</p>
+<h3 id="managing-quality-in-mixed-content-scenarios">Managing Quality in
+Mixed-Content Scenarios</h3>
+<p>If file size limits demand the use of lossy WebP, minimizing haloing
+requires careful encoder tuning:</p>
+<ul>
+<li><strong>Encoder Flags:</strong> Modern WebP encoders support the
+<code>-sharp_yuv</code> flag. This feature uses an improved RGB-to-YUV
+conversion matrix that significantly reduces color bleed and fringe
+artifacts around sharp borders.</li>
+<li><strong>Higher Quality Settings:</strong> Setting the compression
+quality above 85 reduces the quantization severity of high frequencies,
+muting the intensity of halos, though it does not eliminate them
+entirely.</li>
+<li><strong>Near-Lossless Mode:</strong> WebP provides a "near-lossless"
+mode (accessible via the <code>-near_lossless</code> parameter). This
+mode preprocesses image values to improve compressibility while strictly
+limiting edge distortion, offering an effective middle ground between
+file size and edge precision.</li>
+</ul>
+<p>For fine line drawings, lossless WebP is the recommended choice to
+guarantee clean, halo-free rendering across all digital displays.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

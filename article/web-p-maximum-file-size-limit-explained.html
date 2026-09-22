@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Maximum File Size Limit Explained - webp</title>
+    <meta name="description" content="This article examines the maximum file size boundary defined by the WebP container specification, detailing the technical architecture that imposes this constraint. It covers the underlying RIFF file structure, the theoretical 4-gigabyte threshold, and h">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-maximum-file-size-limit-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Maximum File Size Limit Explained - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-maximum-file-size-limit-explained" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the maximum file size boundary defined by the WebP container specification, detailing the technical architecture that imposes this constraint. It covers the underlying RIFF file structure, the theoretical 4-gigabyte threshold, and h" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-maximum-file-size-limit-explained">WebP Maximum File Size
+Limit Explained</h1>
+<p>This article examines the maximum file size boundary defined by the
+WebP container specification, detailing the technical architecture that
+imposes this constraint. It covers the underlying RIFF file structure,
+the theoretical 4-gigabyte threshold, and how dimension limits interact
+with practical file sizes in real-world web environments.</p>
+<h3 id="the-container-limit-4-gigabytes">The Container Limit: 4
+Gigabytes</h3>
+<p>The absolute maximum file size permitted by the WebP specification is
+<strong>4 gigabytes minus 1 byte</strong> (4,294,967,295 bytes, or <span
+class="math inline">\(2^{32} - 1\)</span> bytes).</p>
+<p>This boundary is established by WebP's underlying structure. WebP
+relies on the Resource Interchange File Format (RIFF) container
+architecture. The standard RIFF header allocates a 32-bit unsigned
+integer to define the chunk size field:</p>
+<ul>
+<li><strong>Field Size:</strong> 32 bits (4 bytes)</li>
+<li><strong>Maximum Value:</strong> <code>0xFFFFFFFF</code>
+(4,294,967,295 in decimal)</li>
+<li><strong>Effective Data Boundary:</strong> ~4 GiB</li>
+</ul>
+<p>Because the 32-bit integer cannot store a higher number, no single
+standard RIFF-based WebP file can exceed this limit without breaking
+specification compliance and decoder compatibility.</p>
+<h3 id="dimension-constraints">Dimension Constraints</h3>
+<p>While the file size container allows up to 4 GiB of data, WebP also
+imposes strict architectural limits on image dimensions that make
+reaching this file size extremely rare in practical use.</p>
+<ul>
+<li><strong>Maximum Width:</strong> 16,383 pixels</li>
+<li><strong>Maximum Height:</strong> 16,383 pixels</li>
+</ul>
+<p>The WebP specification restricts dimensions to a 14-bit unsigned
+integer (<span class="math inline">\(2^{14} - 1\)</span>), resulting in
+a maximum canvas area of 268,402,689 pixels.</p>
+<h3 id="practical-implications">Practical Implications</h3>
+<p>Even an uncompressed or lossless image at the maximum resolution of
+<span class="math inline">\(16,383 \times 16,383\)</span> pixels using 4
+bytes per pixel (RGBA) represents roughly 1.07 gigabytes of raw bitmap
+data before compression.</p>
+<p>The 4 GiB container boundary exists primarily to accommodate extended
+WebP formats that include:</p>
+<ul>
+<li>Animated WebP sequences containing thousands of individual
+frames.</li>
+<li>Extensive embedded metadata, such as raw EXIF profiles, XMP data,
+and ICC color profiles.</li>
+<li>Multi-layer alpha masking and supplemental custom data chunks.</li>
+</ul>
+<p>For standard static images, the 16,383-pixel dimension limit acts as
+the effective ceiling long before the 4 GiB container size boundary can
+be reached.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How gif2webp Optimizes Palettes for WebP Animations - webp</title>
+    <meta name="description" content="This article explains how the gif2webp command-line utility optimizes color palettes when converting animated GIFs to the modern WebP animation format. While animated GIFs rely on rigid 8-bit color tables, gif2webp uses WebP’s advanced color indexing t">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-gif-2-webp-optimizes-palettes-for-web-p-animations">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How gif2webp Optimizes Palettes for WebP Animations - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-gif-2-webp-optimizes-palettes-for-web-p-animations" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the gif2webp command-line utility optimizes color palettes when converting animated GIFs to the modern WebP animation format. While animated GIFs rely on rigid 8-bit color tables, gif2webp uses WebP’s advanced color indexing t" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-gif2webp-optimizes-palettes-for-webp-animations">How
+gif2webp Optimizes Palettes for WebP Animations</h1>
+<p>This article explains how the <code>gif2webp</code> command-line
+utility optimizes color palettes when converting animated GIFs to the
+modern WebP animation format. While animated GIFs rely on rigid 8-bit
+color tables, <code>gif2webp</code> uses WebP’s advanced color indexing
+transforms, temporal frame differencing, transparency mapping, and
+entropy coding to minimize palette overhead and significantly reduce
+overall file size.</p>
+<h3 id="color-indexing-transform-in-lossless-mode">Color Indexing
+Transform in Lossless Mode</h3>
+<p>Animated GIFs are restricted to a maximum of 256 colors per frame via
+global or local color tables. When converting in lossless mode (the
+default for <code>gif2webp</code>), the utility does not simply expand
+these 8-bit indices into heavy 32-bit ARGB pixels. Instead, it utilizes
+WebP's native Color Indexing Transform.</p>
+<p>If a frame contains 256 or fewer unique colors, <code>gif2webp</code>
+constructs an internal palette image where the colors are stored in an
+array, and the pixel values become indices into this array. If a frame
+uses significantly fewer colors (for instance, 16 or fewer), the tool
+packs multiple pixel indices into single bytes (e.g., 1, 2, or 4 bits
+per pixel), immediately reducing the uncompressed data footprint
+compared to the GIF's fixed byte-per-pixel structure.</p>
+<h3 id="frame-differencing-and-sub-rectangle-palettes">Frame
+Differencing and Sub-Rectangle Palettes</h3>
+<p>GIF animations often store redundant background pixels or rely on
+complex disposal methods to render movement across frames. The
+<code>gif2webp</code> utility analyzes consecutive frames to detect
+identical regions, cropping each frame to the smallest bounding
+rectangle that contains actual visual changes.</p>
+<p>By isolating only the modified pixels into smaller sub-frames,
+<code>gif2webp</code> reduces the number of active colors required for
+each frame. A frame that originally shared a 256-color palette in the
+GIF might only require a 12-color local palette once cropped to its
+active motion area. This local reduction allows the encoder to apply
+more compact bit-depth encodings to individual frames.</p>
+<h3 id="palette-sorting-and-entropy-optimization">Palette Sorting and
+Entropy Optimization</h3>
+<p>In a standard GIF, color indices are often ordered arbitrarily or
+sequentially based on discovery. The <code>gif2webp</code> tool
+optimizes the organization of the palette entries to benefit subsequent
+compression stages.</p>
+<p>By sorting palette entries to group visually similar colors together,
+<code>gif2webp</code> enhances spatial correlation across neighboring
+pixels. This makes the indexed pixel stream significantly more receptive
+to WebP’s spatial predictors, LZ77 backward references, and canonical
+Huffman entropy encoding.</p>
+<h3 id="transparency-normalization">Transparency Normalization</h3>
+<p>GIF handles transparency through a binary transparency index,
+designating a single palette slot as fully transparent. The
+<code>gif2webp</code> converter translates this single-index
+transparency into WebP’s native 8-bit alpha channel.</p>
+<p>During this process, <code>gif2webp</code> strips out redundant
+transparent color values. Pixels that are marked transparent do not
+compete for valuable color slots within the optimized WebP color index
+table. The utility normalizes RGB channels for fully transparent pixels
+(often zeroing them out), preventing invisible color noise from
+disrupting compression efficiency.</p>
+<h3 id="lossy-palette-abandonment">Lossy Palette Abandonment</h3>
+<p>When <code>gif2webp</code> is executed with the lossy flag
+(<code>-lossy</code>), it abandons palette indexing entirely. Instead of
+maintaining discrete color tables, it converts the GIF's indexed colors
+into standard 24-bit YUV420 color representations. It then applies
+standard WebP lossy compression (based on VP8 intra-frame coding),
+blending colors and discarding the discrete quantization boundaries
+inherent to GIF palettes to achieve much smaller file sizes at the cost
+of slight visual fidelity.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

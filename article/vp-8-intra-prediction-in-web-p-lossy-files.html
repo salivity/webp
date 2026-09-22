@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VP8 Intra-Prediction in WebP Lossy Files - webp</title>
+    <meta name="description" content="WebP lossy compression relies directly on the VP8 video codec’s intra-prediction framework to compress static image data. Instead of encoding raw pixel values, VP8 splits an image into macroblocks and predicts their contents by extrapolating pixels fro">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/vp-8-intra-prediction-in-web-p-lossy-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VP8 Intra-Prediction in WebP Lossy Files - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/vp-8-intra-prediction-in-web-p-lossy-files" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP lossy compression relies directly on the VP8 video codec’s intra-prediction framework to compress static image data. Instead of encoding raw pixel values, VP8 splits an image into macroblocks and predicts their contents by extrapolating pixels fro" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vp8-intra-prediction-in-webp-lossy-files">VP8 Intra-Prediction
+in WebP Lossy Files</h1>
+<p>WebP lossy compression relies directly on the VP8 video codec’s
+intra-prediction framework to compress static image data. Instead of
+encoding raw pixel values, VP8 splits an image into macroblocks and
+predicts their contents by extrapolating pixels from previously decoded
+adjacent blocks situated above and to the left. The encoder then only
+stores the prediction mode chosen and the residual difference between
+the prediction and the actual image data, drastically reducing file
+size.</p>
+<h3 id="macroblock-partitioning">Macroblock Partitioning</h3>
+<p>VP8 processes an image by dividing it into 16x16 pixel macroblocks.
+The prediction process operates on two primary components: luma
+(brightness, Y) and chroma (color, U and V).</p>
+<p>To achieve optimal prediction fidelity across different image
+textures:</p>
+<ul>
+<li><strong>Luma (Y):</strong> Can be predicted as a single 16x16 block
+for smooth, uniform areas, or partitioned into sixteen 4x4 sub-blocks
+for detailed regions with edges or complex patterns.</li>
+<li><strong>Chroma (U and V):</strong> Subsampled to 8x8 blocks (4:2:0
+format) and predicted as whole 8x8 units.</li>
+</ul>
+<p>Prediction is strictly causal, meaning it only uses reconstructed
+boundary pixels from neighboring blocks located immediately above, to
+the left, or above-left of the target block.</p>
+<h3 id="4x4-luma-prediction-modes">4x4 Luma Prediction Modes</h3>
+<p>When a 16x16 macroblock contains fine detail, it is broken down into
+sixteen 4x4 sub-blocks. For each 4x4 sub-block, the encoder chooses one
+of ten prediction modes:</p>
+<ol type="1">
+<li><strong>DC Prediction (B_DC_PRED):</strong> Fills the 4x4 block with
+the mathematical average of the adjacent pixels from the top row and
+left column.</li>
+<li><strong>Vertical Prediction (B_VE_PRED):</strong> Copies the four
+pixels directly above the block vertically downward across all
+rows.</li>
+<li><strong>Horizontal Prediction (B_HE_PRED):</strong> Copies the four
+pixels directly to the left of the block horizontally across all
+columns.</li>
+<li><strong>TrueMotion Prediction (B_TM_PRED):</strong> Extrapolates
+pixels using the formula <code>Predicted = Left + Top - TopLeft</code>,
+estimating directional color gradients.</li>
+<li><strong>Directional Modes (6 Modes):</strong> VP8 includes six
+angled directional modes to trace distinct diagonal edges without
+creating step-like artifacts:
+<ul>
+<li><strong>Left-Down (B_LD_PRED):</strong> Predicts pixels down-left
+along roughly a 45-degree angle.</li>
+<li><strong>Right-Down (B_RD_PRED):</strong> Predicts pixels down-right
+along roughly a 45-degree angle.</li>
+<li><strong>Vertical-Right (B_VR_PRED):</strong> Interpolates diagonally
+downward to the right at roughly a 27-degree angle from the
+vertical.</li>
+<li><strong>Vertical-Left (B_VL_PRED):</strong> Interpolates diagonally
+downward to the left at roughly a 27-degree angle from the
+vertical.</li>
+<li><strong>Horizontal-Down (B_HD_PRED):</strong> Interpolates
+diagonally downward to the right at roughly a 27-degree angle from the
+horizontal.</li>
+<li><strong>Horizontal-Up (B_HU_PRED):</strong> Interpolates diagonally
+upward to the right at roughly a 27-degree angle from the
+horizontal.</li>
+</ul></li>
+</ol>
+<h3 id="16x16-luma-and-8x8-chroma-prediction-modes">16x16 Luma and 8x8
+Chroma Prediction Modes</h3>
+<p>For smoother, less detailed macroblocks, evaluating pixels at the 4x4
+level is unnecessary. In these regions, 16x16 luma blocks and 8x8 chroma
+blocks utilize four shared prediction modes:</p>
+<ul>
+<li><strong>DC Prediction:</strong> The average of all available
+neighboring boundary pixels (top row and left column) fills the entire
+block.</li>
+<li><strong>Vertical Prediction:</strong> Extends the top boundary row
+downward through all rows.</li>
+<li><strong>Horizontal Prediction:</strong> Extends the left boundary
+column rightward through all columns.</li>
+<li><strong>TrueMotion Prediction:</strong> Extrapolates two-dimensional
+gradients across the entire 16x16 or 8x8 space based on the top, left,
+and top-left boundary samples.</li>
+</ul>
+<h3 id="generating-and-encoding-the-residual">Generating and Encoding
+the Residual</h3>
+<p>Once the encoder identifies the optimal prediction mode via
+rate-distortion optimization (RDO), it subtracts the predicted pixel
+values from the original pixel values. This leaves a residual matrix
+representing the error.</p>
+<p>The residual is then transformed using a Discrete Cosine Transform
+(DCT)—or a Walsh-Hadamard Transform (WHT) for DC components—quantized
+according to the target quality level, and encoded using VP8's boolean
+arithmetic entropy coder. The decoder follows the reverse sequence: it
+reconstructs the prediction block based on the signaling mode and adds
+the decompressed residual to reproduce the final image.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 WebP Overhead in Inline CSS - webp</title>
+    <meta name="description" content="Embedding WebP images directly into inline CSS using Base64 encoding introduces an immediate file size overhead of roughly 33.33% before network compression. While this approach eliminates an external HTTP request, it significantly increases the weight o">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/base-64-web-p-overhead-in-inline-css">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Base64 WebP Overhead in Inline CSS - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/base-64-web-p-overhead-in-inline-css" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Embedding WebP images directly into inline CSS using Base64 encoding introduces an immediate file size overhead of roughly 33.33% before network compression. While this approach eliminates an external HTTP request, it significantly increases the weight o" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="base64-webp-overhead-in-inline-css">Base64 WebP Overhead in
+Inline CSS</h1>
+<p>Embedding WebP images directly into inline CSS using Base64 encoding
+introduces an immediate file size overhead of roughly 33.33% before
+network compression. While this approach eliminates an external HTTP
+request, it significantly increases the weight of the CSS stylesheet,
+impacts browser rendering performance, and diminishes the efficiency of
+modern compression algorithms like Gzip and Brotli compared to serving
+native binary files.</p>
+<h3 id="the-mathematical-overhead-of-base64">The Mathematical Overhead
+of Base64</h3>
+<p>Base64 encoding operates by taking binary data and mapping every 3
+bytes (24 bits) into 4 ASCII characters (6 bits each). Because 4
+characters are required to represent 3 bytes of data, the mathematical
+size increase is strictly:</p>
+<p><span class="math display">\[\frac{4}{3} \approx
+133.33\%\]</span></p>
+<p>This means a raw WebP image weighing 30 KB will expand to
+approximately 40 KB once encoded as Base64.</p>
+<p>Additionally, embedding the image into CSS requires a Data URI scheme
+prefix:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>background-image<span class="in">:</span> url<span class="in">(</span>&quot;data<span class="in">:image</span>/webp;base64<span class="op">,</span>UklGR...&quot;<span class="in">)</span>;</span></code></pre></div>
+<p>The prefix <code>data:image/webp;base64,</code> appends an additional
+static overhead of 23 to 26 characters (bytes), though this is
+negligible for anything other than microscopic images.</p>
+<h3 id="impact-of-network-compression-gzip-and-brotli">Impact of Network
+Compression (Gzip and Brotli)</h3>
+<p>A common assumption is that HTTP compression methods such as Gzip or
+Brotli will compress the Base64 string back down to the size of the
+original binary file. This is incorrect.</p>
+<p>WebP is already a heavily compressed binary format that leaves little
+to no redundant data for textual compression algorithms to exploit. When
+a WebP image is converted into an ASCII Base64 string:</p>
+<ol type="1">
+<li>The entropy of the data increases across a 64-character set.</li>
+<li>Gzip typically reduces the Base64 overhead slightly, but the
+transferred payload remains roughly 10% to 20% larger than the original
+binary WebP file.</li>
+<li>Brotli handles Base64 slightly better than Gzip, but the transfer
+payload will still consistently exceed the raw WebP binary size.</li>
+</ol>
+<h3 id="browser-performance-and-parsing-cost">Browser Performance and
+Parsing Cost</h3>
+<p>Embedding Base64 WebP files inside inline CSS introduces rendering
+bottlenecks beyond simple byte counts:</p>
+<ul>
+<li><strong>Render-Blocking CSS:</strong> Browsers must fully parse CSS
+files to construct the CSS Object Model (CSSOM) before rendering the
+page. Bloating your CSS with Base64 images blocks the First Contentful
+Paint (FCP) and Largest Contentful Paint (LCP).</li>
+<li><strong>Decoding Overhead:</strong> When a separate image file is
+loaded, decoding occurs asynchronously off the main thread. Inline
+Base64 images must be decoded by the browser during stylesheet
+evaluation, increasing main-thread CPU time.</li>
+<li><strong>Cache Invalidation:</strong> Browsers cache CSS and external
+media separately. Inlining images ties the image cache directly to your
+CSS. Every minor CSS update forces the client to redownload the entire
+Base64 payload, invalidating cached image assets.</li>
+</ul>
+<h3 id="best-practices">Best Practices</h3>
+<ul>
+<li><strong>Avoid Base64 for Medium to Large Images:</strong> Any WebP
+file larger than 1–2 KB should be loaded as an external asset
+(<code>url('/image.webp')</code>) to take advantage of parallel
+downloads, independent caching, and smaller raw payload sizes.</li>
+<li><strong>Acceptable Scenarios:</strong> Inlining may be justified for
+tiny, critical UI elements (such as a placeholder or a critical icon
+under 1 KB) where eliminating the latency of an additional network
+roundtrip is more valuable than saving a few hundred bytes.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

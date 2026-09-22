@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best WebP Compression for High-Contrast Map Tiles - webp</title>
+    <meta name="description" content="Converting vector road maps to raster WebP tiles requires balancing rapid load times with crisp line geometry and legible typography. Because high-contrast road maps feature sharp edges, solid color fills, and fine vector lines, default lossy compression">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/best-web-p-compression-for-high-contrast-map-tiles">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best WebP Compression for High-Contrast Map Tiles - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/best-web-p-compression-for-high-contrast-map-tiles" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Converting vector road maps to raster WebP tiles requires balancing rapid load times with crisp line geometry and legible typography. Because high-contrast road maps feature sharp edges, solid color fills, and fine vector lines, default lossy compression" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="best-webp-compression-for-high-contrast-map-tiles">Best WebP
+Compression for High-Contrast Map Tiles</h1>
+<p>Converting vector road maps to raster WebP tiles requires balancing
+rapid load times with crisp line geometry and legible typography.
+Because high-contrast road maps feature sharp edges, solid color fills,
+and fine vector lines, default lossy compression methods often produce
+visible ringing artifacts, edge blur, and color bleeding. This guide
+outlines the exact encoding settings using Google's <code>cwebp</code>
+encoder to achieve minimal payload sizes while preserving pixel-level
+clarity.</p>
+<h2 id="the-problem-with-standard-lossy-compression">The Problem with
+Standard Lossy Compression</h2>
+<p>High-contrast cartographic data does not behave like continuous-tone
+photography:</p>
+<ul>
+<li><strong>Chroma Subsampling (YUV420):</strong> Default lossy WebP
+converts RGB images to YUV420, halving color resolution and causing
+bright road shields or colored route lines to bleed into surrounding
+land parcels.</li>
+<li><strong>DCT Ringing:</strong> Transform-based lossy compression
+introduces haloing around high-frequency boundaries, such as dark text
+on white backgrounds or crisp highway outlines.</li>
+</ul>
+<p>Because of these characteristics, standard lossy WebP often yields
+larger file sizes or noticeably degraded visuals compared to lossless or
+near-lossless configurations.</p>
+<hr />
+<h2
+id="strategy-1-webp-lossless-recommended-for-maximum-clarity">Strategy
+1: WebP Lossless (Recommended for Maximum Clarity)</h2>
+<p>For flat-design vector tiles with defined palettes, WebP lossless
+mode typically outperforms lossy compression in both visual fidelity and
+file size due to its integrated palette and spatial prediction
+transforms.</p>
+<h3 id="recommended-settings">Recommended Settings:</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-lossless</span> <span class="at">-z</span> 9 <span class="at">-exact</span> input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<ul>
+<li><strong><code>-lossless</code></strong>: Enables the lossless
+compression engine. It guarantees 100% preservation of thin road lines,
+text, and boundary strokes.</li>
+<li><strong><code>-z 9</code></strong>: Sets the compression effort to
+maximum (level 9, equivalent to <code>-m 6 -q 100</code> in lossless
+mode). While this increases encoding time, it produces the smallest
+possible file sizes without any decoding performance penalty.</li>
+<li><strong><code>-exact</code></strong>: Preserves transparent pixel
+color values. If transparent pixels have random RGB values from previous
+rendering pipelines, omitting this flag allows the encoder to modify
+hidden pixels to improve compression.</li>
+</ul>
+<hr />
+<h2
+id="strategy-2-near-lossless-best-balance-for-low-bandwidth">Strategy 2:
+Near-Lossless (Best Balance for Low Bandwidth)</h2>
+<p>If lossless tiles are still too heavy for mobile networks, the
+near-lossless preprocessing filter is the most effective middle ground.
+It slightly adjusts subtle pixel values to maximize compression runs
+while strictly retaining sharp edges.</p>
+<h3 id="recommended-settings-1">Recommended Settings:</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-near_lossless</span> 60 <span class="at">-m</span> 6 input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<ul>
+<li><strong><code>-near_lossless &lt;0-100&gt;</code></strong>: Values
+between <code>60</code> and <code>80</code> typically reduce tile
+payload by 20% to 40% compared to pure lossless, without introducing the
+mosquito noise or edge blur characteristic of full lossy encoding.</li>
+<li><strong><code>-m 6</code></strong>: Directs the encoder to analyze
+the full spectrum of prediction modes and dictionary sizes.</li>
+</ul>
+<hr />
+<h2 id="strategy-3-fine-tuned-lossy-when-file-size-is-critical">Strategy
+3: Fine-Tuned Lossy (When File Size is Critical)</h2>
+<p>If strict tile size budgets force the use of traditional lossy WebP,
+specific flags must be used to mitigate edge degradation and color
+fringing.</p>
+<h3 id="recommended-settings-2">Recommended Settings:</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-q</span> 80 <span class="at">-sharp_yuv</span> <span class="at">-preset</span> drawing <span class="at">-m</span> 6 input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<ul>
+<li><strong><code>-sharp_yuv</code></strong>: The single most critical
+flag for lossy maps. It uses an improved, iterative RGB-to-YUV color
+conversion algorithm that drastically reduces color bleeding on sharp,
+contrasting edges (such as an orange highway over a dark grey
+background).</li>
+<li><strong><code>-preset drawing</code></strong>: Tailors the internal
+spatial analysis algorithms for line art and high-contrast graphical
+content rather than photographic imagery.</li>
+<li><strong><code>-q 80</code></strong>: Keeps quantization high enough
+to prevent severe ringing around labels and route borders.</li>
+<li><strong><code>-m 6</code></strong>: Utilizes the slowest, most
+thorough search for optimal macroblock partition choices.</li>
+</ul>
+<hr />
+<h2 id="summary-of-optimization-parameters">Summary of Optimization
+Parameters</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Metric / Scenario</th>
+<th style="text-align: left;">Compression Mode</th>
+<th style="text-align: left;">Recommended CLI Flags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Pristine Quality (Labels &amp;
+Roads)</strong></td>
+<td style="text-align: left;">Lossless</td>
+<td style="text-align: left;"><code>-lossless -z 9</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>High Density / Mobile
+Delivery</strong></td>
+<td style="text-align: left;">Near-Lossless</td>
+<td style="text-align: left;"><code>-near_lossless 70 -m 6</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Aggressive Size
+Constraint</strong></td>
+<td style="text-align: left;">Tuned Lossy</td>
+<td
+style="text-align: left;"><code>-q 80 -sharp_yuv -preset drawing -m 6</code></td>
+</tr>
+</tbody>
+</table></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

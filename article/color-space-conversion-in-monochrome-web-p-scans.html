@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Space Conversion in Monochrome WebP Scans - webp</title>
+    <meta name="description" content="Color space conversion significantly influences the file size, visual clarity, and optical character recognition (OCR) accuracy of monochrome WebP document scans. Converting documents from native scan profiles to targeted digital color spaces changes how">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/color-space-conversion-in-monochrome-web-p-scans">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Color Space Conversion in Monochrome WebP Scans - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/color-space-conversion-in-monochrome-web-p-scans" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Color space conversion significantly influences the file size, visual clarity, and optical character recognition (OCR) accuracy of monochrome WebP document scans. Converting documents from native scan profiles to targeted digital color spaces changes how" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="color-space-conversion-in-monochrome-webp-scans">Color Space
+Conversion in Monochrome WebP Scans</h1>
+<p>Color space conversion significantly influences the file size, visual
+clarity, and optical character recognition (OCR) accuracy of monochrome
+WebP document scans. Converting documents from native scan profiles to
+targeted digital color spaces changes how image data is represented
+across color channels and compression blocks. While an optimized
+conversion preserves crisp text edges and reduces bandwidth usage, an
+improper conversion pipeline introduces compression artifacts, edge
+bleeding, and tonal shifts that degrade document legibility.</p>
+<h3 id="the-underlying-webp-architecture-and-color-models">The
+Underlying WebP Architecture and Color Models</h3>
+<p>WebP handles image compression using two distinct engines: lossy
+(derived from the VP8 video codec) and lossless (derived from VP8L).</p>
+<p>Lossy WebP natively encodes pixels in the YUV420 color space. In this
+format, the luminance (Y channel) holds the brightness detail, while the
+chrominance (U and V channels) store color data at half the horizontal
+and vertical resolution. When a monochrome document—typically scanned as
+a 1-bit binary or 8-bit grayscale image—is converted to standard sRGB
+and then compressed into lossy WebP, the encoder must translate those
+RGB values into YUV.</p>
+<p>Lossless WebP, conversely, operates strictly in the ARGB color space.
+Even if an image consists purely of black, white, and shades of gray,
+the format encodes it across standard color channels unless optimized
+using spatial transforms and color index palettes.</p>
+<h3 id="impact-of-chroma-subsampling-on-document-text">Impact of Chroma
+Subsampling on Document Text</h3>
+<p>When a monochrome document is converted into an RGB space and
+exported to lossy WebP, chroma subsampling (4:2:0) often causes
+noticeable text degradation. Document scans rely on high-frequency edge
+contrasts between black text and white backgrounds.</p>
+<p>In a proper grayscale-to-YUV pipeline, the U and V chrominance
+channels remain neutral (a flat value of 128). However, if an
+intermediate RGB profile introduces slight color casts, the lossy WebP
+encoder allocates bit budget to encode chroma variance. The 4:2:0
+subsampling then averages these chrominance values across 2x2 pixel
+grids. This results in subtle color fringing, halo artifacts around fine
+text strokes, and a general softening of character boundaries, which
+impairs legibility and OCR accuracy.</p>
+<h3 id="lossless-color-indexing-and-file-size-efficiency">Lossless Color
+Indexing and File Size Efficiency</h3>
+<p>For monochrome scans, the most efficient WebP representation is
+achieved through Lossless WebP with palette indexing.</p>
+<p>When a scan is explicitly converted to an indexed color space (such
+as a 1-bit binary or low-bit grayscale palette) prior to WebP
+encoding:</p>
+<ul>
+<li><strong>Entropy Reduction:</strong> The lossless encoder utilizes
+color indexing to map the image to a minimal set of values (e.g., 2 to
+16 gray values) instead of full 24-bit RGB triplets.</li>
+<li><strong>Predictive Coding:</strong> WebP's spatial predictors
+function more effectively on low-entropy palette data, dramatically
+decreasing the overall byte size compared to lossy compression.</li>
+<li><strong>Edge Preservation:</strong> Text edges remain mathematically
+intact with zero compression-induced blurring or ringing artifacts.</li>
+</ul>
+<p>Failing to convert the scan to an indexed or grayscale representation
+forces the lossless encoder to process redundant data across the Red,
+Green, and Blue channels, unnecessarily increasing file size by 30% to
+50%.</p>
+<h3 id="gamma-shifts-and-dynamic-range-loss">Gamma Shifts and Dynamic
+Range Loss</h3>
+<p>Color space conversions between linear grayscale and non-linear
+spaces like sRGB affect document contrast due to gamma mapping:</p>
+<ul>
+<li><strong>Faint Text Loss:</strong> An improper gamma conversion curve
+can lighten mid-tones and thin strokes. Very light pencil marks, stamps,
+or fine typographical serifs can fall below the visible threshold and
+wash out entirely.</li>
+<li><strong>Background Noise Amplification:</strong> Conversely,
+conversions that crush lower-end values can darken paper grain,
+bleed-through text from the reverse side of the page, and scanner sensor
+noise, turning faint paper texture into dark, distracting
+artifacts.</li>
+</ul>
+<h3 id="optimization-strategy">Optimization Strategy</h3>
+<p>To maintain maximum quality and minimal file size for monochrome
+document scans in WebP, the scanning workflow should avoid lossy YUV420
+encoding. The optimal pipeline converts the input scan directly into an
+indexed grayscale profile and saves the file using WebP Lossless. This
+eliminates chroma artifacts, maintains 100% edge sharpness for text and
+line art, and yields substantially smaller files than standard lossy
+compression.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

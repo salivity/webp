@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why WebP Is an Image Format Instead of Video - webp</title>
+    <meta name="description" content="While WebP can display multi-frame animations similar to short video clips, it is fundamentally classified as a visual image format rather than a video format. This article explains the technical and structural distinctions that separate WebP from true v">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-web-p-is-an-image-format-instead-of-video">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why WebP Is an Image Format Instead of Video - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-web-p-is-an-image-format-instead-of-video" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While WebP can display multi-frame animations similar to short video clips, it is fundamentally classified as a visual image format rather than a video format. This article explains the technical and structural distinctions that separate WebP from true v" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-webp-is-an-image-format-instead-of-video">Why WebP Is an
+Image Format Instead of Video</h1>
+<p>While WebP can display multi-frame animations similar to short video
+clips, it is fundamentally classified as a visual image format rather
+than a video format. This article explains the technical and structural
+distinctions that separate WebP from true video containers, including
+its lack of audio support, its underlying file architecture, its
+frame-rendering mechanisms, and its integration within browser rendering
+pipelines.</p>
+<h3 id="absence-of-audio-tracks-and-multiplexing">Absence of Audio
+Tracks and Multiplexing</h3>
+<p>The most immediate distinction between WebP and a video format is the
+complete absence of audio support. True video containers, such as MP4,
+WebM, and MKV, rely on multiplexers to interleave synchronized video and
+audio streams along with metadata like subtitles and chapters. WebP does
+not include an audio stream or any clock synchronization protocol for
+external audio. Because audio-visual synchronization is a fundamental
+requirement of video media, WebP cannot function as a video
+container.</p>
+<h3 id="riff-container-architecture-vs-video-streaming-containers">RIFF
+Container Architecture vs. Video Streaming Containers</h3>
+<p>WebP uses the Resource Interchange File Format (RIFF) container
+structure, which is lightweight and designed to wrap individual visual
+assets. In contrast, video containers like MP4 (ISO Base Media File
+Format) or WebM (Matroska) are architected specifically to handle
+continuous, time-stamped media streams with random-access keyframing,
+buffering controls, and variable frame rates optimized for continuous
+playback over networks. WebP’s container simply sequences discrete
+chunks of image data without the transport layers required for streaming
+media.</p>
+<h3 id="frame-sequencing-over-inter-frame-video-compression">Frame
+Sequencing Over Inter-Frame Video Compression</h3>
+<p>Although animated WebP compresses sequential images more effectively
+than legacy formats like GIF, its compression pipeline still functions
+on an image-based model. Video codecs (such as H.264, VP9, or AV1)
+employ sophisticated bidirectional temporal compression, using I-frames
+(keyframes), P-frames (predicted frames), and B-frames (bi-directional
+predictive frames) that map motion vectors across long sequences of
+time.</p>
+<p>Animated WebP utilizes VP8 keyframes and basic frame
+differencing—storing only the rectangular area that changes from one
+frame to the next. This approach resembles an advanced version of
+animated PNG (APNG) or GIF disposal methods rather than the continuous
+motion-estimation engines utilized in modern digital video.</p>
+<h3 id="pipeline-and-rendering-integration">Pipeline and Rendering
+Integration</h3>
+<p>WebP was created by Google to replace static and animated web formats
+like JPEG, PNG, and GIF. As a result, its MIME type is explicitly
+designated as <code>image/webp</code>. Operating system decoders and web
+browsers process WebP through their 2D graphics and image-rendering
+pipelines rather than their hardware-accelerated media player pipelines.
+This design allows WebP to be manipulated using standard CSS, the HTML
+<code>&lt;img&gt;</code> tag, and canvas contexts without requiring the
+playback controls, hardware decoding contexts, or memory buffers
+associated with the HTML5 <code>&lt;video&gt;</code> element.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

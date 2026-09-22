@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP vs Flattened PDF for CAD Compression - webp</title>
+    <meta name="description" content="While WebP is a highly efficient raster format for web imagery, it generally cannot achieve higher practical compression ratios on CAD vector exports than a properly flattened vector PDF. Computer-Aided Design (CAD) drawings rely on precise geometric pat">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-vs-flattened-pdf-for-cad-compression">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP vs Flattened PDF for CAD Compression - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-vs-flattened-pdf-for-cad-compression" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While WebP is a highly efficient raster format for web imagery, it generally cannot achieve higher practical compression ratios on CAD vector exports than a properly flattened vector PDF. Computer-Aided Design (CAD) drawings rely on precise geometric pat" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-vs-flattened-pdf-for-cad-compression">WebP vs Flattened PDF
+for CAD Compression</h1>
+<p>While WebP is a highly efficient raster format for web imagery, it
+generally cannot achieve higher practical compression ratios on CAD
+vector exports than a properly flattened vector PDF. Computer-Aided
+Design (CAD) drawings rely on precise geometric paths, fine linework,
+and textual annotations that store natively as lightweight mathematical
+instructions in a vector PDF. Converting these vector paths into a
+raster format like WebP requires generating millions of pixels to
+preserve legibility, typically resulting in either significantly larger
+file sizes or severe loss of technical clarity.</p>
+<h3 id="vector-data-vs-raster-grids">Vector Data vs. Raster Grids</h3>
+<p>A flattened vector PDF preserves CAD elements—such as lines,
+polylines, arcs, and bezier curves—as coordinate data. The PDF
+specification applies lossless stream compression (such as
+Flate/Deflate) directly to these coordinates and embedded text. A
+blueprint containing thousands of distinct lines might only require a
+few hundred kilobytes because the file stores only the start points,
+endpoints, and line styles.</p>
+<p>In contrast, WebP is purely a raster format. To export a CAD drawing
+to WebP, the vector paths must first be rasterized onto a fixed pixel
+grid. Large-format engineering drawings (such as Arch D or ISO A1
+sheets) printed at standard technical readability (300 DPI) require
+resolutions exceeding 7,000 by 10,000 pixels. Storing that volume of
+pixel data—even with WebP's advanced spatial prediction and entropy
+encoding—substantially inflates the raw data footprint compared to pure
+coordinate lists.</p>
+<h3 id="fidelity-and-lossy-artifacts">Fidelity and Lossy Artifacts</h3>
+<p>To force a WebP export to a smaller file size than a vector PDF,
+aggressive lossy compression must be applied. However, lossy WebP uses
+macroblock prediction and discrete cosine transforms derived from the
+VP8 video codec, which are designed for continuous-tone photographic
+imagery rather than high-contrast, sharp-edged technical graphics.</p>
+<p>Applying lossy WebP compression to CAD drawings produces:</p>
+<ul>
+<li>Ringing artifacts and blur around fine linework.</li>
+<li>Illegible dimensional annotations, tolerances, and small
+typography.</li>
+<li>Broken or faded thin lines, which can lead to misinterpretation of
+engineering plans.</li>
+</ul>
+<p>Lossless WebP avoids these artifacts, but because it must represent a
+massive grid of pixels, its file size will almost always exceed that of
+a compressed vector PDF for standard technical drawings.</p>
+<h3 id="when-flattened-pdfs-become-inefficient">When Flattened PDFs
+Become Inefficient</h3>
+<p>There are limited scenarios where WebP can achieve a smaller file
+size than a flattened PDF:</p>
+<ol type="1">
+<li><strong>Extreme Path Density:</strong> When a CAD model contains
+millions of tiny vector entities—such as dense cross-hatching, complex
+wireframe topographies, or thousands of exploded text characters—the
+coordinate overhead of a vector PDF can balloon to hundreds of
+megabytes. In this specific case, rasterizing to WebP caps the data
+footprint to the resolution of the screen.</li>
+<li><strong>3D Rendered Viewports:</strong> If the CAD export contains
+shaded viewports, textures, gradients, or photorealistic lighting rather
+than 2D line work, the vector format provides no structural advantage.
+Here, lossy WebP provides far superior compression compared to the JPEG
+or Flate-encoded raster streams embedded within a standard PDF
+wrapper.</li>
+</ol>
+<h3 id="the-verdict">The Verdict</h3>
+<p>For standard 2D CAD linework and construction documents, flattened
+vector PDFs remain vastly superior in both compression efficiency and
+visual performance. Vector PDFs retain infinite scalability at a
+fraction of the data footprint. WebP should only be preferred when the
+CAD export contains rendered continuous-tone surfaces, or when
+generating fixed-resolution web thumbnails where technical precision is
+secondary to quick browser loading.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

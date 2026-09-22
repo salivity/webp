@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Gatsby Generates WebP Images via GraphQL - webp</title>
+    <meta name="description" content="This article explains how Gatsby automates WebP image generation during its static build process. By leveraging its image processing ecosystem—primarily gatsby-plugin-image, gatsby-plugin-sharp, and gatsby-transformer-sharp—Gatsby intercepts local an">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-gatsby-generates-web-p-images-via-graph-ql">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Gatsby Generates WebP Images via GraphQL - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-gatsby-generates-web-p-images-via-graph-ql" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how Gatsby automates WebP image generation during its static build process. By leveraging its image processing ecosystem—primarily gatsby-plugin-image, gatsby-plugin-sharp, and gatsby-transformer-sharp—Gatsby intercepts local an" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-gatsby-generates-webp-images-via-graphql">How Gatsby
+Generates WebP Images via GraphQL</h1>
+<p>This article explains how Gatsby automates WebP image generation
+during its static build process. By leveraging its image processing
+ecosystem—primarily <code>gatsby-plugin-image</code>,
+<code>gatsby-plugin-sharp</code>, and
+<code>gatsby-transformer-sharp</code>—Gatsby intercepts local and remote
+media sourced into its GraphQL data layer. It transforms standard
+formats like JPEG and PNG into modern WebP variants at build time and
+structures the data to ensure optimal delivery and backward-compatible
+rendering in the browser.</p>
+<h3 id="the-underlying-plugin-architecture">The Underlying Plugin
+Architecture</h3>
+<p>Gatsby’s media processing does not happen natively within the core
+framework; instead, it relies on a coordinated set of plugins:</p>
+<ol type="1">
+<li><strong><code>gatsby-source-filesystem</code></strong>: Scans
+specified directories on the local machine or remote nodes, converting
+file assets into <code>File</code> nodes in the GraphQL schema.</li>
+<li><strong><code>gatsby-transformer-sharp</code></strong>: Recognizes
+supported image media types on <code>File</code> nodes and attaches
+child <code>ImageSharp</code> nodes to the GraphQL schema.</li>
+<li><strong><code>gatsby-plugin-sharp</code></strong>: Acts as the
+low-level processing engine. It exposes configuration APIs and directly
+interfaces with the high-performance C library <code>libvips</code>
+through the Node.js <code>sharp</code> package.</li>
+</ol>
+<h3 id="querying-webp-in-the-graphql-layer">Querying WebP in the GraphQL
+Layer</h3>
+<p>Developers define image transformation requirements directly within
+GraphQL queries using the <code>gatsbyImageData</code> resolver. This
+resolver accepts arguments that govern output formats, resizing
+dimensions, and quality levels.</p>
+<p>By default, modern Gatsby configurations include WebP automatically
+when querying <code>gatsbyImageData</code>. Developers can also
+explicitly set the output formats:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode graphql"><code class="sourceCode graphql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">query</span> {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  file(relativePath: { eq: <span class="st">&quot;hero.jpg&quot;</span> }) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    childImageSharp {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      gatsbyImageData(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        layout: CONSTRAINED</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        placeholder: BLURRED</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        formats: [AUTO, WEBP]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>In this query, <code>AUTO</code> maintains the original source format
+(e.g., JPEG or PNG), while <code>WEBP</code> explicitly instructs the
+pipeline to generate a WebP counterpart.</p>
+<h3 id="build-time-processing-and-static-asset-generation">Build-Time
+Processing and Static Asset Generation</h3>
+<p>When you execute <code>gatsby build</code>, the framework
+orchestrates the transformation:</p>
+<ol type="1">
+<li><strong>Query Extraction and Analysis</strong>: Gatsby extracts all
+GraphQL queries across pages and components, aggregating image
+transformation instructions into an internal processing queue.</li>
+<li><strong>Sharp Transformation via libvips</strong>: For every
+requested resolution and density (such as 1x, 2x for retina displays),
+<code>gatsby-plugin-sharp</code> invokes <code>sharp</code>. The engine
+reads the source image buffer, scales it, converts the pixel data to
+WebP encoding, and compresses it according to specified or default
+quality settings.</li>
+<li><strong>Static Output</strong>: The newly generated
+<code>.webp</code> files, along with fallback images, are written
+directly to the <code>/public/static/</code> folder with content-hashed
+filenames for immutable caching.</li>
+<li><strong>Data Object Emission</strong>: The GraphQL query returns an
+optimized JSON payload containing metadata: image dimensions, srcsets
+for both WebP and fallback formats, and placeholder strings (such as
+base64-encoded blurs or SVG traces).</li>
+</ol>
+<h3 id="client-side-execution-and-fallbacks">Client-Side Execution and
+Fallbacks</h3>
+<p>Because older browsers or edge-case environments may lack WebP
+support, Gatsby ensures fallback compatibility via the
+<code>&lt;GatsbyImage /&gt;</code> React component.</p>
+<p>The component consumes the data payload provided by the GraphQL query
+and renders a native HTML5 <code>&lt;picture&gt;</code> element:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> </span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ot">    type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="ot"> </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ot">    srcset</span><span class="op">=</span><span class="st">&quot;/static/hash-1x.webp 1x, /static/hash-2x.webp 2x&quot;</span><span class="ot"> </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ot">  </span><span class="dt">/&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> </span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ot">    type</span><span class="op">=</span><span class="st">&quot;image/jpeg&quot;</span><span class="ot"> </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ot">    srcset</span><span class="op">=</span><span class="st">&quot;/static/hash-1x.jpg 1x, /static/hash-2x.jpg 2x&quot;</span><span class="ot"> </span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ot">  </span><span class="dt">/&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ot">    src</span><span class="op">=</span><span class="st">&quot;/static/hash-1x.jpg&quot;</span><span class="ot"> </span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="ot">    loading</span><span class="op">=</span><span class="st">&quot;lazy&quot;</span><span class="ot"> </span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="ot">    decoding</span><span class="op">=</span><span class="st">&quot;async&quot;</span><span class="ot"> </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="ot">    alt</span><span class="op">=</span><span class="st">&quot;Hero Image&quot;</span><span class="ot"> </span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="ot">  </span><span class="dt">/&gt;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>The browser evaluates the <code>&lt;picture&gt;</code> tag
+sequentially. If the client supports the WebP MIME type, it downloads
+and displays the WebP asset from the first <code>&lt;source&gt;</code>
+element. If not, it falls through to the original format fallback,
+ensuring automated performance optimization without sacrificing
+compatibility.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

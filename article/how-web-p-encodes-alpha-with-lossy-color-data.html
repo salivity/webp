@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Encodes Alpha with Lossy Color Data - webp</title>
+    <meta name="description" content="WebP achieves transparent lossy images by decoupling the transparency channel from the color components inside an extended file container. While the RGB color information is converted to YUV and compressed using the lossy VP8 video frame format, the 8-bi">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-encodes-alpha-with-lossy-color-data">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Encodes Alpha with Lossy Color Data - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-encodes-alpha-with-lossy-color-data" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP achieves transparent lossy images by decoupling the transparency channel from the color components inside an extended file container. While the RGB color information is converted to YUV and compressed using the lossy VP8 video frame format, the 8-bi" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-encodes-alpha-with-lossy-color-data">How WebP Encodes
+Alpha with Lossy Color Data</h1>
+<p>WebP achieves transparent lossy images by decoupling the transparency
+channel from the color components inside an extended file container.
+While the RGB color information is converted to YUV and compressed using
+the lossy VP8 video frame format, the 8-bit alpha channel is extracted
+and stored separately in an independent chunk, typically compressed
+using WebP's lossless algorithm. This hybrid approach allows WebP to
+maintain crisp, accurate edge transparency while maximizing compression
+efficiency across the color spectrum.</p>
+<h3 id="the-extended-container-structure">The Extended Container
+Structure</h3>
+<p>A standard lossy WebP bitstream (<code>VP8 </code> chunk) does not
+natively support an alpha channel. To incorporate transparency, the file
+uses the extended WebP format based on the Resource Interchange File
+Format (RIFF).</p>
+<p>When an image contains alpha data:</p>
+<ol type="1">
+<li>The file begins with a <strong>VP8X</strong> chunk, a header
+indicating that extended features (specifically the alpha flag) are
+present.</li>
+<li>An <strong>ALPH</strong> chunk is inserted, which contains the
+complete compressed 8-bit alpha channel data.</li>
+<li>A standard **VP8 ** chunk immediately follows, holding the lossy
+compressed color data.</li>
+</ol>
+<p>Because the alpha and color data reside in isolated chunks, decoders
+can parse and decompress both streams independently or sequentially
+without cross-stream dependencies.</p>
+<h3 id="encoding-the-8-bit-alpha-channel">Encoding the 8-Bit Alpha
+Channel</h3>
+<p>The alpha channel is treated as a standalone, single-channel 8-bit
+grayscale image matching the exact pixel dimensions of the primary
+image. The <code>ALPH</code> chunk includes a 1-byte header followed by
+the compressed payload. The header defines preprocessing options and
+compression types:</p>
+<ul>
+<li><strong>Preprocessing / Filtering:</strong> To maximize compression,
+the encoder can apply one of four spatial prediction filters to the
+alpha samples: None, Horizontal, Vertical, or Gradient. Filtering
+replaces absolute alpha values with differences relative to neighboring
+pixels, significantly flattening the data distribution.</li>
+<li><strong>Compression Method:</strong> The alpha stream can be
+uncompressed or compressed using WebP's lossless format (VP8L). When
+compressed, the filtered data passes through a combination of LZ77
+dictionary coding and canonical Huffman coding.</li>
+<li><strong>Pre-multiplication:</strong> The header specifies whether
+the color channels have been pre-multiplied by the alpha values.
+Pre-multiplication can prevent color artifacts along transparent
+boundaries, though non-pre-multiplied storage is also supported.</li>
+</ul>
+<h3 id="encoding-the-color-data">Encoding the Color Data</h3>
+<p>The color plane is encoded using the standard VP8 intra-frame
+(keyframe) algorithm:</p>
+<ol type="1">
+<li>The RGB color data is converted to the YCbCr (YUV) color space,
+typically with 4:2:0 chroma subsampling.</li>
+<li>The image is divided into macroblocks (16x16 pixels for luma, 8x8
+pixels for chroma).</li>
+<li>The encoder performs intra-prediction, discrete cosine-like
+transforms (DCT), and quantization to discard high-frequency visual
+information based on the chosen quality target.</li>
+<li>The remaining transform coefficients and motion vectors are encoded
+via a boolean arithmetic coder.</li>
+</ol>
+<p>Color values residing beneath fully transparent alpha pixels can be
+altered or smoothed during the encoding phase to maximize
+compressibility, as those color values will not be rendered.</p>
+<h3 id="decoding-and-compositing">Decoding and Compositing</h3>
+<p>During decoding, the host application reconstructs the final RGBA
+image through the following steps:</p>
+<ol type="1">
+<li>The <code>ALPH</code> chunk is read, decoded via the VP8L entropy
+decoder, and inverse-filtered to restore the continuous 8-bit alpha
+surface (0 to 255 per pixel).</li>
+<li>The <code>VP8 </code> chunk is decoded to produce the lossy YUV
+macroblocks, which are then upsampled and converted to RGB color
+values.</li>
+<li>The 8-bit alpha plane is merged with the reconstructed RGB color
+data into a 32-bit RGBA pixel buffer. If pre-multiplication was flagged
+in the <code>ALPH</code> header, the decoder leaves the RGB values
+scaled to the alpha channel or reverses the multiplication depending on
+the target rendering API.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

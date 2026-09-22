@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Libraries to Encode and Decode WebP - webp</title>
+    <meta name="description" content="WebP is a modern image format providing superior lossless and lossy compression for web images. Python offers multiple libraries that interface with Google's native libwebp C library, enabling developers to encode, decode, and manipulate WebP files effic">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/python-libraries-to-encode-and-decode-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Python Libraries to Encode and Decode WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/python-libraries-to-encode-and-decode-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP is a modern image format providing superior lossless and lossy compression for web images. Python offers multiple libraries that interface with Google's native libwebp C library, enabling developers to encode, decode, and manipulate WebP files effic" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="python-libraries-to-encode-and-decode-webp">Python Libraries to
+Encode and Decode WebP</h1>
+<p>WebP is a modern image format providing superior lossless and lossy
+compression for web images. Python offers multiple libraries that
+interface with Google's native <code>libwebp</code> C library, enabling
+developers to encode, decode, and manipulate WebP files efficiently.
+This guide highlights the primary Python libraries available for
+handling WebP images, detailing their capabilities and practical
+usage.</p>
+<h3 id="1-pillow-pil-fork">1. Pillow (PIL Fork)</h3>
+<p>Pillow is the most widely used imaging library in Python and includes
+built-in support for WebP when compiled with <code>libwebp</code>. It
+handles both single-frame and animated WebP images.</p>
+<ul>
+<li><strong>Decoding:</strong> Pillow automatically detects the format
+using <code>Image.open()</code>.</li>
+<li><strong>Encoding:</strong> Images can be saved to WebP format using
+<code>Image.save('output.webp', 'WEBP')</code>, with optional parameters
+to control quality, lossless compression, and animation settings.</li>
+<li><strong>Best For:</strong> General-purpose image processing, format
+conversion, and animated WebP creation.</li>
+</ul>
+<h3 id="2-webp-python-wrapper-for-libwebp">2. webp (Python Wrapper for
+libwebp)</h3>
+<p>The <code>webp</code> package (available on PyPI as
+<code>webp</code>) provides direct Python CFFI bindings to Google’s
+<code>libwebp</code> library. It offers lower-level access to native
+encoding and decoding features than general imaging libraries.</p>
+<ul>
+<li><strong>Decoding:</strong> Provides functions such as
+<code>webp.load_image()</code> to load files directly into PIL images,
+or <code>webp.decode_rgba()</code> to extract raw pixel data into NumPy
+arrays.</li>
+<li><strong>Encoding:</strong> Supports fine-tuned encoding options,
+including direct control over compression modes, memory buffers, and
+animation timelines.</li>
+<li><strong>Best For:</strong> Applications requiring direct access to
+<code>libwebp</code> configuration without the overhead of higher-level
+imaging frameworks.</li>
+</ul>
+<h3 id="3-opencv-opencv-python">3. OpenCV
+(<code>opencv-python</code>)</h3>
+<p>OpenCV is an optimized computer vision library that includes WebP
+support via its image input/output routines if built with
+<code>libwebp</code> enabled.</p>
+<ul>
+<li><strong>Decoding:</strong> Reads WebP files directly into NumPy
+arrays using <code>cv2.imread()</code>.</li>
+<li><strong>Encoding:</strong> Writes NumPy arrays to WebP files using
+<code>cv2.imwrite()</code>, with compression parameters passed via flags
+like <code>cv2.IMWRITE_WEBP_QUALITY</code>.</li>
+<li><strong>Best For:</strong> Computer vision pipelines, machine
+learning workflows, and high-performance image processing where images
+are represented as NumPy arrays.</li>
+</ul>
+<h3 id="4-wand">4. Wand</h3>
+<p>Wand is a <code>ctypes</code>-based Python binding for ImageMagick.
+If ImageMagick is installed with WebP support, Wand inherits the full
+suite of WebP capabilities.</p>
+<ul>
+<li><strong>Decoding:</strong> Loads images seamlessly using the
+<code>wand.image.Image</code> context manager.</li>
+<li><strong>Encoding:</strong> Converts and saves images to WebP by
+setting the image format property to <code>'webp'</code> and saving the
+file.</li>
+<li><strong>Best For:</strong> Complex batch-processing pipelines
+requiring the advanced graphical operations provided by
+ImageMagick.</li>
+</ul>
+<h3 id="5-imageio">5. Imageio</h3>
+<p>Imageio is an image I/O library designed for scientific computing. It
+uses backends like Pillow or FreeImage to manage WebP files.</p>
+<ul>
+<li><strong>Decoding:</strong> Imports WebP images into NumPy arrays
+using <code>imageio.v3.imread()</code>.</li>
+<li><strong>Encoding:</strong> Writes data directly to WebP files using
+<code>imageio.v3.imwrite()</code>.</li>
+<li><strong>Best For:</strong> Scientific and data-analysis workflows
+that require seamless array-based input and output across diverse image
+formats.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serve Cached WebP Images in Nginx with try_files - webp</title>
+    <meta name="description" content="This guide explains how to configure Nginx to automatically deliver pre-generated, cached WebP images in place of standard JPEG and PNG files using the tryfiles directive. By inspecting the browser's Accept header and matching requested file paths agains">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/serve-cached-web-p-images-in-nginx-with-try-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Serve Cached WebP Images in Nginx with try_files - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/serve-cached-web-p-images-in-nginx-with-try-files" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide explains how to configure Nginx to automatically deliver pre-generated, cached WebP images in place of standard JPEG and PNG files using the tryfiles directive. By inspecting the browser's Accept header and matching requested file paths agains" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="serve-cached-webp-images-in-nginx-with-try_files">Serve Cached
+WebP Images in Nginx with try_files</h1>
+<p>This guide explains how to configure Nginx to automatically deliver
+pre-generated, cached WebP images in place of standard JPEG and PNG
+files using the <code>try_files</code> directive. By inspecting the
+browser's <code>Accept</code> header and matching requested file paths
+against existing <code>.webp</code> copies, Nginx can deliver smaller
+image payloads with minimal latency and provide an automatic fallback to
+the original format when WebP is unsupported or the cached file is
+missing.</p>
+<h3 id="1-detect-webp-support-with-the-map-directive">1. Detect WebP
+Support with the <code>map</code> Directive</h3>
+<p>Add a <code>map</code> block inside the <code>http</code> context of
+your Nginx configuration (typically <code>/etc/nginx/nginx.conf</code>).
+This block evaluates the client's <code>Accept</code> header and sets a
+custom variable <code>$webp_suffix</code> to <code>.webp</code> if the
+client supports the format.</p>
+<pre class="nginx"><code>http {
+    # Other configuration settings...
+
+    map $http_accept $webp_suffix {
+        default &quot;&quot;;
+        &quot;~*image/webp&quot; &quot;.webp&quot;;
+    }
+}</code></pre>
+<p>If the client sends a header including <code>image/webp</code>,
+<code>$webp_suffix</code> is populated with <code>.webp</code>. If not,
+it remains an empty string.</p>
+<h3 id="2-configure-the-location-block-using-try_files">2. Configure the
+<code>location</code> Block Using <code>try_files</code></h3>
+<p>Inside your <code>server</code> block (such as in your site
+configuration under <code>/etc/nginx/conf.d/</code> or
+<code>/etc/nginx/sites-available/</code>), define a
+<code>location</code> block matching your target image extensions. Use
+<code>try_files</code> to verify the presence of the cached
+<code>.webp</code> version.</p>
+<pre class="nginx"><code>server {
+    # Other server configurations...
+
+    location ~* \.(png|jpe?g)$ {
+        add_header Vary Accept;
+        try_files $uri$webp_suffix $uri =404;
+    }
+}</code></pre>
+<h3 id="how-it-works">How It Works</h3>
+<ol type="1">
+<li><strong>Vary Header</strong>: The
+<code>add_header Vary Accept;</code> directive instructs CDNs and
+intermediate caches to store distinct versions of the image depending on
+whether the requesting client supports WebP.</li>
+<li><strong>First Check (<code>$uri$webp_suffix</code>)</strong>: If the
+client supports WebP, this resolves to
+<code>/path/to/image.jpg.webp</code>. If that file exists on the server
+disk or cache directory, Nginx immediately serves it. If the client does
+not support WebP, <code>$webp_suffix</code> is empty, so this directly
+matches the original file.</li>
+<li><strong>Fallback Check (<code>$uri</code>)</strong>: If the WebP
+copy does not exist, Nginx falls back to checking the original path
+<code>/path/to/image.jpg</code>.</li>
+<li><strong>Final Fallback (<code>=404</code>)</strong>: If neither the
+WebP variant nor the original file exists, Nginx returns a 404 Not Found
+error.</li>
+</ol>
+<h3 id="3-ensure-proper-mime-types">3. Ensure Proper MIME Types</h3>
+<p>Verify that your Nginx setup properly assigns the
+<code>image/webp</code> MIME type. Open
+<code>/etc/nginx/mime.types</code> and verify that the following line
+exists:</p>
+<pre class="nginx"><code>image/webp webp;</code></pre>
+<p>Because <code>try_files</code> resolves directly to the
+<code>.webp</code> file extension when served, Nginx will automatically
+serve the file with the <code>Content-Type: image/webp</code>
+header.</p>
+<h3 id="4-test-and-reload-nginx">4. Test and Reload Nginx</h3>
+<p>Validate the configuration files for syntax errors before applying
+the changes:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nginx</span> <span class="at">-t</span></span></code></pre></div>
+<p>If the test passes, reload Nginx to activate the new
+configuration:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> reload nginx</span></code></pre></div></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

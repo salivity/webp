@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Sharp RGB to YUV Conversion Improves WebP - webp</title>
+    <meta name="description" content="This article explains how utilizing sharp chromatic mapping during RGB to YUV conversion significantly enhances the visual fidelity of WebP images. Lossy WebP encoding relies on chroma subsampling, which traditionally degrades sharp boundaries between co">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-sharp-rgb-to-yuv-conversion-improves-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Sharp RGB to YUV Conversion Improves WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-sharp-rgb-to-yuv-conversion-improves-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how utilizing sharp chromatic mapping during RGB to YUV conversion significantly enhances the visual fidelity of WebP images. Lossy WebP encoding relies on chroma subsampling, which traditionally degrades sharp boundaries between co" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-sharp-rgb-to-yuv-conversion-improves-webp">How Sharp RGB to
+YUV Conversion Improves WebP</h1>
+<p>This article explains how utilizing sharp chromatic mapping during
+RGB to YUV conversion significantly enhances the visual fidelity of WebP
+images. Lossy WebP encoding relies on chroma subsampling, which
+traditionally degrades sharp boundaries between contrasting colors,
+leading to noticeable blurring and color bleeding. By replacing standard
+box-filtering with an iterative, error-minimizing downsampling
+technique—commonly referred to as Sharp YUV—WebP preserves crisp edges,
+improves text legibility, and eliminates chromatic artifacts without
+increasing decoding complexity or file sizes.</p>
+<h3 id="the-problem-standard-rgb-to-yuv-subsampling">The Problem:
+Standard RGB to YUV Subsampling</h3>
+<p>Lossy WebP uses the YUV420 color space to compress images
+efficiently. In YUV420, luminance (<span
+class="math inline">\(Y\)</span>) is kept at full resolution, while
+chrominance channels (<span class="math inline">\(U\)</span> and <span
+class="math inline">\(V\)</span>) are subsampled by half horizontally
+and vertically. This design exploits the human eye’s lower sensitivity
+to color detail compared to brightness.</p>
+<p>Standard conversion methods generate subsampled chroma values by
+naively averaging clusters of adjacent RGB pixels (typically a <span
+class="math inline">\(2 \times 2\)</span> grid). While this works
+adequately for soft gradients and photographic textures, it fails at
+high-contrast, saturated boundaries. For example, when bright red text
+sits on a green or black background, standard averaging dilutes color
+boundaries. When the decoder upsamples the chroma back to RGB for
+display, the result is visible color bleeding, halo effects, and ringing
+around crisp edges.</p>
+<h3 id="how-sharp-chromatic-mapping-works">How Sharp Chromatic Mapping
+Works</h3>
+<p>Sharp chromatic mapping fundamentally alters the downsampling phase
+by turning it into an optimization problem rather than a simple
+mathematical average:</p>
+<ol type="1">
+<li><strong>Reconstruction Feedback Loop:</strong> Instead of merely
+downsampling RGB values to YUV, the sharp algorithm internally simulates
+the upsampling step that the decoder will eventually execute.</li>
+<li><strong>Error Minimization:</strong> It compares the simulated RGB
+output directly against the original RGB source image, calculating the
+pixel-by-pixel color error.</li>
+<li><strong>Chroma Adjustment:</strong> The algorithm iteratively
+adjusts the subsampled <span class="math inline">\(U\)</span> and <span
+class="math inline">\(V\)</span> chroma values to find the exact
+combination that minimizes total perceived color error upon
+reconstruction.</li>
+<li><strong>Luminance Compensation:</strong> Where color shifts are
+unavoidable due to physical subsampling limits, the luminance channel is
+finely tuned to mask edge discrepancies, preserving perceived
+sharpness.</li>
+</ol>
+<h3 id="visual-quality-benefits-in-webp">Visual Quality Benefits in
+WebP</h3>
+<p>Employing sharp chromatic mapping yields several immediate
+improvements to WebP image quality:</p>
+<ul>
+<li><strong>Elimination of Color Bleeding:</strong> High-contrast color
+boundaries maintain distinct separation. Highly saturated colors no
+longer leak into adjacent neutral tones.</li>
+<li><strong>Sharper Text and Vector Graphics:</strong> Synthetic
+imagery, such as UI screenshots, logos, and colored typography, remains
+sharp even at low-to-medium lossy quality settings where standard WebP
+typically fails.</li>
+<li><strong>Reduced Ringing Artifacts:</strong> Because the converted
+chroma values better match the spatial structure of the original image,
+WebP’s discrete cosine transform (DCT) generates fewer high-frequency
+compression artifacts along contrasting edges.</li>
+<li><strong>Bitrate Efficiency:</strong> By matching chroma transitions
+to actual luminance edges, the compression engine requires fewer bits to
+encode high-frequency errors, yielding better visual quality at
+equivalent file sizes.</li>
+</ul>
+<h3 id="performance-trade-offs">Performance Trade-Offs</h3>
+<p>The primary cost of sharp chromatic mapping is computational overhead
+during encoding. Because the algorithm involves iterative error-checking
+and matrix operations, encoding speeds can be significantly slower than
+standard box-filtered encoding. However, this process incurs zero
+runtime penalty on the client side: the resulting bitstream is fully
+compliant with standard WebP decoders, delivering faster-loading,
+higher-quality visuals with no additional decoding latency.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

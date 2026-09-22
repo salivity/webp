@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is the sharp_yuv Flag in cwebp? - webp</title>
+    <meta name="description" content="The -sharpyuv flag in the cwebp command-line tool enables an advanced RGB-to-YUV conversion algorithm that minimizes color bleeding and edge degradation in lossy WebP images. By optimizing how chroma information is subsampled at high-contrast boundaries,">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/what-is-the-sharp-yuv-flag-in-cwebp">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is the sharp_yuv Flag in cwebp? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/what-is-the-sharp-yuv-flag-in-cwebp" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The -sharpyuv flag in the cwebp command-line tool enables an advanced RGB-to-YUV conversion algorithm that minimizes color bleeding and edge degradation in lossy WebP images. By optimizing how chroma information is subsampled at high-contrast boundaries," />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-the-sharp_yuv-flag-in-cwebp">What Is the sharp_yuv Flag
+in cwebp?</h1>
+<p>The <code>-sharp_yuv</code> flag in the <code>cwebp</code>
+command-line tool enables an advanced RGB-to-YUV conversion algorithm
+that minimizes color bleeding and edge degradation in lossy WebP images.
+By optimizing how chroma information is subsampled at high-contrast
+boundaries, this setting significantly improves edge clarity for sharp
+graphics and text at the expense of slightly slower encoding speeds.</p>
+<h3 id="the-chroma-subsampling-problem">The Chroma Subsampling
+Problem</h3>
+<p>Lossy WebP compression converts standard RGB images into the YUV420
+color space. In YUV420, the image is divided into luma (brightness,
+denoted as <span class="math inline">\(Y\)</span>) and chroma (color,
+denoted as <span class="math inline">\(U\)</span> and <span
+class="math inline">\(V\)</span>). Because human eyes are far more
+sensitive to variations in brightness than in color, the chroma channels
+are downsampled to half their horizontal and vertical resolution to save
+space.</p>
+<p>By default, the conversion from full-resolution RGB to downsampled
+YUV uses standard linear averaging. While this works well for smooth
+photographic scenes, it introduces artifacts in synthetic imagery, user
+interface screenshots, and graphics with sharp boundaries. When a
+vibrant color borders a neutral or contrasting background (such as
+bright red text on a black or white background), the default averaging
+blurs the color edge, causing visible haloing, color bleeding, and
+pixelated fringing.</p>
+<h3 id="how--sharp_yuv-works">How <code>-sharp_yuv</code> Works</h3>
+<p>The <code>-sharp_yuv</code> flag replaces the standard bilinear
+averaging filter with an iterative optimization process.</p>
+<p>Instead of simply downsampling the color data once, the encoder
+evaluates how the subsampled chroma channels will look once
+reconstructed and upsampled back to RGB on the viewer's screen. It
+adjusts the downsampled YUV values to minimize the reconstruction error
+relative to the original RGB source. As a result, edges retain their
+intended sharpness, and the perceived bleed of vibrant colors into
+adjacent neutral pixels is eliminated or dramatically reduced.</p>
+<h3 id="performance-and-encoding-trade-offs">Performance and Encoding
+Trade-offs</h3>
+<p>Using <code>-sharp_yuv</code> involves specific trade-offs:</p>
+<ul>
+<li><strong>Encoding Speed:</strong> The primary cost is computational.
+Because the algorithm iteratively recalculates and optimizes pixel
+values, encoding times can increase by roughly 20% to 50%, depending on
+the image dimensions and complexity.</li>
+<li><strong>Decoding Speed:</strong> Decoding performance is completely
+unaffected. The resulting WebP file is standard YUV420; the viewer's
+browser or image viewer decodes the image using its normal routines
+without any extra processing overhead.</li>
+<li><strong>File Size:</strong> The impact on final file size is
+minimal. In some cases, reducing noisy edge artifacts slightly lowers
+the file size, while in others, preserving sharper transitions slightly
+increases it.</li>
+</ul>
+<h3 id="when-to-use--sharp_yuv">When to Use <code>-sharp_yuv</code></h3>
+<p>The flag is ideal for:</p>
+<ul>
+<li>Images featuring thin lines, text, or vector illustrations.</li>
+<li>UI screenshots containing colorful buttons and icons against
+contrasting backgrounds.</li>
+<li>Pixel art or high-contrast graphics that must be stored in lossy
+WebP format rather than lossless.</li>
+</ul>
+<p>For automated processing, include the flag directly in your
+conversion command:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-q</span> 80 <span class="at">-sharp_yuv</span> input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<p>For purely photographic images without hard edges, the visual
+difference is usually imperceptible, making the flag unnecessary if fast
+encoding throughput is your main priority.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

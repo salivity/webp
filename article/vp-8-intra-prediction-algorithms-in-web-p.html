@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VP8 Intra-Prediction Algorithms in WebP - webp</title>
+    <meta name="description" content="WebP's lossy image compression relies on the VP8 keyframe intra-prediction framework to eliminate spatial redundancy prior to transform coding and quantization. By analyzing previously decoded adjacent boundary pixels to the top and left of a target bloc">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/vp-8-intra-prediction-algorithms-in-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="VP8 Intra-Prediction Algorithms in WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/vp-8-intra-prediction-algorithms-in-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP's lossy image compression relies on the VP8 keyframe intra-prediction framework to eliminate spatial redundancy prior to transform coding and quantization. By analyzing previously decoded adjacent boundary pixels to the top and left of a target bloc" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="vp8-intra-prediction-algorithms-in-webp">VP8 Intra-Prediction
+Algorithms in WebP</h1>
+<p>WebP's lossy image compression relies on the VP8 keyframe
+intra-prediction framework to eliminate spatial redundancy prior to
+transform coding and quantization. By analyzing previously decoded
+adjacent boundary pixels to the top and left of a target block, the
+codec models the current block's texture without transmitting raw pixel
+values. This article breaks down the mathematical formulations and
+algorithms governing the primary VP8 intra-prediction modes used inside
+WebP, covering both macroblock-level predictions and directional 4x4
+sub-block operations.</p>
+<h2 id="macroblock-partitioning-and-reference-pixels">Macroblock
+Partitioning and Reference Pixels</h2>
+<p>VP8 processes images using <span class="math inline">\(16 \times
+16\)</span> macroblocks for luma (brightness) and <span
+class="math inline">\(8 \times 8\)</span> blocks for chroma (color
+difference). Intra-prediction relies entirely on the reconstructed
+pixels immediately adjacent to the current block:</p>
+<ul>
+<li><strong>Above reference vector (<span
+class="math inline">\(A\)</span>):</strong> <span
+class="math inline">\(A_x\)</span> where <span class="math inline">\(x
+\in [0, N-1]\)</span>, situated at row <span class="math inline">\(y =
+-1\)</span>.</li>
+<li><strong>Left reference vector (<span
+class="math inline">\(L\)</span>):</strong> <span
+class="math inline">\(L_y\)</span> where <span class="math inline">\(y
+\in [0, N-1]\)</span>, situated at column <span class="math inline">\(x
+= -1\)</span>.</li>
+<li><strong>Top-left reference pixel (<span class="math inline">\(P_{-1,
+-1}\)</span>):</strong> The diagonal corner pixel at <span
+class="math inline">\((-1, -1)\)</span>.</li>
+</ul>
+<p>For luma components, prediction occurs at either the full <span
+class="math inline">\(16 \times 16\)</span> macroblock level or via
+sixteen individual <span class="math inline">\(4 \times 4\)</span>
+sub-blocks. Chroma components (<span class="math inline">\(U\)</span>
+and <span class="math inline">\(V\)</span>) are always predicted at the
+<span class="math inline">\(8 \times 8\)</span> block level.</p>
+<hr />
+<h2 id="16x16-and-8x8-intra-prediction-modes">16x16 and 8x8
+Intra-Prediction Modes</h2>
+<p>VP8 specifies four standard prediction modes for <span
+class="math inline">\(16 \times 16\)</span> luma macroblocks and <span
+class="math inline">\(8 \times 8\)</span> chroma blocks.</p>
+<h3 id="1-dc-prediction-dc_pred">1. DC Prediction (DC_PRED)</h3>
+<p>DC prediction fills the target block with a single uniform scalar
+value equal to the rounded arithmetic mean of the available adjacent
+reference pixels.</p>
+<p>When both top and left boundaries are present:</p>
+<p><span class="math display">\[\mu = \frac{\sum_{x=0}^{N-1} A_x +
+\sum_{y=0}^{N-1} L_y + N}{2N}\]</span></p>
+<p>In fixed-point integer arithmetic for a <span
+class="math inline">\(16 \times 16\)</span> block (<span
+class="math inline">\(N=16\)</span>), this is calculated as:</p>
+<p><span class="math display">\[P(x, y) = \left( \sum_{x=0}^{15} A_x +
+\sum_{y=0}^{15} L_y + 16 \right) \gg 5\]</span></p>
+<p>For an <span class="math inline">\(8 \times 8\)</span> block (<span
+class="math inline">\(N=8\)</span>):</p>
+<p><span class="math display">\[P(x, y) = \left( \sum_{x=0}^{7} A_x +
+\sum_{y=0}^{7} L_y + 8 \right) \gg 4\]</span></p>
+<p>If boundary pixels are missing due to image borders:</p>
+<ul>
+<li><strong>Only Above Available:</strong> <span
+class="math inline">\(P(x, y) = \left( \sum A_x + (N \gg 1) \right) \gg
+\log_2(N)\)</span></li>
+<li><strong>Only Left Available:</strong> <span
+class="math inline">\(P(x, y) = \left( \sum L_y + (N \gg 1) \right) \gg
+\log_2(N)\)</span></li>
+<li><strong>Neither Available:</strong> <span class="math inline">\(P(x,
+y) = 128\)</span> (mid-range gray for 8-bit depth).</li>
+</ul>
+<h3 id="2-vertical-prediction-v_pred">2. Vertical Prediction
+(V_PRED)</h3>
+<p>Vertical prediction models structures that continue vertically
+downward. The values of the above boundary row are replicated down each
+column:</p>
+<p><span class="math display">\[P(x, y) = A_x \quad \text{for } x, y \in
+[0, N-1]\]</span></p>
+<h3 id="3-horizontal-prediction-h_pred">3. Horizontal Prediction
+(H_PRED)</h3>
+<p>Horizontal prediction projects values horizontally across each row
+from the left boundary column:</p>
+<p><span class="math display">\[P(x, y) = L_y \quad \text{for } x, y \in
+[0, N-1]\]</span></p>
+<h3 id="4-truemotion-prediction-tm_pred">4. TrueMotion Prediction
+(TM_PRED)</h3>
+<p>TrueMotion is a proprietary VP8 mode designed to model linear
+brightness gradients. It combines horizontal and vertical differentials
+relative to the top-left boundary pixel <span
+class="math inline">\(P_{-1, -1}\)</span>. The base mathematical form
+is:</p>
+<p><span class="math display">\[P(x, y) = \text{Clip1}(L_y + A_x -
+P_{-1, -1})\]</span></p>
+<p>Where <span class="math inline">\(\text{Clip1}(v)\)</span> restricts
+the calculated value to the valid 8-bit unsigned integer range:</p>
+<p><span class="math display">\[\text{Clip1}(v) = \max(0, \min(255,
+v))\]</span></p>
+<p>If <span class="math inline">\(L_y\)</span> differs from the corner
+pixel by <span class="math inline">\(\Delta L\)</span>, that same
+differential is applied across <span class="math inline">\(A_x\)</span>,
+preserving two-dimensional planar shifts.</p>
+<hr />
+<h2 id="4x4-luma-intra-prediction-modes">4x4 Luma Intra-Prediction
+Modes</h2>
+<p>When an image contains high-frequency details, a <span
+class="math inline">\(16 \times 16\)</span> block is decomposed into
+sixteen <span class="math inline">\(4 \times 4\)</span> sub-blocks. VP8
+defines ten distinct sub-block prediction modes (B-modes). In addition
+to 4x4 adaptations of DC, Vertical, Horizontal, and TrueMotion, six
+directional modes extrapolate boundary edges at specific geometric
+angles using weighted linear interpolation filters.</p>
+<p>These directional modes reference:</p>
+<ul>
+<li>Top reference pixels: <span class="math inline">\(A_0, A_1, A_2,
+A_3\)</span> and extended pixels <span class="math inline">\(A_4, A_5,
+A_6, A_7\)</span>.</li>
+<li>Left reference pixels: <span class="math inline">\(L_0, L_1, L_2,
+L_3\)</span>.</li>
+<li>Top-left reference pixel: <span class="math inline">\(P_{-1,
+-1}\)</span> (denoted here as <span
+class="math inline">\(C\)</span>).</li>
+</ul>
+<h3 id="1-b_ld_pred-left-down-directional">1. B_LD_PRED (Left-Down
+Directional)</h3>
+<p>Interpolates downward-left at approximately a 45-degree angle using a
+3-tap smoothing filter with weights <span class="math inline">\([1, 2,
+1]\)</span>:</p>
+<p><span class="math display">\[P(x, y) =
+\begin{cases}
+(A_{x+y} + 2A_{x+y+1} + A_{x+y+2} + 2) \gg 2 &amp; \text{if } x + y &lt;
+6 \\
+(A_6 + 2A_7 + A_7 + 2) \gg 2 &amp; \text{if } x + y = 6 \\
+A_7 &amp; \text{if } x + y &gt; 6
+\end{cases}\]</span></p>
+<h3 id="2-b_rd_pred-right-down-directional">2. B_RD_PRED (Right-Down
+Directional)</h3>
+<p>Predicts diagonally along a 45-degree angle from the top-left down
+toward the bottom-right. Depending on the coordinate offset <span
+class="math inline">\(x - y\)</span>, it interpolates either across
+<span class="math inline">\(A\)</span>, <span
+class="math inline">\(L\)</span>, or through the corner pixel <span
+class="math inline">\(C\)</span>:</p>
+<p><span class="math display">\[P(x, y) =
+\begin{cases}
+(A_{x-y-1} + 2A_{x-y} + A_{x-y+1} + 2) \gg 2 &amp; \text{if } x &gt; y
+\\
+(L_{y-x-1} + 2L_{y-x} + L_{y-x+1} + 2) \gg 2 &amp; \text{if } x &lt; y
+\\
+(A_0 + 2C + L_0 + 2) \gg 2 &amp; \text{if } x = y
+\end{cases}\]</span></p>
+<p><em>(Boundary offsets where index equals <span
+class="math inline">\(-1\)</span> map to <span
+class="math inline">\(C\)</span>.)</em></p>
+<h3 id="3-b_vr_pred-vertical-right-directional">3. B_VR_PRED
+(Vertical-Right Directional)</h3>
+<p>Extrapolates trajectories at an angle of roughly 26.6 degrees to the
+right of vertical (<span class="math inline">\(\tan^{-1}(0.5)\)</span>).
+The equation branches on whether the ray intersects the top row or the
+left column:</p>
+<p><span class="math display">\[z = 2x - y\]</span></p>
+<p><span class="math display">\[P(x, y) =
+\begin{cases}
+(A_{x - (y \gg 1) - 1} + A_{x - (y \gg 1)}) \gg 1 &amp; \text{if } z =
+0, 2, 4, 6 \text{ and } z \ge 0 \\
+(A_{x - (y \gg 1) - 2} + 2A_{x - (y \gg 1) - 1} + A_{x - (y \gg 1)} + 2)
+\gg 2 &amp; \text{if } z = 1, 3, 5 \text{ and } z &gt; 0 \\
+(L_0 + 2C + A_0 + 2) \gg 2 &amp; \text{if } z = -1 \\
+(C + 2L_0 + L_1 + 2) \gg 2 &amp; \text{if } z = -2
+\end{cases}\]</span></p>
+<h3 id="4-b_vl_pred-vertical-left-directional">4. B_VL_PRED
+(Vertical-Left Directional)</h3>
+<p>Extrapolates trajectories at an angle of roughly 26.6 degrees to the
+left of vertical:</p>
+<p><span class="math display">\[P(x, y) =
+\begin{cases}
+(A_{x + (y \gg 1)} + A_{x + (y \gg 1) + 1} + 1) \gg 1 &amp; \text{if } y
+\text{ is even} \\
+(A_{x + (y \gg 1)} + 2A_{x + (y \gg 1) + 1} + A_{x + (y \gg 1) + 2} + 2)
+\gg 2 &amp; \text{if } y \text{ is odd}
+\end{cases}\]</span></p>
+<h3 id="5-b_hd_pred-horizontal-down-directional">5. B_HD_PRED
+(Horizontal-Down Directional)</h3>
+<p>Extrapolates trajectories at roughly 26.6 degrees below horizontal
+(<span class="math inline">\(\tan^{-1}(2)\)</span>). Using <span
+class="math inline">\(z = 2y - x\)</span>:</p>
+<p><span class="math display">\[P(x, y) =
+\begin{cases}
+(L_{y - (x \gg 1) - 1} + L_{y - (x \gg 1)}) \gg 1 &amp; \text{if } z =
+0, 2, 4 \text{ and } z \ge 0 \\
+(L_{y - (x \gg 1) - 2} + 2L_{y - (x \gg 1) - 1} + L_{y - (x \gg 1)} + 2)
+\gg 2 &amp; \text{if } z = 1, 3 \text{ and } z &gt; 0 \\
+(L_0 + 2C + A_0 + 2) \gg 2 &amp; \text{if } z = -1 \\
+(C + 2A_0 + A_1 + 2) \gg 2 &amp; \text{if } z = -2
+\end{cases}\]</span></p>
+<h3 id="6-b_hu_pred-horizontal-up-directional">6. B_HU_PRED
+(Horizontal-Up Directional)</h3>
+<p>Extrapolates trajectories upward toward the right from the left
+column:</p>
+<p><span class="math display">\[z = 2y + x\]</span></p>
+<p><span class="math display">\[P(x, y) =
+\begin{cases}
+(L_{y + (x \gg 1)} + L_{y + (x \gg 1) + 1} + 1) \gg 1 &amp; \text{if } z
+= 0, 2, 4 \\
+(L_{y + (x \gg 1)} + 2L_{y + (x \gg 1) + 1} + L_{y + (x \gg 1) + 2} + 2)
+\gg 2 &amp; \text{if } z = 1, 3 \\
+L_3 &amp; \text{if } z \ge 5
+\end{cases}\]</span></p>
+<hr />
+<h2 id="arithmetic-characteristics-and-implementation">Arithmetic
+Characteristics and Implementation</h2>
+<p>All VP8 prediction equations are constrained to power-of-two
+divisions implemented via right-shift bitwise operations (<span
+class="math inline">\(\gg\)</span>). The 3-tap smoothing filters rely on
+the kernel coefficients <span class="math inline">\([1, 2, 1]\)</span>,
+which are implemented as:</p>
+<p><span class="math display">\[f(u, v, w) = (u + (v \ll 1) + w + 2) \gg
+2\]</span></p>
+<p>The addition of the constant offset (<span
+class="math inline">\(2\)</span> or <span
+class="math inline">\(1\)</span>) prior to shifting implements
+round-half-up integer division. This structure eliminates floating-point
+indeterminism, guarantees identical decoding across different hardware
+platforms, and allows parallel execution using single-instruction
+multiple-data (SIMD) vector registers.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

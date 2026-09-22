@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why JPEG XR Lost to Google WebP - webp</title>
+    <meta name="description" content="In the late 2000s and early 2010s, both Microsoft and Google attempted to replace the aging standard JPEG format with modern alternatives: Microsoft introduced JPEG XR, while Google developed WebP. Despite JPEG XR offering impressive compression efficien">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-jpeg-xr-lost-to-google-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why JPEG XR Lost to Google WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-jpeg-xr-lost-to-google-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="In the late 2000s and early 2010s, both Microsoft and Google attempted to replace the aging standard JPEG format with modern alternatives: Microsoft introduced JPEG XR, while Google developed WebP. Despite JPEG XR offering impressive compression efficien" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-jpeg-xr-lost-to-google-webp">Why JPEG XR Lost to Google
+WebP</h1>
+<p>In the late 2000s and early 2010s, both Microsoft and Google
+attempted to replace the aging standard JPEG format with modern
+alternatives: Microsoft introduced JPEG XR, while Google developed WebP.
+Despite JPEG XR offering impressive compression efficiency and
+high-dynamic-range support, it failed to secure commercial momentum and
+was ultimately eclipsed by WebP. This outcome was primarily driven by
+Google’s control over the modern web ecosystem, open-source licensing
+advantages, superior platform reach, and WebP’s direct alignment with
+web performance needs.</p>
+<h3 id="open-source-accessibility-vs-proprietary-perception">Open-Source
+Accessibility vs. Proprietary Perception</h3>
+<p>Google released WebP under a permissive BSD-style free software
+license, providing ready-to-use, open-source reference implementations
+(<code>libwebp</code>) for developers and webmasters. This encouraged
+immediate experimentation and integration into third-party tools,
+content delivery networks (CDNs), and graphics software. Conversely,
+even though Microsoft standardized JPEG XR through the ITU-T and
+ISO/IEC, the format originated as Windows Media Photo (HD Photo). It
+carried the lingering perception of being tied to Microsoft’s
+proprietary ecosystem and patent landscape, which generated hesitation
+within open-source and cross-platform communities.</p>
+<h3 id="browser-dominance-and-cross-platform-reach">Browser Dominance
+and Cross-Platform Reach</h3>
+<p>Format adoption on the web relies entirely on client support. Google
+leveraged the meteoric rise of the Chrome browser and the Android mobile
+operating system to deploy native WebP decoding to billions of endpoints
+rapidly. Microsoft, on the other hand, confined JPEG XR support largely
+to Internet Explorer, early versions of Microsoft Edge, and the Windows
+desktop environment. Because JPEG XR was never natively adopted by Apple
+(Safari/iOS) or Mozilla (Firefox), and lacked an aggressive push onto
+mobile operating systems, web developers could not rely on it as a
+universal format without complex fallbacks.</p>
+<h3 id="purpose-built-for-web-performance">Purpose-Built for Web
+Performance</h3>
+<p>JPEG XR was engineered with professional digital photography,
+high-end printing, and high-bit-depth color spaces (such as HDR) in
+mind. While technically capable, its primary strengths did not solve the
+most pressing problems of the web. In contrast, WebP was explicitly
+built to accelerate web page loading speeds. Derived from the VP8 video
+codec, WebP combined lossy compression with features that web designers
+critically needed: 24-bit color with 8-bit alpha transparency (providing
+a lightweight alternative to heavy PNG files) and animation support to
+challenge the inefficient GIF format.</p>
+<h3 id="first-party-ecosystem-leverage">First-Party Ecosystem
+Leverage</h3>
+<p>Google actively validated WebP's viability by deploying it across its
+own massive web properties, including the Google Play Store, YouTube
+image thumbnails, and the Picasa/Google Photos ecosystem. By proving
+substantial bandwidth and cost savings at enterprise scale, Google
+compelled major CDNs like Cloudflare to automate WebP conversion for
+websites worldwide. Microsoft did not apply equivalent pressure across
+its consumer-facing web services to force industry adoption.</p>
+<h3 id="the-final-transition">The Final Transition</h3>
+<p>The commercial contest effectively ended when Microsoft abandoned its
+proprietary EdgeHTML engine in 2019 to rebuild Microsoft Edge on
+Google's open-source Chromium codebase. With that architectural
+transition, Microsoft adopted native support for WebP while effectively
+deprecating JPEG XR as a web standard.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

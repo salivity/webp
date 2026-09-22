@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decoding Long Animated WebP Loops: Memory Limits - webp</title>
+    <meta name="description" content="Decoding very long or infinitely looping animated WebP files introduces severe memory bottlenecks primarily driven by uncompressed frame caching, complex canvas compositing, and memory retention in decoding engines. Because WebP decoders must expand comp">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/decoding-long-animated-web-p-loops-memory-limits">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Decoding Long Animated WebP Loops: Memory Limits - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/decoding-long-animated-web-p-loops-memory-limits" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Decoding very long or infinitely looping animated WebP files introduces severe memory bottlenecks primarily driven by uncompressed frame caching, complex canvas compositing, and memory retention in decoding engines. Because WebP decoders must expand comp" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="decoding-long-animated-webp-loops-memory-limits">Decoding Long
+Animated WebP Loops: Memory Limits</h1>
+<p>Decoding very long or infinitely looping animated WebP files
+introduces severe memory bottlenecks primarily driven by uncompressed
+frame caching, complex canvas compositing, and memory retention in
+decoding engines. Because WebP decoders must expand compressed frames
+into raw pixel arrays in memory while maintaining previous states for
+delta decoding, long-running loops frequently encounter memory
+exhaustion, garbage collection delays, and process termination on
+constrained devices.</p>
+<h3 id="uncompressed-raw-bitmap-expansion">Uncompressed Raw Bitmap
+Expansion</h3>
+<p>WebP achieves superior file compression by saving deltas—only the
+pixel changes between frames—rather than full images. However, when a
+browser or native decoder renders these frames, it must unpack them into
+uncompressed 32-bit RGBA bitmapped memory. A single 1080p frame requires
+roughly 8.3 MB of raw RAM (1920 × 1080 × 4 bytes). If an animated WebP
+runs for hundreds or thousands of frames and the decoding pipeline
+chooses to cache decoded frames to maintain high frame rates, the memory
+footprint increases rapidly into gigabytes, quickly leading to
+out-of-memory (OOM) errors.</p>
+<h3 id="frame-disposal-and-multi-buffer-overhead">Frame Disposal and
+Multi-Buffer Overhead</h3>
+<p>WebP supports different disposal methods, such as keeping the current
+frame, clearing to the background color, or restoring to the previous
+frame state. Handling these states requires the decoder to maintain
+multiple canvas buffers simultaneously:</p>
+<ul>
+<li><strong>The Render Buffer:</strong> The current frame displayed to
+the user.</li>
+<li><strong>The Canvas Buffer:</strong> The working area where the next
+frame's deltas are composited.</li>
+<li><strong>The Restore Buffer:</strong> A snapshot of an earlier canvas
+state preserved specifically for "restore to previous" operations.</li>
+</ul>
+<p>In long-running animations with alternating disposal techniques,
+retaining these auxiliary buffers prevents memory from being freed
+between frames, creating an elevated baseline memory floor.</p>
+<h3 id="caching-strategies-ram-exhaustion-vs-cpu-throttling">Caching
+Strategies: RAM Exhaustion vs. CPU Throttling</h3>
+<p>Decoders typically implement one of two strategies, both presenting
+distinct limitations in long loops:</p>
+<ol type="1">
+<li><strong>Full Frame Caching:</strong> The engine decodes the entire
+loop once and retains all raw frames in memory so subsequent loop
+iterations use zero CPU. On long animations, this causes sudden memory
+spikes that trigger browser tab crashes or device memory warnings.</li>
+<li><strong>Streaming / Real-Time Decoding:</strong> The engine drops
+past frames and decodes deltas on the fly. While this caps memory usage
+to a few frame buffers, it requires constant CPU/GPU cycles. In long
+loops, sustained computational load causes thermal throttling, which can
+result in frame drops and buffer desynchronization.</li>
+</ol>
+<h3 id="loop-reset-and-garbage-collection-deficits">Loop Reset and
+Garbage Collection Deficits</h3>
+<p>When an animated WebP completes a cycle and restarts, the decoder
+must reset the canvas state cleanly. In many browser rendering engines
+(such as Blink and WebKit), frame allocation and deallocation occur
+across thread boundaries. If the decoder generates new frame allocations
+faster than the JavaScript engine or underlying renderer runs its
+garbage collection cycles, memory accumulates across loop iterations.
+This creates a pseudo-memory leak where the loop gradually consumes more
+system memory with every repetition until the browser forces a context
+reset or crashes the rendering process.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF Disposal Method to Retain Frame Content - webp</title>
+    <meta name="description" content="This article explains how frame disposal methods function in animated graphics formats like GIF and APNG, specifically identifying the method responsible for keeping a frame's visual content visible beneath subsequent frames. Understanding these methods">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/gif-disposal-method-to-retain-frame-content">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="GIF Disposal Method to Retain Frame Content - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/gif-disposal-method-to-retain-frame-content" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how frame disposal methods function in animated graphics formats like GIF and APNG, specifically identifying the method responsible for keeping a frame's visual content visible beneath subsequent frames. Understanding these methods" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="gif-disposal-method-to-retain-frame-content">GIF Disposal Method
+to Retain Frame Content</h1>
+<p>This article explains how frame disposal methods function in animated
+graphics formats like GIF and APNG, specifically identifying the method
+responsible for keeping a frame's visual content visible beneath
+subsequent frames. Understanding these methods is essential for
+optimizing file sizes and controlling visual rendering in multi-frame
+animations.</p>
+<h2 id="the-disposal-method-do-not-dispose">The Disposal Method: "Do Not
+Dispose"</h2>
+<p>The disposal method that retains the current frame content beneath
+the succeeding frame is officially designated as <strong>"Do Not
+Dispose"</strong> (also referred to as <strong>Disposal Method
+1</strong> or <strong>"Leave in Place"</strong> in various graphic
+editing software).</p>
+<p>When an animation encoder sets a frame to "Do Not Dispose," the
+rendering engine does not clear the pixels of that frame when advancing
+to the next one. Instead, the graphic remains on the canvas, and the
+subsequent frame is drawn directly over it.</p>
+<h2 id="how-do-not-dispose-works">How "Do Not Dispose" Works</h2>
+<p>In graphic formats like GIF89a and APNG, each frame contains a
+Graphic Control Extension block that dictates how the frame should be
+treated once its display duration expires.</p>
+<p>The standard disposal methods are defined by numerical values:</p>
+<ul>
+<li><strong>0 - No Disposal Specified:</strong> The decoder is not
+instructed on how to handle the frame, often defaulting to leaving the
+graphic in place.</li>
+<li><strong>1 - Do Not Dispose:</strong> The current frame remains
+intact on the display canvas. Any pixels in the succeeding frame are
+layered directly on top of the existing pixels.</li>
+<li><strong>2 - Restore to Background:</strong> The area used by the
+current frame is cleared back to the background color or transparent
+canvas before the next frame is rendered.</li>
+<li><strong>3 - Restore to Previous:</strong> The canvas reverts to
+whatever content existed before the current frame was drawn.</li>
+</ul>
+<p>When Method 1 is applied, any transparent pixels in the succeeding
+frame allow the content of the current frame to remain visible
+underneath.</p>
+<h2 id="practical-uses-for-do-not-dispose">Practical Uses for "Do Not
+Dispose"</h2>
+<p>The primary application of the "Do Not Dispose" method is animation
+optimization.</p>
+<ol type="1">
+<li><strong>Cumulative Animation:</strong> It enables incremental
+building of an image, where each new frame only adds small elements
+(like text appearing letter by letter) without redrawing the entire
+screen.</li>
+<li><strong>Static Backgrounds:</strong> A static background can be
+rendered once in the first frame using "Do Not Dispose." Subsequent
+frames only need to render the moving elements with transparent
+backgrounds, drastically reducing file size because unchanged pixel data
+does not need to be repeated.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

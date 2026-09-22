@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Lossy Alpha Channel Visual Artifacts - webp</title>
+    <meta name="description" content="Applying lossy compression to the alpha channel in WebP images dramatically decreases file size, but it does so by discarding transparency precision. While standard WebP images often pair lossy RGB color channels with a lossless alpha channel, forcing lo">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-lossy-alpha-channel-visual-artifacts">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Lossy Alpha Channel Visual Artifacts - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-lossy-alpha-channel-visual-artifacts" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Applying lossy compression to the alpha channel in WebP images dramatically decreases file size, but it does so by discarding transparency precision. While standard WebP images often pair lossy RGB color channels with a lossless alpha channel, forcing lo" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-lossy-alpha-channel-visual-artifacts">WebP Lossy Alpha
+Channel Visual Artifacts</h1>
+<p>Applying lossy compression to the alpha channel in WebP images
+dramatically decreases file size, but it does so by discarding
+transparency precision. While standard WebP images often pair lossy RGB
+color channels with a lossless alpha channel, forcing lossy compression
+onto transparency introduces distinct visual defects. These issues
+primarily manifest around silhouette borders, soft drop shadows, and
+delicate semi-transparent gradients, creating noticeable quality
+degradation across user interfaces and graphic assets.</p>
+<h3 id="edge-halos-and-color-fringing">Edge Halos and Color
+Fringing</h3>
+<p>The most prominent artifact caused by lossy alpha compression is
+fringing or haloing along high-contrast boundaries. Because lossy
+compression shifts the spatial boundaries of the transparency mask, the
+edge pixels may not align perfectly with the RGB color data underneath.
+This misalignment frequently samples the "hidden" color data stored in
+fully transparent pixels—often pure black or pure white—creating an
+unsightly light or dark outline around cutouts and icons placed against
+contrasting backgrounds.</p>
+<h3 id="banding-in-smooth-transparency-gradients">Banding in Smooth
+Transparency Gradients</h3>
+<p>Lossy alpha encoding heavily quantizes opacity values, reducing the
+number of intermediate alpha states. When applied to assets featuring
+subtle drops, glows, smoke, or glass effects, the smooth transition from
+opaque to transparent breaks down into stepped, visible layers. This
+phenomenon, known as posterization or alpha banding, replaces smooth
+falloffs with harsh, distinct lines that ruin the illusion of soft light
+or depth.</p>
+<h3 id="ringing-and-high-frequency-ripples">Ringing and High-Frequency
+Ripples</h3>
+<p>Like lossy JPEG and lossy WebP color processing, lossy alpha
+compression relies on transform-based techniques (such as DCT
+approximations) to discard high-frequency data. Sharp transitions—such
+as crisp text outlines, geometric vector shapes, or hard cutouts—trigger
+high-frequency oscillations known as ringing artifacts. This results in
+faint, ghost-like ripples or repeated contours that echo outward into
+the surrounding transparent space.</p>
+<h3 id="blockiness-and-macroblocking">Blockiness and Macroblocking</h3>
+<p>At low alpha quality settings, WebP's sub-block encoding becomes
+visible within the transparency layer. Soft fades and semi-transparent
+fills can fracture into square, checkerboard-like macroblocks (typically
+4x4 pixel grids). Instead of a uniform semi-opaque surface, the image
+displays uneven patches of varying opacity, particularly noticeable
+against solid, high-contrast backgrounds.</p>
+<h3 id="detail-erosion-and-inconsistent-cutouts">Detail Erosion and
+Inconsistent Cutouts</h3>
+<p>Delicate transparency details—such as individual strands of hair,
+complex foliage, wireframes, and sub-pixel anti-aliasing on
+typography—are treated as high-frequency noise by lossy compression
+algorithms. Consequently, these elements are smoothed away or completely
+erased. The result is an eroded, blunt silhouette where fine edges
+appear chewed up, blurry, or disconnected from the main graphic.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

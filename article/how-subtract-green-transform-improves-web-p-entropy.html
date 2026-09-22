@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Subtract Green Transform Improves WebP Entropy - webp</title>
+    <meta name="description" content="The subtract green transform in WebP lossless compression is a decorrelation technique that drastically reduces cross-channel redundancy in RGB images. By subtracting the green channel's values from both the red and blue channels, it shifts the statistic">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-subtract-green-transform-improves-web-p-entropy">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Subtract Green Transform Improves WebP Entropy - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-subtract-green-transform-improves-web-p-entropy" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The subtract green transform in WebP lossless compression is a decorrelation technique that drastically reduces cross-channel redundancy in RGB images. By subtracting the green channel's values from both the red and blue channels, it shifts the statistic" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-subtract-green-transform-improves-webp-entropy">How Subtract
+Green Transform Improves WebP Entropy</h1>
+<p>The subtract green transform in WebP lossless compression is a
+decorrelation technique that drastically reduces cross-channel
+redundancy in RGB images. By subtracting the green channel's values from
+both the red and blue channels, it shifts the statistical distribution
+of color data toward zero. This concentration of values reduces the
+dynamic range and overall Shannon entropy of the image data, enabling
+subsequent entropy coding stages—such as LZ77 dictionary coding and
+Huffman coding—to compress the file significantly more efficiently.</p>
+<h3 id="eliminating-inter-channel-correlation">Eliminating Inter-Channel
+Correlation</h3>
+<p>Natural images exhibit a high degree of correlation between their
+color channels. Because the human visual system is most sensitive to
+green wavelengths, cameras and image sensors capture the majority of
+luminance and fine structural detail within the green channel.
+Consequently, variations in brightness or texture usually manifest
+simultaneously across red, green, and blue. Storing raw RGB values
+independently wastes space by encoding this shared structural
+information three separate times.</p>
+<h3 id="the-mathematics-of-the-transform">The Mathematics of the
+Transform</h3>
+<p>To remove this redundancy, WebP applies a reversible, lossless
+transformation before running its entropy coding pipeline. The operation
+computes new red (<span class="math inline">\(R&#39;\)</span>) and blue
+(<span class="math inline">\(B&#39;\)</span>) values by subtracting the
+green value (<span class="math inline">\(G\)</span>) modulo 256:</p>
+<ul>
+<li><span class="math inline">\(R&#39; = (R - G)
+\pmod{256}\)</span></li>
+<li><span class="math inline">\(G&#39; = G\)</span></li>
+<li><span class="math inline">\(B&#39; = (B - G)
+\pmod{256}\)</span></li>
+</ul>
+<p>Because the transformation is modular arithmetic, it is completely
+reversible on decoding:</p>
+<ul>
+<li><span class="math inline">\(R = (R&#39; + G)
+\pmod{256}\)</span></li>
+<li><span class="math inline">\(B = (B&#39; + G)
+\pmod{256}\)</span></li>
+</ul>
+<h3 id="impact-on-probability-distribution-and-entropy">Impact on
+Probability Distribution and Entropy</h3>
+<p>Entropy coding algorithms compress data by assigning shorter
+bit-lengths to symbols that appear frequently and longer bit-lengths to
+rare symbols. The fundamental limit of this compression is defined by
+Shannon entropy: a flatter, uniform distribution of values has high
+entropy (difficult to compress), while a distribution with sharp peaks
+has low entropy (easy to compress).</p>
+<p>In standard RGB images, red and blue values are spread across the
+full 0–255 range. When green is subtracted, the difference between
+correlated channels is usually very small. As a result, the values of
+<span class="math inline">\(R&#39;\)</span> and <span
+class="math inline">\(B&#39;\)</span> cluster heavily around zero (or
+255 due to wrap-around). This collapse of the probability distribution
+drastically lowers the entropy of the red and blue channels.</p>
+<h3 id="boosting-lz77-and-huffman-coding-performance">Boosting LZ77 and
+Huffman Coding Performance</h3>
+<p>WebP lossless compression relies on a combination of LZ77
+sliding-dictionary matching, prefix (Huffman) coding, and a local color
+cache. The subtract green transform directly benefits these
+mechanisms:</p>
+<ol type="1">
+<li><strong>Enhanced LZ77 String Matches:</strong> Because pixel
+differences become uniform across flat or textured areas, repetitive
+byte sequences occur much more frequently. The LZ77 algorithm can locate
+longer, more frequent backward references across image scanlines.</li>
+<li><strong>Optimal Prefix Coding:</strong> Canonical Huffman codes
+yield the shortest prefixes for the most common symbols. With <span
+class="math inline">\(R&#39;\)</span> and <span
+class="math inline">\(B&#39;\)</span> values heavily biased toward zero,
+the entropy encoder can assign extremely short bit-codes to the dominant
+differences, substantially shrinking the final bitstream.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

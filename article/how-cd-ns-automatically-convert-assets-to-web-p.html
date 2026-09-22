@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How CDNs Automatically Convert Assets to WebP - webp</title>
+    <meta name="description" content="Modern Content Delivery Networks (CDNs) automatically convert traditional images like JPEGs and PNGs into the WebP format at the edge to significantly reduce file sizes and improve page load times. This process involves inspecting incoming browser reques">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-cd-ns-automatically-convert-assets-to-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How CDNs Automatically Convert Assets to WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-cd-ns-automatically-convert-assets-to-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern Content Delivery Networks (CDNs) automatically convert traditional images like JPEGs and PNGs into the WebP format at the edge to significantly reduce file sizes and improve page load times. This process involves inspecting incoming browser reques" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-cdns-automatically-convert-assets-to-webp">How CDNs
+Automatically Convert Assets to WebP</h1>
+<p>Modern Content Delivery Networks (CDNs) automatically convert
+traditional images like JPEGs and PNGs into the WebP format at the edge
+to significantly reduce file sizes and improve page load times. This
+process involves inspecting incoming browser request headers,
+dynamically transcoding images using edge compute functions or dedicated
+media processing engines upon a cache miss, and caching the newly
+generated WebP file globally for future requests.</p>
+<h3 id="1-browser-capability-detection">1. Browser Capability
+Detection</h3>
+<p>The process begins when a browser requests an image from the CDN.
+During the HTTP handshake, the client sends an <code>Accept</code>
+request header indicating the media formats it supports. If the browser
+supports modern formats, the header typically includes
+<code>image/webp</code>. The CDN edge server inspects this header before
+deciding how to handle the asset.</p>
+<h3 id="2-edge-cache-inspection">2. Edge Cache Inspection</h3>
+<p>Once the CDN recognizes that the client supports WebP, it checks its
+local edge cache. Because CDNs utilize the <code>Vary: Accept</code>
+HTTP response header (or normalize cache keys based on format support),
+the edge maintains separate cached versions of the same URL for
+different formats.</p>
+<ul>
+<li><strong>Cache Hit:</strong> If the WebP version already exists in
+the edge cache, the CDN serves it immediately with zero computation
+latency.</li>
+<li><strong>Cache Miss:</strong> If the WebP asset is not present, the
+CDN initiates the on-the-fly conversion pipeline.</li>
+</ul>
+<h3 id="3-fetching-the-origin-asset">3. Fetching the Origin Asset</h3>
+<p>Upon a cache miss, the edge server retrieves the original master
+image—usually a high-resolution JPEG, PNG, or TIFF—either from its local
+storage, a regional tier cache, or the origin server.</p>
+<h3 id="4-just-in-time-jit-transcoding">4. Just-In-Time (JIT)
+Transcoding</h3>
+<p>Once the origin asset is retrieved, the CDN routes the image data to
+an on-the-fly transformation engine. Depending on the CDN architecture,
+this is executed by integrated image optimization services (such as
+Cloudflare Image Optimization or Fastly Image Optimizer) or serverless
+edge computing functions (such as AWS Lambda@Edge).</p>
+<p>The engine decodes the source image into raw pixel data in memory and
+applies modern compression algorithms using libraries like
+<code>libwebp</code>. During this phase, the CDN often strips
+unnecessary EXIF metadata, normalizes color profiles, and applies
+perceptual lossy compression algorithms to achieve the optimal balance
+between file size and visual fidelity.</p>
+<h3 id="5-caching-and-serving-the-converted-file">5. Caching and Serving
+the Converted File</h3>
+<p>After transcoding, the edge server saves the resulting WebP file into
+its cache to ensure that subsequent requests from compatible browsers
+are served instantly without re-processing. The server then responds to
+the client, delivering the image with the header
+<code>Content-Type: image/webp</code> along with appropriate
+<code>Vary: Accept</code> and <code>Cache-Control</code> headers so
+downstream intermediate proxies and client browsers handle the caching
+correctly.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

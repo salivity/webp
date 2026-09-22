@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Dithering Techniques for High-Depth Images - webp</title>
+    <meta name="description" content="Converting high-bit-depth images—such as 10-bit, 12-bit, or 16-bit raw and HDR assets—into the WebP format requires truncating color data to an 8-bit per channel depth. This downsampling process frequently produces visible color banding and posteriza">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-dithering-techniques-for-high-depth-images">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Dithering Techniques for High-Depth Images - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-dithering-techniques-for-high-depth-images" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Converting high-bit-depth images—such as 10-bit, 12-bit, or 16-bit raw and HDR assets—into the WebP format requires truncating color data to an 8-bit per channel depth. This downsampling process frequently produces visible color banding and posteriza" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-dithering-techniques-for-high-depth-images">WebP Dithering
+Techniques for High-Depth Images</h1>
+<p>Converting high-bit-depth images—such as 10-bit, 12-bit, or 16-bit
+raw and HDR assets—into the WebP format requires truncating color data
+to an 8-bit per channel depth. This downsampling process frequently
+produces visible color banding and posterization across smooth
+gradients. To preserve perceptual fidelity, conversion pipelines employ
+various dithering techniques, including error diffusion, ordered
+dithering, blue noise masking, and colorspace-specific dithering.</p>
+<h3 id="the-downsampling-challenge-in-webp">The Downsampling Challenge
+in WebP</h3>
+<p>Standard WebP supports only 8-bit precision—8-bit RGBA for lossless
+encoding and 8-bit YUV 4:2:0 for lossy encoding. When an asset with a
+wider gamut or higher bit depth is clamped down to 256 levels per
+channel, continuous tones (like skies or shadows) exhibit harsh stepped
+boundaries. Dithering counters this by intentionally introducing
+high-frequency noise that distributes quantization errors across
+adjacent pixels, tricking the human visual system into perceiving a
+smoother transition.</p>
+<h3 id="error-diffusion-dithering">Error Diffusion Dithering</h3>
+<p>Error diffusion is the most prevalent dynamic dithering approach used
+when targeting WebP.</p>
+<ul>
+<li><strong>Floyd-Steinberg:</strong> The industry standard algorithm
+scans pixels sequentially and pushes the quantization error of the
+current pixel to neighboring, unprocessed pixels using fractional
+weights (7/16 to the right, 3/16 to the lower-left, 5/16 directly below,
+and 1/16 to the lower-right). It yields organic-looking transitions with
+minimal patterned artifacts.</li>
+<li><strong>Atkinson Dithering:</strong> A variant that diffuses only
+three-quarters of the total error, leaving some error unassigned. This
+produces cleaner, less noisy regions in flat fields, though it can
+sacrifice subtle shadow detail compared to standard
+Floyd-Steinberg.</li>
+<li><strong>libwebp Implementation:</strong> In the standard
+<code>cwebp</code> encoder, the <code>-dither</code> parameter regulates
+error diffusion during RGB-to-YUV downsampling. Users can set an
+intensity value from 0 (off) to 100 (maximum strength) to mitigate
+banding along edge boundaries without introducing excessive noise that
+hurts compression efficiency.</li>
+</ul>
+<h3 id="ordered-dithering">Ordered Dithering</h3>
+<p>Ordered dithering calculates threshold values using deterministic,
+repeating spatial matrices (commonly Bayer matrices of size 4x4 or
+8x8).</p>
+<ul>
+<li><strong>Mechanism:</strong> The conversion tool tests the high-depth
+input pixel against the normalized value within the matrix grid to
+determine whether to round up or down to the nearest 8-bit value.</li>
+<li><strong>Performance:</strong> Because it requires no feedback loop
+or error propagation, ordered dithering is computationally fast and
+highly parallelizable.</li>
+<li><strong>Trade-off:</strong> It introduces cross-hatch or
+checkerboard patterns. While these geometric patterns are predictable,
+they compress more efficiently with lossy WebP’s discrete cosine
+transform (DCT) blocks than the pseudorandom noise generated by error
+diffusion.</li>
+</ul>
+<h3 id="blue-noise-masking">Blue Noise Masking</h3>
+<p>Blue noise dithering employs precomputed masks containing
+high-frequency noise distributions with no low-frequency energy.</p>
+<ul>
+<li><strong>Visual Superiority:</strong> Unlike white noise, which
+causes noticeable clumping and grain in smooth gradients, blue noise
+disperses the dots evenly.</li>
+<li><strong>Gradient Retention:</strong> When converting high-depth
+assets to WebP, blue noise masks simulate intermediate tones without the
+directional sweeping artifacts of Floyd-Steinberg or the rigid grids of
+Bayer dithering. It provides optimal visual smoothing while maintaining
+edge sharpness.</li>
+</ul>
+<h3 id="chroma-subsampling-and-yuv-quantization">Chroma Subsampling and
+YUV Quantization</h3>
+<p>Lossy WebP relies on VP8 video encoding primitives, which convert RGB
+to the YUV colorspace and downsample the chroma channels to half
+resolution (YUV 4:2:0).</p>
+<ul>
+<li><strong>Plane-Specific Dithering:</strong> Advanced pre-processing
+pipelines apply dithering independently to the luma (<span
+class="math inline">\(Y\)</span>) and chroma (<span
+class="math inline">\(U, V\)</span>) planes. Because the human eye is
+significantly less sensitive to spatial frequency in color than in
+brightness, aggressive dithering is prioritized on the luma plane, while
+softer dithering or filtering is applied to the chroma channels.</li>
+<li><strong>Pre-Quantization:</strong> Applying dithering strictly
+during the high-depth RGB-to-RGB-8 conversion can cause artifacts to be
+magnified during the subsequent RGB-to-YUV 4:2:0 conversion. Encoders
+that incorporate dithering directly into the YUV conversion phase
+achieve substantially better gradient coherence.</li>
+</ul>
+<h3 id="compression-considerations">Compression Considerations</h3>
+<p>Dithering inevitably introduces high-frequency variations that
+increase spatial entropy. In WebP encoding, excessive dithering forces
+the encoder to allocate higher bitrates to encode the noise, which can
+degrade overall compression ratios or cause the lossy encoder to smooth
+the noise away entirely at lower quality settings. Consequently, optimal
+pipelines apply dithering conservatively, targeting only low-variance
+areas prone to posterization.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

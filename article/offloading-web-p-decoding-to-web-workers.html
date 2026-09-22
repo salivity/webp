@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offloading WebP Decoding to Web Workers - webp</title>
+    <meta name="description" content="Offloading WebP image decoding to background web workers frees the browser's main thread from resource-intensive image decompression, directly eliminating interface lag and stutter. By handling network fetching, byte parsing, and pixel decompression with">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/offloading-web-p-decoding-to-web-workers">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Offloading WebP Decoding to Web Workers - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/offloading-web-p-decoding-to-web-workers" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Offloading WebP image decoding to background web workers frees the browser's main thread from resource-intensive image decompression, directly eliminating interface lag and stutter. By handling network fetching, byte parsing, and pixel decompression with" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="offloading-webp-decoding-to-web-workers">Offloading WebP
+Decoding to Web Workers</h1>
+<p>Offloading WebP image decoding to background web workers frees the
+browser's main thread from resource-intensive image decompression,
+directly eliminating interface lag and stutter. By handling network
+fetching, byte parsing, and pixel decompression within an isolated
+worker context, web applications can prepare graphical assets
+asynchronously. The main thread is then left unimpeded to process user
+interactions, handle JavaScript execution, and render layout changes,
+resulting in lower input latency and significantly improved Core Web
+Vitals.</p>
+<h2 id="the-main-thread-bottleneck">The Main Thread Bottleneck</h2>
+<p>The browser main thread is single-threaded, meaning it handles DOM
+manipulation, style recalculations, layout, script execution, and user
+input events sequentially. When an application loads multiple
+high-resolution WebP images simultaneously, the browser must decode
+compressed image data into raw RGBA bitmaps before painting them.</p>
+<p>WebP uses predictive coding and entropy encoding to achieve high
+compression ratios, requiring non-trivial CPU work during decompression.
+Executing this decoding pipeline directly on the main thread causes:</p>
+<ul>
+<li><strong>Frame Drops (Jank):</strong> Long-running decoding
+operations exceed the browser's per-frame budget (16.6ms for 60Hz
+displays), halting ongoing animations and scrolling.</li>
+<li><strong>Elevated Total Blocking Time (TBT):</strong> The thread
+becomes unresponsive to queued tasks while processing compressed
+streams.</li>
+<li><strong>Degraded Interaction to Next Paint (INP):</strong> Tap,
+click, and keyboard inputs are delayed because the main thread cannot
+service event listeners until the decoding task completes.</li>
+</ul>
+<h2 id="how-web-workers-alleviate-the-load">How Web Workers Alleviate
+the Load</h2>
+<p>Web Workers execute JavaScript in isolated operating system threads
+separate from the main execution context. Moving WebP decoding off the
+main thread isolates the computationally heavy decompression phase.</p>
+<p>In an offloaded architecture:</p>
+<ol type="1">
+<li>The main thread or the worker initiates the network fetch for the
+raw WebP asset as an <code>ArrayBuffer</code> or <code>Blob</code>.</li>
+<li>The Web Worker receives the compressed binary data.</li>
+<li>The worker handles parsing and decompression in the background.</li>
+<li>The decoded result is passed back to the main thread ready for
+immediate rendering, entirely bypassing main-thread decode spikes.</li>
+</ol>
+<h2 id="mechanisms-for-off-thread-webp-decoding">Mechanisms for
+Off-Thread WebP Decoding</h2>
+<h3 id="native-decoding-with-createimagebitmap">Native Decoding with
+<code>createImageBitmap</code></h3>
+<p>The most efficient method to decode WebP off-thread is using the
+<code>createImageBitmap()</code> API, which is supported inside Web
+Worker contexts. When invoked with a WebP <code>Blob</code>,
+<code>createImageBitmap()</code> executes image parsing and pixel
+conversion directly in the background:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Inside the Web Worker</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>self<span class="op">.</span><span class="at">onmessage</span> <span class="op">=</span> <span class="kw">async</span> (<span class="bu">event</span>) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> imageBlob <span class="op">=</span> <span class="bu">event</span><span class="op">.</span><span class="at">data</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> imageBitmap <span class="op">=</span> <span class="cf">await</span> <span class="fu">createImageBitmap</span>(imageBlob)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  self<span class="op">.</span><span class="fu">postMessage</span>({ imageBitmap }<span class="op">,</span> [imageBitmap])<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<p>This API optimizes memory allocation and prepares the image surface
+off the main thread.</p>
+<h3 id="webassembly-wasm-port-of-libwebp">WebAssembly (Wasm) Port of
+libwebp</h3>
+<p>For specialized processing—such as client-side dynamic resizing,
+cropping, or handling fallback environments—developers can compile
+<code>libwebp</code> to WebAssembly and run it inside the worker. The
+worker accepts the raw binary, decodes it into a shared or transferable
+typed array (such as <code>Uint8ClampedArray</code>), and transmits the
+uncompressed pixel buffer without competing for interface resources.</p>
+<h2 id="efficient-data-transfer-via-transferable-objects">Efficient Data
+Transfer via Transferable Objects</h2>
+<p>Passing large objects between the worker and the main thread via
+standard messaging typically involves structured cloning, which creates
+memory copies and introduces serialization overhead.</p>
+<p>To prevent this overhead, off-thread decoding relies on
+<strong>Transferable Objects</strong>:</p>
+<ul>
+<li><strong><code>ImageBitmap</code> Transfer:</strong> Passing an
+<code>ImageBitmap</code> as a transfer item moves ownership of the
+underlying pixel memory to the main thread with near-zero latency.</li>
+<li><strong><code>OffscreenCanvas</code>:</strong> A worker can render
+the decoded image directly into an <code>OffscreenCanvas</code>. The
+visual output is then mirrored to a main-thread
+<code>&lt;canvas&gt;</code> element without requiring the main thread to
+process the pixel manipulation steps.</li>
+</ul>
+<h2 id="measurable-performance-impacts">Measurable Performance
+Impacts</h2>
+<p>Offloading WebP decompression delivers distinct performance
+improvements:</p>
+<ul>
+<li><strong>Lower Interaction to Next Paint (INP):</strong> User inputs
+are processed immediately because CPU cores handling decompression do
+not interrupt the event loop.</li>
+<li><strong>Consistent 60/120 FPS Rendering:</strong> Fluidity during
+scrolling, page transitions, and canvas updates is preserved since image
+decompression tasks are isolated from the layout and paint cycles.</li>
+<li><strong>Predictable Thread Scheduling:</strong> The main thread's
+task queue remains sparse, allowing high-priority user-interface tasks
+to clear without being preempted by asset pipelines.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

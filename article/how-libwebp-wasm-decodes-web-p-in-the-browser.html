@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How libwebp-wasm Decodes WebP in the Browser - webp</title>
+    <meta name="description" content="The libwebp-wasm library enables client-side WebP decoding by compiling Google’s official C-based libwebp library into WebAssembly (Wasm) using the Emscripten toolchain. This approach allows modern browsers to execute native decoding algorithms at near">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-libwebp-wasm-decodes-web-p-in-the-browser">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How libwebp-wasm Decodes WebP in the Browser - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-libwebp-wasm-decodes-web-p-in-the-browser" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The libwebp-wasm library enables client-side WebP decoding by compiling Google’s official C-based libwebp library into WebAssembly (Wasm) using the Emscripten toolchain. This approach allows modern browsers to execute native decoding algorithms at near" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-libwebp-wasm-decodes-webp-in-the-browser">How libwebp-wasm
+Decodes WebP in the Browser</h1>
+<p>The <code>libwebp-wasm</code> library enables client-side WebP
+decoding by compiling Google’s official C-based <code>libwebp</code>
+library into WebAssembly (Wasm) using the Emscripten toolchain. This
+approach allows modern browsers to execute native decoding algorithms at
+near-native speeds directly in JavaScript environments, converting
+compressed WebP binary data into raw RGBA pixel arrays that can be
+rendered using standard web APIs like the HTML5 Canvas.</p>
+<h3 id="compiling-native-c-to-webassembly">Compiling Native C to
+WebAssembly</h3>
+<p>The foundation of <code>libwebp-wasm</code> relies on Emscripten, an
+LLVM-to-WebAssembly compiler. The official <code>libwebp</code> decoder
+is written in highly optimized C. Rather than rewriting these complex
+lossy and lossless decompression algorithms in JavaScript—which would
+result in slower execution and potential compatibility quirks—Emscripten
+compiles the native source code into a <code>.wasm</code> binary
+alongside a lightweight JavaScript glue file. This glue code handles
+loading the Wasm module, binding functions, and managing execution
+lifecycles.</p>
+<h3 id="memory-allocation-and-data-transfer">Memory Allocation and Data
+Transfer</h3>
+<p>WebAssembly executes within a sandboxed environment that uses a
+linear memory model, represented on the JavaScript side as a resizable
+<code>ArrayBuffer</code>. When a client-side application fetches or
+receives a WebP image as a binary payload (<code>Blob</code>,
+<code>File</code>, or <code>Uint8Array</code>), it cannot pass this data
+directly into C memory space without preparation.</p>
+<ol type="1">
+<li><strong>Allocation:</strong> The JavaScript wrapper invokes
+Emscripten’s exported <code>malloc</code> function to reserve an
+appropriate segment of memory within the Wasm module’s linear heap.</li>
+<li><strong>Copying Data:</strong> The binary WebP data is copied from
+the JavaScript <code>Uint8Array</code> directly into the allocated heap
+space via a typed view of the Wasm memory
+(<code>Module.HEAPU8</code>).</li>
+</ol>
+<h3 id="executing-the-decoder">Executing the Decoder</h3>
+<p>Once the binary data resides in linear memory, the wrapper calls the
+exposed C functions of the <code>libwebp</code> API:</p>
+<ul>
+<li><strong>Header Inspection (<code>WebPGetInfo</code>):</strong> The
+library first parses the WebP bitstream header to extract the image’s
+metadata, verifying validity and obtaining its width and height.</li>
+<li><strong>Pixel Decompression (<code>WebPDecodeRGBA</code>):</strong>
+The library invokes the core decoding routine, allocating a secondary
+block of linear memory for the output buffer. The native algorithm
+unpacks the VP8 (lossy) or VP8L (lossless) compressed bitstream and
+writes the uncompressed, 32-bit RGBA pixel components sequentially into
+this output buffer.</li>
+</ul>
+<h3 id="extracting-and-rendering-pixel-data">Extracting and Rendering
+Pixel Data</h3>
+<p>After <code>WebPDecodeRGBA</code> finishes execution, the
+uncompressed RGBA data exists as a continuous block of bytes in the Wasm
+memory space. To display the image in the browser:</p>
+<ol type="1">
+<li><strong>View Creation:</strong> The JavaScript wrapper creates a
+<code>Uint8ClampedArray</code> view over the specific region of the Wasm
+heap containing the decoded RGBA pixels.</li>
+<li><strong>DOM Integration:</strong> This array is wrapped in an
+<code>ImageData</code> object using the dimensions previously retrieved.
+The <code>ImageData</code> is then painted onto an HTML5
+<code>&lt;canvas&gt;</code> element using
+<code>CanvasRenderingContext2D.putImageData()</code>, or converted into
+an <code>ImageBitmap</code> or <code>Blob</code> for flexible
+rendering.</li>
+<li><strong>Memory Cleanup:</strong> Finally, the wrapper invokes
+Emscripten’s <code>free</code> on both the input and output pointers in
+the Wasm heap to prevent client-side memory leaks.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

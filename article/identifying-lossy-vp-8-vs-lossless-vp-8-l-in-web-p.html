@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identifying Lossy VP8 vs Lossless VP8L in WebP - webp</title>
+    <meta name="description" content="A WebP parser determines whether an image contains lossy VP8 or lossless VP8L data by reading the Four-Character Codes (FourCC) embedded within the file’s Resource Interchange File Format (RIFF) container. Depending on whether the file uses a simple or">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/identifying-lossy-vp-8-vs-lossless-vp-8-l-in-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Identifying Lossy VP8 vs Lossless VP8L in WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/identifying-lossy-vp-8-vs-lossless-vp-8-l-in-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="A WebP parser determines whether an image contains lossy VP8 or lossless VP8L data by reading the Four-Character Codes (FourCC) embedded within the file’s Resource Interchange File Format (RIFF) container. Depending on whether the file uses a simple or" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="identifying-lossy-vp8-vs-lossless-vp8l-in-webp">Identifying
+Lossy VP8 vs Lossless VP8L in WebP</h1>
+<p>A WebP parser determines whether an image contains lossy VP8 or
+lossless VP8L data by reading the Four-Character Codes (FourCC) embedded
+within the file’s Resource Interchange File Format (RIFF) container.
+Depending on whether the file uses a simple or extended container
+format, the parser identifies specific chunk tags—specifically
+<code>"VP8 "</code> for lossy compression and <code>"VP8L"</code> for
+lossless compression—to route the payload to the correct decompression
+engine.</p>
+<h3 id="the-riff-container-basics">The RIFF Container Basics</h3>
+<p>Every standard WebP file begins with a 12-byte header:</p>
+<ol type="1">
+<li><strong>Bytes 0–3:</strong> The ASCII string
+<code>"RIFF"</code>.</li>
+<li><strong>Bytes 4–7:</strong> A 32-bit little-endian integer
+indicating the file size (minus 8 bytes).</li>
+<li><strong>Bytes 8–11:</strong> The ASCII string
+<code>"WEBP"</code>.</li>
+</ol>
+<p>Immediately following byte 11, the file contains sequential data
+chunks. Each chunk consists of a 4-byte FourCC identifier, a 4-byte
+little-endian payload size, and the actual payload. A WebP parser
+inspects this initial FourCC identifier to determine the file type.</p>
+<h3 id="simple-lossy-webp-vp8-">Simple Lossy WebP
+(<code>VP8 </code>)</h3>
+<p>In a simple lossy file, the chunk header immediately following the
+<code>"WEBP"</code> signature is <code>"VP8 "</code> (with an ASCII
+space character at the end, represented in hex as
+<code>0x56 0x50 0x38 0x20</code>).</p>
+<p>When a parser encounters <code>"VP8 "</code>:</p>
+<ul>
+<li>It recognizes that the payload is an encoded VP8 keyframe (derived
+from the VP8 video codec standard).</li>
+<li>It verifies the 10-byte VP8 frame header within the payload,
+checking for the 3-byte frame tag and the start code
+<code>0x9D 0x01 0x2A</code>.</li>
+<li>It routes the subsequent data to the lossy VP8 decoder.</li>
+</ul>
+<h3 id="simple-lossless-webp-vp8l">Simple Lossless WebP
+(<code>VP8L</code>)</h3>
+<p>In a simple lossless file, the chunk header immediately following the
+<code>"WEBP"</code> signature is <code>"VP8L"</code> (hex:
+<code>0x56 0x50 0x38 0x4C</code>).</p>
+<p>When a parser encounters <code>"VP8L"</code>:</p>
+<ul>
+<li>It identifies the stream as proprietary WebP lossless data, which
+uses spatial transform techniques, color transforms, entropy coding, and
+LZ77-based back-referencing.</li>
+<li>It verifies the stream’s 1-byte signature at the start of the
+payload, which must equal <code>0x2F</code>.</li>
+<li>It routes the payload directly to the VP8L decoder.</li>
+</ul>
+<h3 id="extended-webp-files-vp8x">Extended WebP Files
+(<code>VP8X</code>)</h3>
+<p>If the WebP file contains advanced features—such as transparency in
+lossy images, animation, metadata (EXIF/XMP), or an ICC color
+profile—the first chunk identifier is <code>"VP8X"</code> (hex:
+<code>0x56 0x50 0x38 0x58</code>).</p>
+<p>When an extended header is present, the parser cannot determine the
+compression type from the very first chunk. Instead, it follows this
+process:</p>
+<ol type="1">
+<li><strong>Read the VP8X Chunk:</strong> The parser reads the 10-byte
+<code>VP8X</code> payload, which includes flags indicating features like
+the presence of an alpha channel, animation, or metadata, followed by
+the canvas width and height.</li>
+<li><strong>Iterate Through Remaining Chunks:</strong> The parser walks
+through the subsequent chunks in the container:
+<ul>
+<li><strong>For Still Images:</strong> The parser continues reading
+until it encounters either a <code>"VP8 "</code> chunk (lossy data) or a
+<code>"VP8L"</code> chunk (lossless data). If the image is lossy with
+transparency, the parser will also encounter an <code>"ALPH"</code>
+chunk before the <code>"VP8 "</code> chunk, which contains the alpha map
+encoded using lossy or lossless compression. If the image is lossless,
+alpha is handled directly inside the <code>"VP8L"</code> data
+stream.</li>
+<li><strong>For Animated Images:</strong> The parser encounters an
+<code>"ANIM"</code> chunk followed by multiple <code>"ANMF"</code>
+(animation frame) chunks. Each <code>"ANMF"</code> chunk wraps the data
+for an individual frame, which internally contains its own
+<code>"VP8 "</code> or <code>"VP8L"</code> sub-chunk, allowing an
+animated file to mix lossy and lossless frames.</li>
+</ul></li>
+</ol>
+<p>By checking for <code>"VP8 "</code> or <code>"VP8L"</code> tags
+either at byte 12 (simple files) or deeper in the chunk stream (extended
+<code>VP8X</code> files), the parser conclusively identifies the
+compression format.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

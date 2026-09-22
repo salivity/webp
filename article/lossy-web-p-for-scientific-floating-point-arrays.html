@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lossy WebP for Scientific Floating-Point Arrays - webp</title>
+    <meta name="description" content="Using lossy WebP compression to store floating-point scientific pixel arrays introduces severe data corruption, precision loss, and mathematical artifacts. Scientific arrays typically require high-precision continuous values (such as 32-bit or 64-bit flo">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/lossy-web-p-for-scientific-floating-point-arrays">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lossy WebP for Scientific Floating-Point Arrays - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/lossy-web-p-for-scientific-floating-point-arrays" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Using lossy WebP compression to store floating-point scientific pixel arrays introduces severe data corruption, precision loss, and mathematical artifacts. Scientific arrays typically require high-precision continuous values (such as 32-bit or 64-bit flo" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="lossy-webp-for-scientific-floating-point-arrays">Lossy WebP for
+Scientific Floating-Point Arrays</h1>
+<p>Using lossy WebP compression to store floating-point scientific pixel
+arrays introduces severe data corruption, precision loss, and
+mathematical artifacts. Scientific arrays typically require
+high-precision continuous values (such as 32-bit or 64-bit floats) to
+represent physical quantities accurately. Because lossy WebP is designed
+specifically for standard 8-bit photographic imagery optimized for human
+perception, converting scientific arrays into this format fundamentally
+alters numerical values, destroys spatial relationships, and invalidates
+quantitative analysis.</p>
+<h3 id="bit-depth-reduction-and-quantization">Bit-Depth Reduction and
+Quantization</h3>
+<p>Standard lossy WebP relies on the VP8 video codec profile, which
+natively operates on 8-bit unsigned integers per channel (0 to 255).
+Scientific float data (FP32 or FP64) spans vast dynamic ranges,
+including fractional, negative, and extreme values. To store floats in
+lossy WebP, the data must first be normalized and quantized to fit an
+8-bit integer space. This step alone collapses continuous measurements
+into just 256 discrete levels, instantly eliminating precision and
+truncating low-amplitude signals that may contain vital physical
+measurements.</p>
+<h3 id="chroma-subsampling-destroys-channel-independence">Chroma
+Subsampling Destroys Channel Independence</h3>
+<p>Lossy WebP encodes images using the YUV 4:2:0 color space, which
+halves the spatial resolution of the color (U and V) channels relative
+to the luminance (Y) channel. In scientific computing, multi-channel
+arrays represent independent variables (such as velocity components,
+multi-spectral bands, or electromagnetic field tensors) rather than
+perceptual color. Storing these channels in a YUV 4:2:0 container
+averages adjacent data points across 2x2 pixel neighborhoods,
+irreversibly blending independent scientific metrics and corrupting
+spatial fidelity.</p>
+<h3
+id="frequency-domain-artifacts-and-block-boundaries">Frequency-Domain
+Artifacts and Block Boundaries</h3>
+<p>Lossy WebP relies on the Discrete Cosine Transform (DCT) and spatial
+prediction to discard high-frequency data that the human visual system
+cannot easily distinguish. In scientific arrays, high-frequency
+variations represent real physical phenomena, such as steep pressure
+gradients, shock waves, particle boundaries, or localized sensor
+responses. The DCT compression introduces characteristic ringing
+artifacts, blurred boundaries, and blocking artifacts at 4x4 and 16x16
+macroblock seams, generating false gradients and distorting downstream
+derivative or differential calculations.</p>
+<h3
+id="inability-to-handle-non-finite-and-out-of-bounds-values">Inability
+to Handle Non-Finite and Out-of-Bounds Values</h3>
+<p>Scientific computing frequently generates special floating-point
+values, including negative numbers, zero-crossings, <code>NaN</code>
+(Not a Number), and positive or negative infinity (<code>+/-Inf</code>).
+Lossy WebP has no mechanism to represent non-finite numbers or arbitrary
+numerical ranges. Attempting to encode these values forces arbitrary
+clamping, zero-filling, or manual packing strategies that risk silent
+data failure during decoding.</p>
+<h3 id="non-deterministic-precision-degradation">Non-Deterministic
+Precision Degradation</h3>
+<p>Unlike specialized lossy scientific compressors (such as ZFP or SZ),
+which allow researchers to define explicit error bounds (such as
+absolute error tolerance or fixed peak signal-to-noise ratios), lossy
+WebP uses perceptual quality metrics. A lossy WebP quality factor (e.g.,
+75 or 85) does not translate to a consistent numerical error bound
+across an array. As a result, the error margin introduced by compression
+varies unpredictably across different regions of the dataset.</p>
+<p>For scientific arrays requiring compression, native scientific data
+containers such as HDF5, Zarr, NetCDF, or multi-page floating-point TIFF
+coupled with precision-preserving codecs (such as Blosc, Zstandard, or
+ZFP) should be used instead of perceptual visual formats like lossy
+WebP.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

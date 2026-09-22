@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP vs JPEG Generation Loss Compared - webp</title>
+    <meta name="description" content="Generational loss occurs when a lossy image format undergoes repeated cycles of decoding, editing, and re-encoding, resulting in cumulative visual artifacts and data destruction. This comparison explores how modern lossy WebP handles repeated re-compress">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-vs-jpeg-generation-loss-compared">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP vs JPEG Generation Loss Compared - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-vs-jpeg-generation-loss-compared" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Generational loss occurs when a lossy image format undergoes repeated cycles of decoding, editing, and re-encoding, resulting in cumulative visual artifacts and data destruction. This comparison explores how modern lossy WebP handles repeated re-compress" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-vs-jpeg-generation-loss-compared">WebP vs JPEG Generation
+Loss Compared</h1>
+<p>Generational loss occurs when a lossy image format undergoes repeated
+cycles of decoding, editing, and re-encoding, resulting in cumulative
+visual artifacts and data destruction. This comparison explores how
+modern lossy WebP handles repeated re-compression compared to standard
+JPEG, examining the underlying mathematical causes, the distinct visual
+patterns of their degradation, and which format better preserves image
+integrity across multiple generations.</p>
+<h2 id="how-lossy-compression-causes-generational-decay">How Lossy
+Compression Causes Generational Decay</h2>
+<p>Both lossy WebP and JPEG discard data that the human visual system is
+less likely to notice. When an image is re-encoded, the compression
+algorithm treats the previously introduced artifacts as original image
+data. It compresses the existing errors, adds new approximations, and
+quantizes the color and frequency values again. Over successive
+generations, this compounds into severe visual distortion.</p>
+<h2 id="jpeg-generational-degradation">JPEG Generational
+Degradation</h2>
+<p>JPEG relies on the Discrete Cosine Transform (DCT) applied to fixed
+<span class="math inline">\(8 \times 8\)</span> pixel blocks, followed
+by quantization and chroma subsampling.</p>
+<h3 id="the-artifact-profile">The Artifact Profile</h3>
+<ul>
+<li><strong>Blockiness:</strong> As high-frequency data is stripped away
+across generations, the boundaries of the <span class="math inline">\(8
+\times 8\)</span> pixel grids become increasingly prominent, producing a
+visible checkerboard pattern.</li>
+<li><strong>Mosquito Noise and Ringing:</strong> High-contrast edges
+develop high-frequency halos and buzzing artifacts due to repeated
+truncation of high-frequency DCT coefficients.</li>
+<li><strong>Color Drift:</strong> Successive passes of chroma
+subsampling (typically 4:2:0) cause colors to bleed, desaturate, or
+shift in hue.</li>
+</ul>
+<h3 id="re-encoding-behavior">Re-encoding Behavior</h3>
+<p>If a JPEG is repeatedly re-saved at the exact same quality setting
+without modifying its pixel dimensions or aligning shifts, the rate of
+degradation can eventually plateau. However, if the image is cropped,
+translated off the <span class="math inline">\(8 \times 8\)</span> grid,
+or saved at fluctuating quality levels, degradation accelerates
+catastrophically, creating misaligned overlapping block grids.</p>
+<h2 id="webp-generational-degradation">WebP Generational
+Degradation</h2>
+<p>Lossy WebP is derived from the VP8 video codec keyframe architecture.
+Instead of treating every block independently like standard JPEG, WebP
+relies heavily on spatial intra-prediction and dynamic sub-blocks (<span
+class="math inline">\(4 \times 4\)</span> or <span
+class="math inline">\(16 \times 16\)</span>), combined with an
+aggressive in-loop deblocking filter.</p>
+<h3 id="the-artifact-profile-1">The Artifact Profile</h3>
+<ul>
+<li><strong>Smearing and Posterization:</strong> Because WebP predicts
+pixel blocks from neighboring pixels, generational errors propagate
+spatially. Instead of forming rigid grids, fine textures gradually blur
+and merge into flat, waxy surfaces.</li>
+<li><strong>Watercolor Effect:</strong> Repeated application of WebP's
+built-in deblocking filter smooths away high-frequency noise, yielding
+an illustrative, painterly appearance rather than a noisy one.</li>
+<li><strong>Edge Warping:</strong> Sharp transitions tend to stay
+sharper longer than in JPEG without ringing, but the surrounding fine
+details bleed into the background.</li>
+</ul>
+<h3 id="re-encoding-behavior-1">Re-encoding Behavior</h3>
+<p>Because WebP dynamically predicts blocks based on adjacent context,
+generational loss spreads unevenly across the image. Repeated saves at
+identical settings do not plateau as reliably as JPEG because the
+prediction vectors continuously recalculate based on the smoothed,
+filtered output of the previous generation.</p>
+<h2 id="direct-comparison">Direct Comparison</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Characteristic</th>
+<th style="text-align: left;">JPEG</th>
+<th style="text-align: left;">Lossy WebP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Primary Visual
+Artifact</strong></td>
+<td style="text-align: left;">Grid-like blocking and ringing noise</td>
+<td style="text-align: left;">Smearing, blurring, and plastic
+textures</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Edge Retention</strong></td>
+<td style="text-align: left;">High edge ringing, preserved contrast</td>
+<td style="text-align: left;">Clean edges, loss of adjacent fine
+detail</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Texture Preservation</strong></td>
+<td style="text-align: left;">Replaces texture with high-frequency
+noise</td>
+<td style="text-align: left;">Erases texture via aggressive
+smoothing</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Grid Alignment
+Vulnerability</strong></td>
+<td style="text-align: left;">Severe degradation if shifted off <span
+class="math inline">\(8 \times 8\)</span> grid</td>
+<td style="text-align: left;">Resilient to spatial shifts due to
+flexible block structures</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>First-Generation
+Quality</strong></td>
+<td style="text-align: left;">Good at high bitrates, poor at low
+bitrates</td>
+<td style="text-align: left;">Superior visual quality at lower
+bitrates</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Multi-Generation
+Decay</strong></td>
+<td style="text-align: left;">Noisy, sharp-edged deterioration</td>
+<td style="text-align: left;">Soft, muddy, waxy deterioration</td>
+</tr>
+</tbody>
+</table>
+<h2 id="which-format-holds-up-better">Which Format Holds Up Better?</h2>
+<p>At moderate to high quality settings (Q80+), JPEG tends to maintain
+structural consistency and high-frequency textures slightly better over
+dozens of identical, unshifted re-saves, despite its obvious block
+artifacts. WebP prioritizes eliminating visible noise, meaning it strips
+fine details faster with each generation, turning complex surfaces like
+skin, fabric, and foliage into flat color fields.</p>
+<p>At low quality settings (below Q50), WebP survives generational
+cycles with fewer jarring structural breakdowns than JPEG. While a JPEG
+quickly breaks down into an unreadable grid of pixel blocks, WebP
+retains the primary silhouettes and structural shapes of the original
+image, albeit heavily smoothed.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

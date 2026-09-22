@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP vs WebM: How They Differ Despite VP8 Lineage - webp</title>
+    <meta name="description" content="Both WebP and WebM were introduced by Google to modernize media delivery across the internet, utilizing foundational video compression technology acquired from On2 Technologies' VP8 codec. Despite sharing this underlying architecture, they serve complete">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-vs-web-m-how-they-differ-despite-vp-8-lineage">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP vs WebM: How They Differ Despite VP8 Lineage - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-vs-web-m-how-they-differ-despite-vp-8-lineage" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Both WebP and WebM were introduced by Google to modernize media delivery across the internet, utilizing foundational video compression technology acquired from On2 Technologies' VP8 codec. Despite sharing this underlying architecture, they serve complete" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-vs-webm-how-they-differ-despite-vp8-lineage">WebP vs WebM:
+How They Differ Despite VP8 Lineage</h1>
+<p>Both WebP and WebM were introduced by Google to modernize media
+delivery across the internet, utilizing foundational video compression
+technology acquired from On2 Technologies' VP8 codec. Despite sharing
+this underlying architecture, they serve completely distinct functions:
+WebP is an image format optimized for still and animated graphics, while
+WebM is a full-featured multimedia container designed for streaming
+video and audio. Understanding their differences requires examining
+their container architectures, compression methods, and operational
+features.</p>
+<h3 id="container-architecture">Container Architecture</h3>
+<p>The most fundamental difference between WebP and WebM lies in their
+structural file containers:</p>
+<ul>
+<li><strong>WebP utilizes the Resource Interchange File Format
+(RIFF):</strong> The RIFF wrapper is a lightweight chunk-based format
+historically used for formats like WAV and AVI. It acts as a
+minimalistic shell providing just enough metadata to define image
+dimensions, color profiles (ICC), alpha transparency, and animation
+frames without excess overhead.</li>
+<li><strong>WebM utilizes a profile of the Matroska (MKV)
+format:</strong> Built upon Extensible Binary Meta Language (EBML), the
+WebM container is structured to handle complex, asynchronous media
+tracks. It contains dedicated structures for timecodes, multiple audio
+and video streams, chapter markings, cue points for seeking, and
+subtitle tracks.</li>
+</ul>
+<h3 id="vp8-compression-implementation">VP8 Compression
+Implementation</h3>
+<p>While both formats trace their roots to the VP8 video standard, they
+employ its compression capabilities differently:</p>
+<ul>
+<li><strong>WebP focuses on intra-frame coding:</strong> Standard lossy
+WebP operates exclusively on the "keyframe" (intra-frame) compression
+method of VP8. It uses spatial prediction to compress an individual
+frame based solely on pixels within that same frame. WebP also includes
+"WebP-Lossless" (VP8L), which does not use VP8 math at all, but rather
+specialized spatial transformations, color cache indexing, and entropy
+coding.</li>
+<li><strong>WebM utilizes full temporal inter-frame coding:</strong>
+Video requires tracking changes across time, not just within a single
+image. WebM employs the complete VP8 video specification—including
+predictive frames (P-frames) that store only the differences from
+previous frames via motion vectors. Modern WebM has also evolved beyond
+VP8 to support newer codecs such as VP9 and AV1.</li>
+</ul>
+<h3 id="audio-and-stream-handling">Audio and Stream Handling</h3>
+<p>WebM is built specifically for time-synchronized multimedia playback.
+It natively encapsulates compressed audio streams—principally Vorbis and
+Opus—and synchronizes them precisely with video frames using timestamp
+headers. It supports dynamic streaming protocols, adaptive bitrates, and
+live media broadcasts via WebRTC.</p>
+<p>WebP contains no audio specifications whatsoever. Even in its
+animated form, WebP functions purely as an image sequence format
+intended to replace animated GIFs and APNGs, offering variable frame
+durations and alpha transparency, but no mechanisms for sound
+reproduction or streaming synchronization.</p>
+<h3 id="primary-use-cases">Primary Use Cases</h3>
+<ul>
+<li><strong>WebP</strong> is designed for website interface elements,
+photography, digital illustrations, and simple looped animations. Its
+primary role is replacing traditional image formats like JPEG, PNG, and
+GIF to reduce page weight and improve web rendering speeds.</li>
+<li><strong>WebM</strong> is designed for the HTML5
+<code>&lt;video&gt;</code> element, video conferencing, and multimedia
+streaming. Its purpose is providing an open, royalty-free alternative to
+the H.264/MP4 standard for rich multimedia delivery.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

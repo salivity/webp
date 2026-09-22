@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Affects Browser Caching Strategies - webp</title>
+    <meta name="description" content="Adopting the WebP image format significantly enhances website loading speeds due to superior compression, but it introduces critical considerations for browser and edge caching. This article examines how serving WebP assets impacts HTTP caching mechanism">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-affects-browser-caching-strategies">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Affects Browser Caching Strategies - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-affects-browser-caching-strategies" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Adopting the WebP image format significantly enhances website loading speeds due to superior compression, but it introduces critical considerations for browser and edge caching. This article examines how serving WebP assets impacts HTTP caching mechanism" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-affects-browser-caching-strategies">How WebP Affects
+Browser Caching Strategies</h1>
+<p>Adopting the WebP image format significantly enhances website loading
+speeds due to superior compression, but it introduces critical
+considerations for browser and edge caching. This article examines how
+serving WebP assets impacts HTTP caching mechanisms, covering the role
+of content negotiation, the necessity of the <code>Vary: Accept</code>
+header, the architectural difference between dynamic delivery and static
+markup, and how smaller file footprints reduce browser cache churn.</p>
+<h3 id="dynamic-content-negotiation-and-the-vary-header">Dynamic Content
+Negotiation and the <code>Vary</code> Header</h3>
+<p>When a web server delivers WebP images dynamically from the same URL
+as legacy formats (JPEG or PNG), it relies on HTTP content negotiation.
+The browser sends an <code>Accept</code> request header indicating
+whether it supports WebP, and the server responds with the appropriate
+format.</p>
+<p>To cache these dynamic responses correctly, the server must include
+the <code>Vary: Accept</code> HTTP response header. This header
+instructs the browser and intermediate reverse proxies or Content
+Delivery Networks (CDNs) to create separate cache entries for each
+unique <code>Accept</code> header value. Without
+<code>Vary: Accept</code>, a browser lacking WebP support might receive
+a cached WebP image previously requested by a modern browser, causing a
+rendering failure.</p>
+<h3 id="cache-fragmentation-and-cdn-hit-ratios">Cache Fragmentation and
+CDN Hit Ratios</h3>
+<p>While <code>Vary: Accept</code> ensures correct asset delivery, it
+can fragment caches. Different browsers send slightly different
+variations of the <code>Accept</code> header string, which can lead to
+multiple redundant cache entries for the exact same file version.</p>
+<p>To maintain high cache hit ratios at the edge and browser levels,
+caching layers must implement header normalization. Normalization
+transforms varied incoming <code>Accept</code> headers into a
+standardized binary state (e.g., "supports WebP" or "does not support
+WebP") before querying the cache, preventing cache misses and redundant
+origin requests.</p>
+<h3 id="static-delivery-via-the-picture-element">Static Delivery via the
+<code>&lt;picture&gt;</code> Element</h3>
+<p>An alternative to dynamic content negotiation is decoupling formats
+through explicit URLs using the HTML5 <code>&lt;picture&gt;</code> and
+<code>&lt;source&gt;</code> tags. In this architecture, WebP files have
+distinct file paths (such as <code>image.webp</code> versus
+<code>image.jpg</code>).</p>
+<p>This approach simplifies browser caching strategies
+significantly:</p>
+<ul>
+<li><strong>Elimination of <code>Vary</code> Headers:</strong> Because
+each asset has a unique URL, browsers and CDNs treat each image format
+as an independent static resource, eliminating the need for
+<code>Vary: Accept</code>.</li>
+<li><strong>Aggressive Caching:</strong> Static, uniquely named files
+can safely utilize immutable caching directives
+(<code>Cache-Control: public, max-age=31536000, immutable</code>).</li>
+<li><strong>Deterministic Cache Keys:</strong> Cache keys are based
+solely on the URL, resulting in higher cache hit rates and predictable
+invalidation.</li>
+</ul>
+<h3 id="cache-eviction-and-memory-footprint">Cache Eviction and Memory
+Footprint</h3>
+<p>Beyond HTTP headers, the reduced byte size of WebP files directly
+benefits local browser storage. Browsers allocate a finite amount of
+disk and memory space for their internal caches, relying on algorithms
+like Least Recently Used (LRU) to evict older assets when storage limits
+are reached.</p>
+<p>Because WebP images are typically 25% to 35% smaller than comparable
+JPEGs and PNGs, they consume significantly less cache storage. This
+reduced footprint decreases cache churn, allowing cached assets to
+persist longer on the user's device. Consequently, repeat visitors
+experience fewer network requests for previously fetched assets, leading
+to faster subsequent page loads and lower origin server bandwidth
+usage.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

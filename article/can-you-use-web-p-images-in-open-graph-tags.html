@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can You Use WebP Images in Open Graph Tags? - webp</title>
+    <meta name="description" content="While the official Open Graph protocol technically supports modern formats like WebP, real-world support across major social media platforms and messaging apps remains inconsistent. This article covers how the Open Graph protocol defines WebP usage, how">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-you-use-web-p-images-in-open-graph-tags">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can You Use WebP Images in Open Graph Tags? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-you-use-web-p-images-in-open-graph-tags" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While the official Open Graph protocol technically supports modern formats like WebP, real-world support across major social media platforms and messaging apps remains inconsistent. This article covers how the Open Graph protocol defines WebP usage, how" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-you-use-webp-images-in-open-graph-tags">Can You Use WebP
+Images in Open Graph Tags?</h1>
+<p>While the official Open Graph protocol technically supports modern
+formats like WebP, real-world support across major social media
+platforms and messaging apps remains inconsistent. This article covers
+how the Open Graph protocol defines WebP usage, how major networks like
+Facebook, X (formerly Twitter), and LinkedIn handle the format, and the
+recommended best practices to ensure your social link previews always
+display reliably.</p>
+<h3 id="the-open-graph-protocol-specification">The Open Graph Protocol
+Specification</h3>
+<p>The Open Graph protocol allows website owners to define preview
+metadata using standard <code>&lt;meta&gt;</code> tags. By
+specification, the protocol does not restrict images to legacy formats
+like JPEG, GIF, or PNG. You can define a WebP image and declare its MIME
+type using the following markup:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;https://example.com/preview.webp&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:type&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:width&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;1200&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:height&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;630&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span></code></pre></div>
+<p>Declaring <code>og:image:type</code> explicitly informs scrapers of
+the format before they download the asset. However, a platform's scraper
+must still be programmed to parse, process, and render that format.</p>
+<h3 id="platform-support-breakdown">Platform Support Breakdown</h3>
+<p>Support for WebP in social link previews varies significantly
+depending on the platform scraping your URL:</p>
+<ul>
+<li><strong>X (Twitter):</strong> X supports WebP images in its card
+parser. Both <code>summary</code> and <code>summary_large_image</code>
+cards will generally render WebP files without issue, provided the file
+size remains within the platform's limits (under 5MB).</li>
+<li><strong>Facebook:</strong> Meta's crawler has historically had
+inconsistent support for WebP. While Facebook can display WebP files
+inside its feed, the Open Graph crawler sometimes fails to generate
+thumbnails from <code>.webp</code> URLs, resulting in blank preview
+boxes.</li>
+<li><strong>LinkedIn:</strong> LinkedIn has strict and conservative
+preview requirements. It officially recommends PNG and JPEG formats.
+WebP images frequently fail to render on LinkedIn posts, defaulting to a
+generic link card with no thumbnail.</li>
+<li><strong>Discord, Slack, and Telegram:</strong> Modern chat
+applications generally rely on modern rendering engines and handle WebP
+Open Graph images smoothly.</li>
+</ul>
+<h3 id="why-jpg-and-png-remain-the-best-choice">Why JPG and PNG Remain
+the Best Choice</h3>
+<p>Social share images are only fetched when a link is crawled or
+shared, meaning the bandwidth savings of WebP do not offer the same
+performance benefits as they do for standard on-page web assets. Because
+platforms cache the scraped images on their own content delivery
+networks (CDNs), the end user rarely downloads the file directly from
+your origin server.</p>
+<p>Using WebP for Open Graph images introduces the risk of broken link
+previews on platforms like LinkedIn or older web crawlers for minimal
+performance gain.</p>
+<h3 id="best-practice-recommendation">Best Practice Recommendation</h3>
+<p>To guarantee 100% visibility across every platform:</p>
+<ol type="1">
+<li><strong>Use JPEG or PNG for <code>og:image</code>:</strong> Keep
+your primary Open Graph images formatted as standard JPEG or PNG files,
+ideally sized at 1200 x 630 pixels and kept under 8MB.</li>
+<li><strong>Serve WebP on the Page:</strong> Continue using WebP or AVIF
+for the visible images on your actual web pages to improve Core Web
+Vitals and load times.</li>
+<li><strong>Validate Your URLs:</strong> Always run your URLs through
+developer tools like the Facebook Sharing Debugger, Twitter Card
+Validator, and LinkedIn Post Inspector to confirm how each crawler
+interprets your image tags before publishing.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

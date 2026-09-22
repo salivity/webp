@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Magic Bytes: How to Verify a WebP File - webp</title>
+    <meta name="description" content="Verifying an authentic WebP image requires inspecting the binary header of the file rather than relying strictly on the .webp file extension. Because WebP is built on the Resource Interchange File Format (RIFF) container, a genuine WebP file contains a d">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-magic-bytes-how-to-verify-a-web-p-file">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Magic Bytes: How to Verify a WebP File - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-magic-bytes-how-to-verify-a-web-p-file" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Verifying an authentic WebP image requires inspecting the binary header of the file rather than relying strictly on the .webp file extension. Because WebP is built on the Resource Interchange File Format (RIFF) container, a genuine WebP file contains a d" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-magic-bytes-how-to-verify-a-webp-file">WebP Magic Bytes:
+How to Verify a WebP File</h1>
+<p>Verifying an authentic WebP image requires inspecting the binary
+header of the file rather than relying strictly on the
+<code>.webp</code> file extension. Because WebP is built on the Resource
+Interchange File Format (RIFF) container, a genuine WebP file contains a
+distinct 12-byte header signature split into two distinct identifiers.
+This guide covers the exact magic byte sequence, byte offsets, and chunk
+headers necessary to confirm that a file is a valid WebP image.</p>
+<h3 id="the-12-byte-header-signature">The 12-Byte Header Signature</h3>
+<p>A valid WebP file does not use a single, continuous string of bytes
+at index 0. Instead, it places verification data across the first 12
+bytes:</p>
+<ul>
+<li><strong>Bytes 0–3 (Offset <code>0x00</code>):</strong> Must contain
+the ASCII string <code>RIFF</code> (Hex: <code>52 49 46 46</code>).</li>
+<li><strong>Bytes 4–7 (Offset <code>0x04</code>):</strong> A 32-bit
+little-endian integer representing the total file size minus 8 bytes.
+Because this value changes with every file, it cannot be matched against
+a static byte sequence.</li>
+<li><strong>Bytes 8–11 (Offset <code>0x08</code>):</strong> Must contain
+the ASCII string <code>WEBP</code> (Hex: <code>57 45 42 50</code>).</li>
+</ul>
+<p>To conclusively verify that a file is a WebP image, you must check
+both that bytes 0–3 equal <code>RIFF</code> <strong>and</strong> that
+bytes 8–11 equal <code>WEBP</code>.</p>
+<h3 id="webp-format-chunks">WebP Format Chunks</h3>
+<p>Immediately following the <code>WEBP</code> identifier at byte 12
+(Offset <code>0x0C</code>), the file declares the internal WebP format
+variant. Inspecting these bytes provides additional validation of the
+file's structure:</p>
+<ul>
+<li><strong><code>VP8 </code> (Hex: <code>56 50 38 20</code>):</strong>
+Identifies lossy WebP compression. Note the trailing ASCII space.</li>
+<li><strong><code>VP8L</code> (Hex: <code>56 50 38 4C</code>):</strong>
+Identifies lossless WebP compression.</li>
+<li><strong><code>VP8X</code> (Hex: <code>56 50 38 58</code>):</strong>
+Identifies an extended WebP format, used for animations, ICC color
+profiles, EXIF metadata, or alpha transparency.</li>
+</ul>
+<h3 id="hex-representation-example">Hex Representation Example</h3>
+<p>When inspecting a standard lossy WebP file in a hex editor, the first
+16 bytes will appear in this format:</p>
+<pre class="text"><code>52 49 46 46 [XX XX XX XX] 57 45 42 50 56 50 38 20
+ R  I  F  F  (File Size)   W  E  B  P  V  P  8  _</code></pre>
+<p>Any file that lacks <code>RIFF</code> at offset 0 and
+<code>WEBP</code> at offset 8 is not an authentic WebP image.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

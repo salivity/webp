@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Native WebP Image Rendering on iOS and macOS - webp</title>
+    <meta name="description" content="Apple platforms natively support the WebP image format across several foundational graphics and user interface frameworks. Starting with iOS 14 and macOS 11 (Big Sur), developers can decode, display, and encode WebP images directly without relying on thi">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/native-web-p-image-rendering-on-i-os-and-mac-os">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Native WebP Image Rendering on iOS and macOS - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/native-web-p-image-rendering-on-i-os-and-mac-os" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Apple platforms natively support the WebP image format across several foundational graphics and user interface frameworks. Starting with iOS 14 and macOS 11 (Big Sur), developers can decode, display, and encode WebP images directly without relying on thi" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="native-webp-image-rendering-on-ios-and-macos">Native WebP Image
+Rendering on iOS and macOS</h1>
+<p>Apple platforms natively support the WebP image format across several
+foundational graphics and user interface frameworks. Starting with iOS
+14 and macOS 11 (Big Sur), developers can decode, display, and encode
+WebP images directly without relying on third-party libraries like
+<code>libwebp</code>. This native capability is powered primarily by
+low-level image processing APIs and exposed seamlessly through
+high-level UI components across both operating systems.</p>
+<h3 id="imageio">ImageIO</h3>
+<p>ImageIO is the core framework responsible for low-level image
+decoding and metadata handling in iOS and macOS. It serves as the
+underlying engine that makes WebP support possible across higher-level
+frameworks. Using <code>CGImageSourceCreateWithData</code> or
+<code>CGImageSourceCreateWithURL</code>, developers can read WebP data,
+inspect properties, extract metadata, and generate a
+<code>CGImage</code> for rendering. ImageIO also supports encoding
+images into the WebP format via <code>CGImageDestination</code>.</p>
+<h3 id="uikit-and-appkit">UIKit and AppKit</h3>
+<p>For standard application interfaces, the platform-specific UI
+frameworks handle WebP automatically:</p>
+<ul>
+<li><strong>UIKit (iOS):</strong> <code>UIImage</code> natively parses
+WebP files through initializers like <code>UIImage(named:)</code>,
+<code>UIImage(contentsOfFile:)</code>, and <code>UIImage(data:)</code>.
+An <code>UIImageView</code> can display these images without custom
+configuration.</li>
+<li><strong>AppKit (macOS):</strong> <code>NSImage</code> provides the
+equivalent functionality on macOS, allowing WebP files to be initialized
+directly via <code>NSImage(named:)</code>,
+<code>NSImage(contentsOfFile:)</code>, or <code>NSImage(data:)</code>
+and displayed inside an <code>NSImageView</code>.</li>
+</ul>
+<h3 id="swiftui">SwiftUI</h3>
+<p>SwiftUI leverages the platform's native image infrastructure. WebP
+assets included in an Asset Catalog (Xcode 12 and later) can be
+displayed directly using <code>Image("asset_name")</code>. For
+dynamically downloaded or generated WebP data, developers can initialize
+a SwiftUI <code>Image</code> by first bridging through
+<code>UIImage</code> on iOS or <code>NSImage</code> on macOS.</p>
+<h3 id="webkit">WebKit</h3>
+<p>The <code>WebKit</code> framework natively handles WebP content
+rendered within web views. A <code>WKWebView</code> renders WebP images
+inside HTML elements (<code>&lt;img&gt;</code>, CSS background images,
+and <code>&lt;picture&gt;</code> tags) natively without requiring
+polyfills or JavaScript decoders.</p>
+<h3 id="core-image">Core Image</h3>
+<p>Core Image can process WebP data by initializing a
+<code>CIImage</code> using <code>CIImage(data:)</code> or
+<code>CIImage(contentsOf:)</code>. Because Core Image integrates
+directly with ImageIO under the hood, developers can apply image
+filters, transformations, and color adjustments to WebP images natively
+before rendering them to a context.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

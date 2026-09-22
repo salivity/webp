@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Selects Optimal Block Prediction Modes - webp</title>
+    <meta name="description" content="The WebP image format achieves high compression efficiency by using spatial intra-prediction borrowed from the VP8 video codec, predicting pixel values in a block using previously decoded boundary pixels. To select the optimal prediction mode for each im">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-selects-optimal-block-prediction-modes">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Selects Optimal Block Prediction Modes - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-selects-optimal-block-prediction-modes" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The WebP image format achieves high compression efficiency by using spatial intra-prediction borrowed from the VP8 video codec, predicting pixel values in a block using previously decoded boundary pixels. To select the optimal prediction mode for each im" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-selects-optimal-block-prediction-modes">How WebP
+Selects Optimal Block Prediction Modes</h1>
+<p>The WebP image format achieves high compression efficiency by using
+spatial intra-prediction borrowed from the VP8 video codec, predicting
+pixel values in a block using previously decoded boundary pixels. To
+select the optimal prediction mode for each image block, the WebP
+encoder analyzes neighboring pixels, generates residuals for each
+available candidate mode, evaluates the visual error and bit cost using
+distortion metrics and Rate-Distortion Optimization (RDO), and
+ultimately chooses the mode that produces the smallest file footprint
+with the least visual degradation.</p>
+<h3 id="1-macroblock-partitioning">1. Macroblock Partitioning</h3>
+<p>Before evaluating prediction modes, the encoder divides the image
+into macroblocks of 16x16 pixels. For the luma (brightness) channel, the
+encoder decides whether to treat the macroblock as a single 16x16 block
+or subdivide it into sixteen individual 4x4 sub-blocks.</p>
+<ul>
+<li><strong>16x16 Partitioning:</strong> Best suited for flat, smooth,
+or low-detail regions.</li>
+<li><strong>4x4 Partitioning:</strong> Utilized in complex regions
+containing sharp edges, textures, or fine details where a global 16x16
+prediction would produce high residual errors.</li>
+</ul>
+<p>The chroma (color) channels are always evaluated in 8x8 blocks
+corresponding to the standard 4:2:0 subsampling.</p>
+<h3 id="2-generating-predictions-from-boundary-pixels">2. Generating
+Predictions from Boundary Pixels</h3>
+<p>For each block, the encoder attempts to predict pixel values using
+the reconstructed pixels immediately adjacent to its top and left
+borders.</p>
+<p>For 16x16 luma and 8x8 chroma blocks, the encoder tests four primary
+modes:</p>
+<ul>
+<li><strong>DC Prediction:</strong> Fills the block with the average
+value of the top and left border pixels.</li>
+<li><strong>Vertical Prediction:</strong> Copies the row of pixels
+directly above down through each column.</li>
+<li><strong>Horizontal Prediction:</strong> Copies the column of pixels
+to the left across each row.</li>
+<li><strong>TrueMotion (TM) Prediction:</strong> Extends vertical and
+horizontal gradients simultaneously using the top-left corner pixel as a
+baseline, preserving smooth planar transitions.</li>
+</ul>
+<p>For 4x4 luma blocks, the encoder evaluates 10 directional modes,
+including pure vertical, horizontal, DC, and several angled directions
+(such as diagonal-down-left and vertical-right) to align with fine
+edges.</p>
+<h3 id="3-error-metrics-sad-and-satd">3. Error Metrics: SAD and
+SATD</h3>
+<p>Once a candidate prediction is formed, the encoder subtracts it from
+the original block to produce a residual block. To quickly estimate the
+quality of a mode without performing a full transform and
+entropy-encoding pass, the encoder computes quick distortion
+metrics:</p>
+<ul>
+<li><strong>Sum of Absolute Differences (SAD):</strong> Calculates the
+absolute pixel-by-pixel difference between the original block and the
+predicted block.</li>
+<li><strong>Sum of Absolute Transformed Differences (SATD):</strong>
+Applies a fast Hadamard transform to the residual before summing
+absolute values. SATD better correlates with human visual perception and
+frequency-domain energy than raw SAD.</li>
+</ul>
+<p>In fast encoding presets, the encoder uses these metrics to eliminate
+poor candidate modes early.</p>
+<h3 id="4-rate-distortion-optimization-rdo">4. Rate-Distortion
+Optimization (RDO)</h3>
+<p>For high-quality or high-compression settings, the encoder selects
+the optimal mode using full Rate-Distortion Optimization (RDO). RDO
+measures the true trade-off between visual quality and required storage
+via a cost function:</p>
+<p><span class="math display">\[\text{Cost} = \text{Distortion} +
+\lambda \times \text{Rate}\]</span></p>
+<ul>
+<li><strong>Distortion (<span
+class="math inline">\(D\)</span>):</strong> The Sum of Squared Errors
+(SSE) between the original block and the fully reconstructed block
+(after Discrete Cosine Transform, quantization, and
+dequantization).</li>
+<li><strong>Rate (<span class="math inline">\(R\)</span>):</strong> The
+exact number of bits required to encode both the choice of prediction
+mode itself and the quantized residual coefficients using the arithmetic
+entropy coder.</li>
+<li><strong>Lambda (<span
+class="math inline">\(\lambda\)</span>):</strong> A Lagrange multiplier
+derived from the target quality/quantization parameter (<span
+class="math inline">\(QP\)</span>) that balances fidelity against file
+size.</li>
+</ul>
+<p>The encoder computes this cost for all viable modes and selects the
+one with the lowest overall cost score.</p>
+<h3 id="5-search-acceleration-and-pruning">5. Search Acceleration and
+Pruning</h3>
+<p>Evaluating every mode with full RDO is computationally intensive. The
+WebP encoder utilizes configurable speed-versus-quality trade-offs:</p>
+<ul>
+<li><strong>Mode Pruning:</strong> Evaluates candidates using fast SATD
+first and only runs full DCT/RDO on the top two or three
+candidates.</li>
+<li><strong>Early Termination:</strong> If a candidate mode yields a
+near-zero residual with minimal bits, the encoder can terminate the
+search early for that block.</li>
+<li><strong>Spatial Correlation:</strong> Adjacent blocks often share
+the same directionality; the encoder prioritizes testing modes chosen by
+neighboring blocks to speed up convergence.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP vs JPEG XL: Photographic Detail Retention - webp</title>
+    <meta name="description" content="When comparing modern image formats for photography, JPEG XL significantly outperforms WebP in preserving fine textures, dynamic range, and edge sharpness, especially at medium-to-high quality settings. While WebP relies on an older video-derived compres">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-vs-jpeg-xl-photographic-detail-retention">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP vs JPEG XL: Photographic Detail Retention - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-vs-jpeg-xl-photographic-detail-retention" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When comparing modern image formats for photography, JPEG XL significantly outperforms WebP in preserving fine textures, dynamic range, and edge sharpness, especially at medium-to-high quality settings. While WebP relies on an older video-derived compres" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-vs-jpeg-xl-photographic-detail-retention">WebP vs JPEG XL:
+Photographic Detail Retention</h1>
+<p>When comparing modern image formats for photography, JPEG XL
+significantly outperforms WebP in preserving fine textures, dynamic
+range, and edge sharpness, especially at medium-to-high quality
+settings. While WebP relies on an older video-derived compression scheme
+that tends to smudge micro-details and wash out subtle gradients, JPEG
+XL was engineered specifically for high-fidelity static imaging. The
+result is that JPEG XL can retain complex textures like skin pores,
+foliage, and fabric at file sizes equal to or smaller than WebP images
+exhibiting noticeable degradation.</p>
+<h3 id="architectural-foundations-and-block-sizes">Architectural
+Foundations and Block Sizes</h3>
+<p>The disparity in detail retention stems directly from the core
+architecture of each format. WebP's lossy compression is built on the
+VP8 video codec, which operates primarily on rigid 16x16 macroblocks.
+Because it was developed with motion video in mind—where the human eye
+cannot track minute defects frame-by-frame—WebP uses aggressive in-loop
+deblocking filters to suppress boundary lines between blocks. In static
+photography, this causes subtle textures to be treated as noise and
+smoothed over, producing a distinct "plastic" or smeared appearance.</p>
+<p>JPEG XL, by contrast, was designed from the ground up for still
+photography, utilizing a hybrid architecture based on the Pik and FUIF
+formats. It uses variable-sized Discrete Cosine Transforms (VarDCT)
+ranging from 2x2 up to 256x256 pixels, alongside a spline system and
+edge-preserving modes. This allows the encoder to match its mathematical
+tools to the specific visual characteristics of different parts of a
+photo, applying small blocks to preserve chaotic textures and large
+blocks to smooth surfaces.</p>
+<h3 id="high-frequency-micro-textures">High-Frequency
+Micro-Textures</h3>
+<p>High-frequency information—such as individual strands of hair,
+distant tree leaves, sand, and film grain—presents the greatest
+challenge for lossy compression. Under WebP, high-frequency details are
+often discarded early in the quantization process to achieve target file
+sizes. The remaining features are then softened by the format's
+mandatory deblocking filter, leading to an overall loss of perceived
+sharpness and micro-contrast.</p>
+<p>JPEG XL preserves high frequencies far more effectively due to its
+use of the Butteraugli psycho-visual error metric. This metric
+accurately models human vision, distinguishing between imperceptible
+compression noise and critical photographic detail. JPEG XL can even
+synthesize fine textures and film grain parametrically, ensuring that
+the visual texture of an image remains intact without requiring
+excessive data bits.</p>
+<h3 id="color-depth-and-gradient-preservation">Color Depth and Gradient
+Preservation</h3>
+<p>Photographic fidelity depends heavily on smooth color gradations in
+areas such as skies, sunsets, and deep shadows. Lossy WebP is strictly
+limited to 8-bit color depth and standard dynamic range (SDR),
+frequently necessitating 4:2:0 chroma subsampling. This restriction
+inevitably leads to color banding (posterization) and chromatic bleeding
+along high-contrast edges.</p>
+<p>JPEG XL natively supports wide color gamuts, high dynamic range
+(HDR), and bit depths of up to 32 bits per channel. Because it does not
+force chroma subsampling and provides superior bit distribution across
+color channels, JPEG XL reproduces tonal gradations smoothly without
+banding artifacts, maintaining subtle luminosity transitions that WebP
+flattens.</p>
+<h3 id="compression-degradation-behavior">Compression Degradation
+Behavior</h3>
+<p>When bitrates are constrained, the two formats degrade in
+fundamentally different ways. As WebP compresses further, it transitions
+rapidly from slight blurring to severe blockiness and smudged patches.
+JPEG XL degrades gracefully; rather than introducing distinct square
+blocks or plastic-looking blurs, its compression artifacts manifest as a
+subtle, uniform loss of resolution that mimics optical defocusing rather
+than digital corruption. For professional and high-fidelity photography,
+JPEG XL is objectively superior in retaining the photographic nuances
+intended by the photographer.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

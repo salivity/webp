@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serving WebP with HTTP Content Negotiation - webp</title>
+    <meta name="description" content="Server-side content negotiation allows web servers to automatically serve modern, highly compressed WebP images to browsers that support them, while delivering standard formats like JPEG or PNG to browsers that do not, all without altering the image URL.">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/serving-web-p-with-http-content-negotiation">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Serving WebP with HTTP Content Negotiation - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/serving-web-p-with-http-content-negotiation" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Server-side content negotiation allows web servers to automatically serve modern, highly compressed WebP images to browsers that support them, while delivering standard formats like JPEG or PNG to browsers that do not, all without altering the image URL." />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="serving-webp-with-http-content-negotiation">Serving WebP with
+HTTP Content Negotiation</h1>
+<p>Server-side content negotiation allows web servers to automatically
+serve modern, highly compressed WebP images to browsers that support
+them, while delivering standard formats like JPEG or PNG to browsers
+that do not, all without altering the image URL. This process relies on
+the client signaling its capabilities through the HTTP
+<code>Accept</code> request header, enabling the server to make dynamic
+routing decisions before delivering the payload and ensuring optimal
+performance and compatibility.</p>
+<h3 id="the-role-of-the-http-accept-header">The Role of the HTTP Accept
+Header</h3>
+<p>When a web browser requests an asset, it sends several HTTP headers
+detailing its capabilities. Modern browsers that support WebP include
+the MIME type <code>image/webp</code> inside the <code>Accept</code>
+request header.</p>
+<p>A standard image request header typically looks like this:</p>
+<pre class="http"><code>Accept: image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8</code></pre>
+<p>This string informs the server that while the client will accept
+standard image formats, it explicitly supports and prefers optimized
+formats like WebP. If a browser does not support WebP, the string
+<code>image/webp</code> will be absent from this header.</p>
+<h3 id="the-server-side-negotiation-mechanism">The Server-Side
+Negotiation Mechanism</h3>
+<p>Once the request reaches the server, content negotiation proceeds
+through four main steps:</p>
+<ol type="1">
+<li><strong>Inspection:</strong> The server intercepts the request for
+an image resource (e.g., <code>/images/photo.jpg</code>) and reads the
+<code>Accept</code> header.</li>
+<li><strong>Evaluation:</strong> The server evaluates whether
+<code>image/webp</code> exists within the <code>Accept</code> string and
+verifies whether an equivalent WebP file (e.g.,
+<code>/images/photo.webp</code>) exists on disk or can be generated
+dynamically.</li>
+<li><strong>Internal Rewrite:</strong> If both conditions are met, the
+server internally rewrites the request path to deliver the WebP file. If
+the header lacks WebP support or the WebP version is missing, the server
+defaults to the original format (JPEG or PNG).</li>
+<li><strong>Header Modification:</strong> The server sets the outgoing
+<code>Content-Type</code> header to match the payload actually being
+sent (e.g., <code>Content-Type: image/webp</code>).</li>
+</ol>
+<p>Because this substitution happens internally on the server, the
+client's browser maintains the original resource URL in the DOM,
+eliminating the need for client-side JavaScript or HTML
+<code>&lt;picture&gt;</code> elements.</p>
+<h3 id="the-critical-role-of-the-vary-header">The Critical Role of the
+Vary Header</h3>
+<p>When serving different file formats from the same URL, caching
+layers—such as intermediate proxies, Content Delivery Networks (CDNs),
+and local browser caches—can inadvertently serve WebP files to
+unsupported clients.</p>
+<p>To prevent this issue, the server must append the following header to
+every response:</p>
+<pre class="http"><code>Vary: Accept</code></pre>
+<p>The <code>Vary: Accept</code> header instructs caches to create
+separate cache keys based on the contents of the incoming
+<code>Accept</code> header. A request with
+<code>Accept: image/webp</code> will receive and cache the WebP version,
+while a request without it will receive and cache the JPEG or PNG
+version.</p>
+<h3 id="server-implementation-patterns">Server Implementation
+Patterns</h3>
+<p>Web servers implement this negotiation via configuration rules:</p>
+<ul>
+<li><strong>Nginx:</strong> Uses the <code>map</code> directive to
+inspect <code>$http_accept</code>. If it contains <code>webp</code>,
+Nginx assigns an internal variable to match the <code>.webp</code>
+extension and uses <code>try_files</code> to serve the modern file if it
+exists, falling back to the original if it does not.</li>
+<li><strong>Apache:</strong> Leverages <code>mod_rewrite</code> to
+evaluate the <code>%{HTTP_ACCEPT}</code> variable for
+<code>image/webp</code> alongside a <code>RewriteCond</code> to verify
+the <code>.webp</code> file exists on disk, silently rewriting the
+request while applying <code>Header append Vary Accept</code>.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

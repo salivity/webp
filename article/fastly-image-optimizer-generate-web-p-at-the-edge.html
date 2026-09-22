@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fastly Image Optimizer: Generate WebP at the Edge - webp</title>
+    <meta name="description" content="Fastly leverages its Image Optimizer (IO) to dynamically convert source images into lightweight WebP assets directly on its edge cloud platform. By intercepting incoming media requests, detecting browser capabilities, and performing real-time image trans">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/fastly-image-optimizer-generate-web-p-at-the-edge">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fastly Image Optimizer: Generate WebP at the Edge - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/fastly-image-optimizer-generate-web-p-at-the-edge" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Fastly leverages its Image Optimizer (IO) to dynamically convert source images into lightweight WebP assets directly on its edge cloud platform. By intercepting incoming media requests, detecting browser capabilities, and performing real-time image trans" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fastly-image-optimizer-generate-webp-at-the-edge">Fastly Image
+Optimizer: Generate WebP at the Edge</h1>
+<p>Fastly leverages its Image Optimizer (IO) to dynamically convert
+source images into lightweight WebP assets directly on its edge cloud
+platform. By intercepting incoming media requests, detecting browser
+capabilities, and performing real-time image transformations close to
+end users, Fastly delivers optimized, format-efficient graphics without
+burdening origin infrastructure or requiring manual pre-generation of
+assets.</p>
+<h3 id="automated-browser-capability-detection">Automated Browser
+Capability Detection</h3>
+<p>Fastly’s edge nodes inspect the HTTP <code>Accept</code> request
+header sent by the client's browser. Modern browsers indicate support
+for WebP by including <code>image/webp</code> in this header. Fastly
+uses this signal to determine whether the requested asset can be served
+as a WebP file or if it should remain in a legacy format like JPEG or
+PNG for older clients that lack support.</p>
+<h3 id="the-transformation-workflow">The Transformation Workflow</h3>
+<p>When a user requests an image, the process unfolds at the edge:</p>
+<ol type="1">
+<li><strong>Request Inspection:</strong> The edge server receives the
+image request and checks for format parameters (such as
+<code>auto=webp</code> or specific quality settings) in the query string
+or configured Varnish Configuration Language (VCL) / Compute logic.</li>
+<li><strong>Cache Check:</strong> Fastly checks its local edge cache to
+see if the requested asset—already transformed into WebP—exists. If
+cached, it is served immediately.</li>
+<li><strong>Origin Fetch and Transformation:</strong> If the asset is
+not cached, Fastly fetches the high-resolution source image from the
+origin server. The edge processor decodes the original image, applies
+requested resizing or compression, and encodes the output into WebP
+directly in memory.</li>
+<li><strong>Caching and Delivery:</strong> The newly generated WebP
+image is cached at the edge to serve subsequent requests and
+simultaneously delivered to the client.</li>
+</ol>
+<h3 id="parameter-driven-optimization">Parameter-Driven
+Optimization</h3>
+<p>Fastly allows developers to enable automatic format selection using
+simple query parameters. Appending <code>auto=webp</code> to an image
+URL instructs the Fastly Image Optimizer to automatically serve a WebP
+version if the client supports it, while safely falling back to the
+original format if it does not. Developers can combine this with
+additional parameters, such as <code>quality</code>, <code>width</code>,
+and <code>height</code>, to fine-tune visual fidelity and asset
+dimensions dynamically.</p>
+<h3 id="key-benefits-of-edge-generated-webp">Key Benefits of
+Edge-Generated WebP</h3>
+<ul>
+<li><strong>Bandwidth Reduction:</strong> WebP images are typically 25%
+to 35% smaller than comparable JPEGs and PNGs, drastically reducing data
+transfer costs.</li>
+<li><strong>Origin Offloading:</strong> Because transformations occur
+within Fastly's edge environment, the origin server only stores a single
+master copy of each image, eliminating the need to store and manage
+multiple file formats.</li>
+<li><strong>Faster Page Speeds:</strong> Delivering smaller files from
+the nearest edge point of presence (PoP) reduces latency and improves
+Core Web Vitals, specifically Largest Contentful Paint (LCP).</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

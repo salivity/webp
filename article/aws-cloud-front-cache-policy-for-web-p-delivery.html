@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS CloudFront Cache Policy for WebP Delivery - webp</title>
+    <meta name="description" content="Delivering WebP images dynamically through Amazon CloudFront requires a caching strategy that evaluates whether a client's browser supports modern image formats. This guide explains how to configure CloudFront Cache Policies and Origin Request Policies u">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/aws-cloud-front-cache-policy-for-web-p-delivery">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AWS CloudFront Cache Policy for WebP Delivery - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/aws-cloud-front-cache-policy-for-web-p-delivery" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Delivering WebP images dynamically through Amazon CloudFront requires a caching strategy that evaluates whether a client's browser supports modern image formats. This guide explains how to configure CloudFront Cache Policies and Origin Request Policies u" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="aws-cloudfront-cache-policy-for-webp-delivery">AWS CloudFront
+Cache Policy for WebP Delivery</h1>
+<p>Delivering WebP images dynamically through Amazon CloudFront requires
+a caching strategy that evaluates whether a client's browser supports
+modern image formats. This guide explains how to configure CloudFront
+Cache Policies and Origin Request Policies using the HTTP
+<code>Accept</code> header, ensuring that compatible browsers receive
+lightweight WebP files while older browsers receive standard formats
+like JPEG or PNG without cache collisions.</p>
+<h3 id="the-challenge-of-dynamic-webp-delivery">The Challenge of Dynamic
+WebP Delivery</h3>
+<p>When an origin serves different image formats from the same URL based
+on browser capabilities, CloudFront must not serve a cached WebP image
+to a client that does not support it. CloudFront determines what to
+store and serve using the cache key. By default, CloudFront cache keys
+only include the domain name and the URL path. Without explicit
+configuration, the first requested version of an image (WebP or legacy)
+would be cached and delivered to all subsequent visitors regardless of
+their browser support.</p>
+<h3 id="creating-the-cloudfront-cache-policy">Creating the CloudFront
+Cache Policy</h3>
+<p>To ensure correct delivery, the cache key must vary based on client
+capabilities. Because browsers declare support via the
+<code>Accept</code> request header, CloudFront must incorporate this
+signal into its cache key.</p>
+<ol type="1">
+<li>Open the <strong>CloudFront Console</strong> and navigate to
+<strong>Policies</strong> &gt; <strong>Cache</strong>.</li>
+<li>Click <strong>Create cache policy</strong>.</li>
+<li>Under <strong>Cache key settings</strong>, locate the
+<strong>Headers</strong> dropdown and select <strong>Include the
+following headers</strong>.</li>
+<li>Add the <code>Accept</code> header to the list.</li>
+<li>Configure your desired Minimum, Maximum, and Default TTL
+values.</li>
+<li>Save the policy and attach it to your distribution’s image cache
+behavior.</li>
+</ol>
+<h3 id="managing-cache-hit-ratios-with-header-normalization">Managing
+Cache Hit Ratios with Header Normalization</h3>
+<p>While adding the raw <code>Accept</code> header to a custom cache
+policy guarantees correct image delivery, it introduces a significant
+performance drawback: different browsers send widely varying
+<code>Accept</code> strings (e.g., listing various combinations of AVIF,
+WebP, APNG, and quality weights). This causes CloudFront to treat each
+browser variant as a unique cache entry, drastically reducing your cache
+hit ratio.</p>
+<p>To maximize caching efficiency while maintaining correct delivery,
+the industry-standard approach uses a lightweight <strong>CloudFront
+Function</strong> on the Viewer Request event to normalize the
+request:</p>
+<ol type="1">
+<li><strong>Viewer Request (CloudFront Function):</strong> Inspect the
+incoming <code>Accept</code> header. If it contains
+<code>image/webp</code>, set a custom header, such as
+<code>x-webp-support: true</code>. If not, set it to
+<code>false</code>.</li>
+<li><strong>Custom Cache Policy:</strong> Configure CloudFront to cache
+based on the custom <code>x-webp-support</code> header instead of the
+raw <code>Accept</code> header.</li>
+<li><strong>Origin Request Policy:</strong> Forward the
+<code>x-webp-support</code> (or the original <code>Accept</code>) header
+to your origin server so it knows which image format to generate and
+return.</li>
+</ol>
+<p>This normalization restricts the cache to only two variants per image
+(WebP-supported and non-supported), maximizing the cache hit ratio
+across all global edge locations.</p>
+<h3 id="setting-the-vary-header-at-the-origin">Setting the Vary Header
+at the Origin</h3>
+<p>In addition to CloudFront policies, your origin server must include
+the <code>Vary: Accept</code> (or <code>Vary: x-webp-support</code>)
+response header. This prevents intermediate proxy caches and downstream
+browser caches from serving the incorrect format to users who share a
+network.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

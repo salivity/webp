@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can Error Level Analysis Detect Edits in WebP Images? - webp</title>
+    <meta name="description" content="Error Level Analysis (ELA) is largely ineffective and unreliable at distinguishing edited elements inside a re-saved WebP image. While ELA was originally developed to identify compression inconsistencies across 8x8 Discrete Cosine Transform (DCT) blocks">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-error-level-analysis-detect-edits-in-web-p-images">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can Error Level Analysis Detect Edits in WebP Images? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-error-level-analysis-detect-edits-in-web-p-images" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Error Level Analysis (ELA) is largely ineffective and unreliable at distinguishing edited elements inside a re-saved WebP image. While ELA was originally developed to identify compression inconsistencies across 8x8 Discrete Cosine Transform (DCT) blocks" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-error-level-analysis-detect-edits-in-webp-images">Can Error
+Level Analysis Detect Edits in WebP Images?</h1>
+<p>Error Level Analysis (ELA) is largely ineffective and unreliable at
+distinguishing edited elements inside a re-saved WebP image. While ELA
+was originally developed to identify compression inconsistencies across
+8x8 Discrete Cosine Transform (DCT) blocks in JPEG files, WebP utilizes
+fundamentally different compression mechanics—specifically VP8-based
+predictive coding and aggressive filtering—that homogenize compression
+artifacts. Consequently, re-saving an edited WebP image typically
+obscures the distinct error levels that forensic analysts rely on to
+detect manipulations.</p>
+<h3 id="why-standard-ela-fails-on-webp">Why Standard ELA Fails on
+WebP</h3>
+<p>ELA works on the principle that lossy images degrade at a predictable
+rate when repeatedly re-saved at a uniform quality level. In a standard
+JPEG, modified regions that have been saved fewer times display higher
+error levels (brighter pixels in the analysis mask) compared to
+untouched areas that have reached an error equilibrium.</p>
+<p>WebP handles lossy compression through VP8 video frame
+intra-prediction rather than standard standalone DCT blocks. Instead of
+evaluating isolated 8x8 blocks, WebP predicts pixel blocks based on
+neighboring blocks, applying macroblock partitions (16x16, 8x8, or 4x4)
+and frequency transforms. When standard ELA algorithms compare WebP
+data, the inter-block predictive dependencies produce erratic error maps
+that cannot reliably delineate between edited elements and complex
+natural textures.</p>
+<h3 id="the-effect-of-in-loop-deblocking-filters">The Effect of In-Loop
+Deblocking Filters</h3>
+<p>A core feature of lossy WebP compression is its adaptive in-loop
+deblocking filter. This filter automatically smooths boundary edges
+between macroblocks to eliminate harsh grid artifacts and improve visual
+fidelity at lower bitrates.</p>
+<p>When a manipulated image is re-saved as a WebP, the deblocking filter
+blurs the transitions between the original canvas and any inserted or
+altered elements. This process rapidly blends the compression signature
+of the spliced element with the surrounding image, removing the sharp
+variance in error levels that an ELA test needs to flag a forgery.</p>
+<h3 id="lossy-vs-lossless-webp-considerations">Lossy vs. Lossless WebP
+Considerations</h3>
+<p>The format variation used when saving the WebP also determines the
+viability of ELA:</p>
+<ul>
+<li><strong>Lossless WebP:</strong> ELA cannot be used on lossless WebP
+images. Lossless compression mathematically preserves every pixel
+perfectly, meaning re-saving the file introduces zero compression loss.
+The resulting error differential is entirely black, revealing nothing
+about the image’s edit history.</li>
+<li><strong>Lossy WebP:</strong> While lossy WebP introduces compression
+artifacts, a single re-save at a standard quality level distributes new
+quantization loss across the entire image. Unless the pasted element
+features radically distinct high-frequency noise from an uncompressed
+source, re-encoding the file as WebP standardizes the mathematical error
+across the canvas.</li>
+</ul>
+<h3 id="practical-forensic-alternatives">Practical Forensic
+Alternatives</h3>
+<p>Because traditional ELA cannot be trusted for re-saved WebP images,
+digital forensic investigators rely on alternate methodologies to detect
+tampering:</p>
+<ul>
+<li><strong>Copy-Move and Clone Detection:</strong> Algorithms that
+analyze keypoint descriptors (such as SIFT or SURF) to identify
+duplicated image patches regardless of re-compression.</li>
+<li><strong>Sensor Noise (PRNU) Analysis:</strong> Examining Photo
+Response Non-Uniformity to identify hardware sensor inconsistencies
+introduced by combining elements from different cameras.</li>
+<li><strong>Neural Network Forensics:</strong> Deep learning models
+trained specifically on modern compression algorithms (WebP, AVIF, HEIC)
+to detect resampling, edge discrepancies, and boundary inconsistencies
+that traditional ELA overlooks.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Deblocking Loop Filters Work - webp</title>
+    <meta name="description" content="WebP relies on an in-loop deblocking filter to eliminate the grid-like seams and sharp edges, known as block artifacts, that result from lossy compression. By operating directly inside the decoding and encoding loops, this filter evaluates pixel gradient">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-deblocking-loop-filters-work">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Deblocking Loop Filters Work - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-deblocking-loop-filters-work" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP relies on an in-loop deblocking filter to eliminate the grid-like seams and sharp edges, known as block artifacts, that result from lossy compression. By operating directly inside the decoding and encoding loops, this filter evaluates pixel gradient" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-deblocking-loop-filters-work">How WebP Deblocking Loop
+Filters Work</h1>
+<p>WebP relies on an in-loop deblocking filter to eliminate the
+grid-like seams and sharp edges, known as block artifacts, that result
+from lossy compression. By operating directly inside the decoding and
+encoding loops, this filter evaluates pixel gradients across block
+boundaries and selectively blends adjacent pixels without softening
+genuine image details. This article breaks down why these artifacts
+occur, how WebP determines filtering strength, and the step-by-step
+process used to smooth block boundaries.</p>
+<h3 id="why-block-artifacts-occur">Why Block Artifacts Occur</h3>
+<p>Lossy WebP encodes images by splitting the canvas into <span
+class="math inline">\(16 \times 16\)</span> pixel macroblocks, which are
+further divided into <span class="math inline">\(4 \times 4\)</span>
+sub-blocks for transform coding. Each block undergoes a Discrete Cosine
+Transform (DCT) or Walsh-Hadamard Transform (WHT), followed by
+quantization.</p>
+<p>Quantization discards high-frequency data to reduce file size.
+Because adjacent blocks are transformed and quantized independently, the
+pixel values reconstructed at the boundaries often fail to match
+seamlessly. At higher compression ratios, these mathematical
+discrepancies manifest as sharp, visible grids across the image.</p>
+<h3 id="the-role-of-the-in-loop-design">The Role of the "In-Loop"
+Design</h3>
+<p>WebP inherits its core lossy compression architecture from the VP8
+video codec, which utilizes an <em>in-loop</em> filter rather than an
+external post-processing filter.</p>
+<p>Being "in-loop" means the filter runs during the decoding
+reconstruction phase. When spatial prediction (intra-prediction)
+predicts future macroblocks, it references the already deblocked pixels
+rather than the raw, unpolished transform outputs. Because both the
+encoder and decoder run the identical filtering algorithm at the exact
+same step, prediction drift is eliminated, leading to better compression
+efficiency and consistent visual output.</p>
+<h3 id="boundary-detection-and-filtering-levels">Boundary Detection and
+Filtering Levels</h3>
+<p>The deblocking loop filter processes boundaries between <span
+class="math inline">\(4 \times 4\)</span> sub-blocks across both luma
+(brightness) and chroma (color) planes. It executes in two passes: first
+smoothing vertical edges by filtering horizontally, then smoothing
+horizontal edges by filtering vertically.</p>
+<p>To avoid blurring real subject edges—such as hair, text, or sharp
+object outlines—the filter relies on dynamic thresholds:</p>
+<ol type="1">
+<li><strong>Filter Level:</strong> Governed by the quantization
+parameter (<span class="math inline">\(Q\)</span>). Higher compression
+settings trigger a higher base filter level, applying stronger smoothing
+to combat harsher blockiness.</li>
+<li><strong>Edge Thresholds:</strong> The algorithm samples pixels
+immediately flanking a boundary line (<span class="math inline">\(p_1,
+p_0 \,|\, q_0, q_1\)</span>, where the pipe represents the block
+boundary). It measures the absolute differences:
+<ul>
+<li>Across the boundary: <span class="math inline">\(|p_0 -
+q_0|\)</span></li>
+<li>On the left/top side: <span class="math inline">\(|p_1 -
+p_0|\)</span></li>
+<li>On the right/bottom side: <span class="math inline">\(|q_1 -
+q_0|\)</span></li>
+</ul></li>
+</ol>
+<p>If the pixel variance across the boundary exceeds predefined limits,
+WebP classifies the discontinuity as a legitimate photographic edge
+rather than a compression artifact and skips filtering entirely.</p>
+<h3 id="simple-vs-normal-filtering-modes">Simple vs. Normal Filtering
+Modes</h3>
+<p>Depending on quality profiles and performance constraints, WebP uses
+two distinct filter implementations:</p>
+<ul>
+<li><strong>Simple Filter:</strong> Optimized for speed, the simple
+filter operates strictly on luma channels and only adjusts the two
+boundary pixels (<span class="math inline">\(p_0\)</span> and <span
+class="math inline">\(q_0\)</span>). It computes a signed correction
+delta, clamps it to a narrow range based on the quantization level, and
+adds or subtracts this delta to flatten the step between the
+blocks.</li>
+<li><strong>Normal (Complex) Filter:</strong> Evaluates a wider span of
+pixels (<span class="math inline">\(p_3, p_2, p_1, p_0 \,|\, q_0, q_1,
+q_2, q_3\)</span>). It can smooth up to two or three pixels deep on each
+side of the edge if the surrounding texture is relatively flat. It
+checks whether the region qualifies as a "flat area"; if so, it
+distributes a wider smoothing gradient across multiple pixels to
+eliminate low-frequency banding.</li>
+</ul>
+<h3 id="pixel-modification-process">Pixel Modification Process</h3>
+<p>Once a boundary qualifies for filtering, WebP calculates a bounded
+correction value (<span class="math inline">\(\Delta\)</span>):</p>
+<p><span class="math display">\[\Delta = \text{Clamp}(p_0 - q_0 +
+\text{rounding offsets})\]</span></p>
+<p>The filter updates the inner boundary pixels:</p>
+<ul>
+<li><span class="math inline">\(p_0&#39; = \text{ClampToByte}(p_0 -
+\Delta)\)</span></li>
+<li><span class="math inline">\(q_0&#39; = \text{ClampToByte}(q_0 +
+\Delta)\)</span></li>
+</ul>
+<p>If the normal filter determines that the outer pixels (<span
+class="math inline">\(p_1, q_1\)</span>) also require smoothing,
+smaller, secondary adjustment deltas are derived from <span
+class="math inline">\(\Delta\)</span> and applied further outward.</p>
+<p>By dynamically calibrating corrections based on local variance and
+quantization metrics, WebP effectively suppresses artificial gridlines
+while retaining critical structural sharpness.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

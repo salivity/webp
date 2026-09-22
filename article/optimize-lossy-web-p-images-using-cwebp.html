@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimize Lossy WebP Images Using cwebp - webp</title>
+    <meta name="description" content="This guide outlines the essential command-line parameters used in the cwebp utility to maximize the efficiency of lossy WebP image compression. By fine-tuning these flags, you can significantly reduce file sizes while maintaining optimal visual clarity,">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/optimize-lossy-web-p-images-using-cwebp">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Optimize Lossy WebP Images Using cwebp - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/optimize-lossy-web-p-images-using-cwebp" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This guide outlines the essential command-line parameters used in the cwebp utility to maximize the efficiency of lossy WebP image compression. By fine-tuning these flags, you can significantly reduce file sizes while maintaining optimal visual clarity," />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="optimize-lossy-webp-images-using-cwebp">Optimize Lossy WebP
+Images Using cwebp</h1>
+<p>This guide outlines the essential command-line parameters used in the
+<code>cwebp</code> utility to maximize the efficiency of lossy WebP
+image compression. By fine-tuning these flags, you can significantly
+reduce file sizes while maintaining optimal visual clarity, ensuring
+faster web page loading times and lower bandwidth usage.</p>
+<h3 id="quality-and-effort-controls">Quality and Effort Controls</h3>
+<ul>
+<li><strong><code>-q &lt;float&gt;</code> (Quality Factor)</strong> Sets
+the compression factor for RGB channels between <code>0</code> (lowest
+quality, smallest file) and <code>100</code> (highest quality, largest
+file). The default is <code>75</code>. For lossy web graphics, values
+between <code>75</code> and <code>85</code> generally provide the best
+balance between visual artifacts and file weight.</li>
+<li><strong><code>-m &lt;int&gt;</code> (Compression Method)</strong>
+Controls the trade-off between encoding speed and compression
+efficiency. Values range from <code>0</code> to <code>6</code>, with
+<code>4</code> being the default. Setting this to <code>6</code> enables
+the slowest, highest-effort analysis, producing the smallest file size
+for a given quality level without degrading image fidelity.</li>
+<li><strong><code>-pass &lt;int&gt;</code> (Analysis Passes)</strong>
+Specifies the number of analysis passes (from <code>1</code> to
+<code>10</code>) used during segment optimization. A value such as
+<code>-pass 6</code> allows the encoder to spend more compute cycles
+finding the optimal distribution of macroblocks, yielding tighter file
+sizes.</li>
+</ul>
+<h3 id="preset-and-target-sizing">Preset and Target Sizing</h3>
+<ul>
+<li><strong><code>-preset &lt;string&gt;</code> (Content
+Tuning)</strong> Applies predefined parameters tailored to specific
+image types. Available presets are:
+<ul>
+<li><code>photo</code>: Optimized for natural outdoor or portrait
+photography.</li>
+<li><code>picture</code>: Tuned for indoor shots or hand-held
+captures.</li>
+<li><code>drawing</code>: Suited for high-contrast illustrations and
+hand drawings.</li>
+<li><code>icon</code>: Tuned for small, color-restricted images.</li>
+<li><code>text</code>: Optimized for text-heavy images.</li>
+</ul></li>
+<li><strong><code>-size &lt;int&gt;</code> (Target Byte Size)</strong>
+Instructs the compressor to target a specific file size (in bytes). The
+compressor runs multiple passes to reach this target as closely as
+possible.</li>
+<li><strong><code>-psnr &lt;float&gt;</code> (Target PSNR)</strong>
+Instructs the compressor to target a specific Peak Signal-to-Noise Ratio
+(in dB), automatically adjusting the compression level to match the
+threshold.</li>
+</ul>
+<h3 id="edge-and-noise-refinement">Edge and Noise Refinement</h3>
+<ul>
+<li><strong><code>-sns &lt;int&gt;</code> (Spatial Noise
+Shaping)</strong> Adjusts spatial noise shaping amplitude from
+<code>0</code> (disabled) to <code>100</code> (maximum). This optimizes
+complex segments of an image by directing bit allocation toward smooth
+regions where compression artifacts are most visible.</li>
+<li><strong><code>-f &lt;int&gt;</code> (Filter Strength)</strong>
+Controls the deblocking filter strength between <code>0</code> (off) and
+<code>100</code>. A strength around <code>20</code> to <code>50</code>
+smooths block boundaries commonly introduced in heavy lossy
+compression.</li>
+<li><strong><code>-sharpness &lt;int&gt;</code> (Filter
+Sharpness)</strong> Adjusts filtering sharpness from <code>0</code>
+(sharpest) to <code>7</code> (least sharp). Lower values maintain crisp
+edges, while higher values create smoother transitions.</li>
+</ul>
+<h3 id="transparency-and-metadata-handling">Transparency and Metadata
+Handling</h3>
+<ul>
+<li><strong><code>-alpha_q &lt;int&gt;</code> (Alpha Quality)</strong>
+Sets the lossy compression factor for the alpha channel between
+<code>0</code> and <code>100</code>. The default is <code>100</code>
+(lossless alpha). Lowering this value reduces the byte overhead of
+transparency in scenes where exact alpha fidelity is not critical.</li>
+<li><strong><code>-metadata &lt;string&gt;</code> (Metadata
+Stripping)</strong> Controls which metadata transfers to the output.
+Setting <code>-metadata none</code> strips all EXIF, XMP, and ICC
+profiles, saving significant space on small web assets.</li>
+</ul>
+<h3 id="recommended-command-example">Recommended Command Example</h3>
+<p>To achieve aggressive, high-quality lossy optimization for a typical
+photograph:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-q</span> 80 <span class="at">-m</span> 6 <span class="at">-pass</span> 6 <span class="at">-sns</span> 80 <span class="at">-metadata</span> none input.jpg <span class="at">-o</span> output.webp</span></code></pre></div></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

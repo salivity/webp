@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Handles Lossy Color Subsampling - webp</title>
+    <meta name="description" content="WebP lossy compression relies directly on the VP8 video codec specification, which mandates the use of YUV 4:2:0 chroma subsampling. This article explores how standard lossy WebP converts RGB image data into luma and chroma components, halves the color r">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-handles-lossy-color-subsampling">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Handles Lossy Color Subsampling - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-handles-lossy-color-subsampling" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP lossy compression relies directly on the VP8 video codec specification, which mandates the use of YUV 4:2:0 chroma subsampling. This article explores how standard lossy WebP converts RGB image data into luma and chroma components, halves the color r" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-handles-lossy-color-subsampling">How WebP Handles Lossy
+Color Subsampling</h1>
+<p>WebP lossy compression relies directly on the VP8 video codec
+specification, which mandates the use of YUV 4:2:0 chroma subsampling.
+This article explores how standard lossy WebP converts RGB image data
+into luma and chroma components, halves the color resolution
+horizontally and vertically to drastically reduce file sizes, and uses
+modern algorithms like SharpYUV to prevent the visual artifacts
+typically associated with aggressive color subsampling.</p>
+<h3 id="the-vp8-heritage-and-fixed-420-subsampling">The VP8 Heritage and
+Fixed 4:2:0 Subsampling</h3>
+<p>Unlike standard JPEG, which allows developers to configure chroma
+subsampling between modes such as 4:4:4 (no subsampling), 4:2:2, and
+4:2:0, standard lossy WebP is strictly locked to YUV 4:2:0. Because
+WebP's lossy encoding is built around VP8 keyframe compression, it
+inherits VP8’s core container and macroblock architecture. VP8 processes
+images in <span class="math inline">\(16 \times 16\)</span> pixel
+macroblocks, requiring a fixed pixel format where color information is
+reduced to match human visual perception.</p>
+<h3 id="the-rgb-to-yuv-transformation">The RGB to YUV
+Transformation</h3>
+<p>The encoding process begins by converting the input pixel data from
+standard RGB color space into YUV (specifically, YCbCr). The
+transformation separates image data into three distinct components:</p>
+<ul>
+<li><strong>Y (Luma):</strong> Represents brightness and achromatic
+detail.</li>
+<li><strong>U (Cb):</strong> Represents the blue-difference chroma
+component.</li>
+<li><strong>V (Cr):</strong> Represents the red-difference chroma
+component.</li>
+</ul>
+<p>Because the human visual system contains significantly more rod cells
+(responsible for detecting light intensity) than cone cells (responsible
+for detecting color nuances), human eyes are far more sensitive to
+spatial changes in brightness than in hue. WebP exploits this biological
+trait by preserving full resolution for the Y channel while downscaling
+the U and V channels.</p>
+<h3 id="the-420-subsampling-mechanism">The 4:2:0 Subsampling
+Mechanism</h3>
+<p>Once the channels are separated, WebP downsamples the U and V planes
+by a factor of two along both the horizontal and vertical axes:</p>
+<ol type="1">
+<li><strong>Luma (Y):</strong> Retains a <span
+class="math inline">\(1:1\)</span> ratio with the source image pixels.
+Every original pixel gets its own luma value.</li>
+<li><strong>Chroma (U and V):</strong> A single color sample is shared
+across a <span class="math inline">\(2 \times 2\)</span> grid of luma
+pixels.</li>
+</ol>
+<p>In practice, a <span class="math inline">\(16 \times 16\)</span> luma
+macroblock contains an array of <span class="math inline">\(16 \times
+16\)</span> Y samples, but only <span class="math inline">\(8 \times
+8\)</span> U samples and <span class="math inline">\(8 \times 8\)</span>
+V samples. This structural decimation instantly discards 50% of the raw,
+uncompressed color data before any discrete cosine transforms (DCT),
+intra-prediction, or quantization algorithms are applied.</p>
+<h3 id="mitigating-edge-bleeding-with-sharpyuv">Mitigating Edge Bleeding
+with SharpYUV</h3>
+<p>A major drawback of standard 4:2:0 downsampling is color bleeding,
+which occurs frequently along sharp, high-contrast borders (such as
+bright red text on a black or white background). Naive downsampling
+algorithms blend adjacent pixels using simple linear or box filtering,
+which can cause severe edge blurring and ringing artifacts.</p>
+<p>To solve this, modern WebP encoders (via <code>libwebp</code>)
+incorporate an advanced downsampling algorithm known as
+<strong>SharpYUV</strong> (enabled via the <code>-pre 4</code> or
+<code>-sharp_yuv</code> flag). SharpYUV functions through an
+optimization loop:</p>
+<ol type="1">
+<li>It downsamples the chroma channels using an initial filter.</li>
+<li>It upsamples the chroma internally to reconstruct an approximation
+of the RGB target.</li>
+<li>It calculates the difference (error) between the reconstructed RGB
+image and the original RGB source.</li>
+<li>It iteratively refines the subsampled chroma values to minimize
+perceived color shifts along contrasting edges.</li>
+</ol>
+<p>This process ensures that edges remain sharp and legible despite the
+reduction in physical chroma resolution.</p>
+<h3 id="decoding-and-reconstruction">Decoding and Reconstruction</h3>
+<p>During decompression, the WebP decoder reconstructs the missing color
+values through spatial interpolation. The <span class="math inline">\(8
+\times 8\)</span> chroma planes are upsampled back to <span
+class="math inline">\(16 \times 16\)</span> to align with the luma
+block, using bilinear filtering to smooth the transitions between
+adjacent color points. Finally, the upsampled YUV values are
+mathematically converted back to standard RGB values for display.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

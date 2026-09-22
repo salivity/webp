@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lossy WebP Repeated Compression Artifacts Explained - webp</title>
+    <meta name="description" content="When a lossy WebP image is repeatedly saved, decoded, and re-compressed, it undergoes generation loss. Because lossy WebP is derived from the VP8 video codec, its degradation patterns differ noticeably from traditional formats like JPEG. Over successive">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/lossy-web-p-repeated-compression-artifacts-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lossy WebP Repeated Compression Artifacts Explained - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/lossy-web-p-repeated-compression-artifacts-explained" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="When a lossy WebP image is repeatedly saved, decoded, and re-compressed, it undergoes generation loss. Because lossy WebP is derived from the VP8 video codec, its degradation patterns differ noticeably from traditional formats like JPEG. Over successive" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="lossy-webp-repeated-compression-artifacts-explained">Lossy WebP
+Repeated Compression Artifacts Explained</h1>
+<p>When a lossy WebP image is repeatedly saved, decoded, and
+re-compressed, it undergoes generation loss. Because lossy WebP is
+derived from the VP8 video codec, its degradation patterns differ
+noticeably from traditional formats like JPEG. Over successive
+compression cycles, mathematical rounding errors and aggressive
+quantization compound, transforming sharp imagery into an over-smoothed,
+distorted version of the original.</p>
+<h3 id="progressive-blurring-and-the-plastic-effect">Progressive
+Blurring and the "Plastic" Effect</h3>
+<p>The most prominent artifact of generational WebP compression is
+extreme smoothing. Lossy WebP relies heavily on intra-frame prediction
+and an aggressive built-in loop filter designed to prevent visible block
+seams. With each re-compression, high-frequency spatial data is
+discarded. Fine textures—such as skin pores, fabric weaves, grain, or
+foliage—are rapidly smoothed away, leaving surfaces with a waxy,
+plastic-like appearance.</p>
+<h3 id="macroblocking-and-prediction-drift">Macroblocking and Prediction
+Drift</h3>
+<p>WebP processes images using 16x16 macroblocks divided into smaller
+sub-blocks (4x4 luminance and 8x8 chrominance) to predict pixel values
+from neighboring blocks. In repeated re-encoding passes:</p>
+<ul>
+<li>The encoder may choose different prediction modes than the original
+pass due to slightly modified boundary pixels.</li>
+<li>Faint grid patterns and misaligned square blocks emerge across what
+should be continuous regions.</li>
+<li>While the deblocking filter tries to blur these edges, heavy
+re-compression eventually overwhelms the filter, causing block
+boundaries to become plainly visible.</li>
+</ul>
+<h3 id="ringing-and-halo-artifacts">Ringing and Halo Artifacts</h3>
+<p>High-contrast edges, such as dark text on a light background or sharp
+silhouettes, suffer from ringing artifacts (often called mosquito
+noise). This occurs because lossy WebP uses discrete cosine transform
+(DCT) and Walsh-Hadamard transforms. Quantizing transform coefficients
+discards higher frequencies, causing high-contrast transitions to
+generate rippling echoes or blurry halos along sharp outlines.</p>
+<h3 id="chroma-degradation-and-color-banding">Chroma Degradation and
+Color Banding</h3>
+<p>Standard lossy WebP converts RGB images to the YUV color space and
+applies 4:2:0 chroma subsampling, cutting color resolution in half both
+horizontally and vertically. Across repeated compressions:</p>
+<ul>
+<li><strong>Color Bleeding:</strong> Saturated colors spill over into
+neighboring neutral zones.</li>
+<li><strong>Posterization (Banding):</strong> Smooth gradients (such as
+sunsets or clear skies) break down into stark, stepped bands of flat
+color as intermediate color values are quantized out of existence.</li>
+<li><strong>Loss of Color Depth:</strong> Subtle chroma variations
+disappear entirely, leading to flat, dull tones.</li>
+</ul>
+<h3 id="luminance-shifts-and-rounding-drift">Luminance Shifts and
+Rounding Drift</h3>
+<p>Every compression cycle requires converting from RGB to YUV for
+encoding, and then from YUV back to RGB for display or decoding. Because
+these color-space transformations involve floating-point approximations
+truncated to integer values, microscopic rounding errors accumulate.
+Over dozens of generations, the image may exhibit noticeable shifts in
+overall brightness, contrast collapse, or an unintended color tint
+across neutral gray areas.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

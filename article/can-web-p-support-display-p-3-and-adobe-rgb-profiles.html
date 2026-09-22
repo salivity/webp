@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can WebP Support Display P3 and Adobe RGB Profiles? - webp</title>
+    <meta name="description" content="WebP fully supports embedded color profiles, allowing images to accurately display wide color gamuts such as Display P3, Adobe RGB, and ProPhoto RGB. Through the use of standard International Color Consortium (ICC) profiles embedded within the WebP conta">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-web-p-support-display-p-3-and-adobe-rgb-profiles">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can WebP Support Display P3 and Adobe RGB Profiles? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-web-p-support-display-p-3-and-adobe-rgb-profiles" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP fully supports embedded color profiles, allowing images to accurately display wide color gamuts such as Display P3, Adobe RGB, and ProPhoto RGB. Through the use of standard International Color Consortium (ICC) profiles embedded within the WebP conta" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-webp-support-display-p3-and-adobe-rgb-profiles">Can WebP
+Support Display P3 and Adobe RGB Profiles?</h1>
+<p>WebP fully supports embedded color profiles, allowing images to
+accurately display wide color gamuts such as Display P3, Adobe RGB, and
+ProPhoto RGB. Through the use of standard International Color Consortium
+(ICC) profiles embedded within the WebP container format, modern
+browsers and operating systems can correctly read and render wide-gamut
+color data. This guide explains how WebP color management works, browser
+compatibility, and how to embed these profiles effectively.</p>
+<h3 id="how-webp-stores-color-profiles">How WebP Stores Color
+Profiles</h3>
+<p>The WebP specification is built on the Resource Interchange File
+Format (RIFF). While simple WebP images consist only of the core
+bitstream, the Extended WebP file format (indicated by a
+<code>VP8X</code> header chunk) supports optional metadata chunks.</p>
+<p>Embedded color profiles are stored inside a dedicated
+<code>ICCP</code> (ICC profile) chunk. This chunk carries the raw,
+standard ICC profile payload, identical to how ICC profiles are embedded
+in JPEG, PNG, or TIFF files. Because the specification relies on
+standard ICC data rather than a proprietary color system, any valid
+color profile—including Display P3 and Adobe RGB (1998)—can be
+encapsulated.</p>
+<h3 id="color-gamut-support-display-p3-and-adobe-rgb">Color Gamut
+Support: Display P3 and Adobe RGB</h3>
+<p>When an image is exported to WebP with an embedded Display P3 or
+Adobe RGB profile:</p>
+<ol type="1">
+<li><strong>Color Data Preservation:</strong> The pixel values are
+mapped according to the wider gamut rather than being clipped or
+compressed down to standard sRGB.</li>
+<li><strong>Display Translation:</strong> When rendered on a wide-gamut
+display (such as modern Apple Retina screens or wide-gamut desktop
+monitors), color-managed software translates the embedded color
+coordinates to match the screen's physical capabilities. This produces
+richer reds, deeper greens, and overall more vibrant colors without
+banding or clipping.</li>
+<li><strong>Fallback Handling:</strong> If viewed on a standard sRGB
+monitor, color-managed software automatically maps the wide-gamut colors
+to the closest reproducible sRGB equivalents.</li>
+</ol>
+<h3 id="browser-and-platform-support">Browser and Platform Support</h3>
+<p>Support for color profiles in WebP is broad across all modern
+platforms:</p>
+<ul>
+<li><strong>Web Browsers:</strong> Google Chrome, Apple Safari, Mozilla
+Firefox, and Microsoft Edge all respect embedded ICC profiles in WebP
+images and apply native color management.</li>
+<li><strong>Operating Systems:</strong> macOS, iOS, Windows, and Android
+handle system-level color management, allowing applications utilizing
+system graphics APIs to read the WebP <code>ICCP</code> chunk
+correctly.</li>
+</ul>
+<h3 id="impact-on-file-size">Impact on File Size</h3>
+<p>Embedding an ICC profile increases the final file size of a WebP
+image:</p>
+<ul>
+<li><strong>Standard Profiles:</strong> Full-featured ICC profiles can
+add anywhere from 3 KB to over 50 KB of overhead to the file.</li>
+<li><strong>Compact/Matrix Profiles:</strong> For web optimization, it
+is recommended to use minimal matrix-based profiles (often under 1 KB)
+to define Display P3 or Adobe RGB. This preserves wide-gamut fidelity
+while maintaining the bandwidth advantages of the WebP format.</li>
+</ul>
+<h3 id="how-to-preserve-profiles-during-export">How to Preserve Profiles
+During Export</h3>
+<p>To ensure the color profile is included when generating WebP
+files:</p>
+<ul>
+<li><strong>Google's <code>cwebp</code> CLI:</strong> Use the
+<code>-metadata icc</code> or <code>-metadata all</code> flag. Without
+this flag, <code>cwebp</code> strips all metadata by default, converting
+the image to untagged data that browsers will assume is sRGB.</li>
+<li><strong>Image Editing Software:</strong> In applications like Adobe
+Photoshop, ensure "Embed Color Profile" is checked in the export or save
+dialogue.</li>
+<li><strong>ImageMagick:</strong> Use
+<code>-define webp:include-metadata=icc</code> during conversion to
+prevent profile stripping.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

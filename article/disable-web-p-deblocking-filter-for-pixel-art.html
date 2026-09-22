@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disable WebP Deblocking Filter for Pixel Art - webp</title>
+    <meta name="description" content="The in-loop deblocking filter in WebP can be completely disabled for lossy compression by setting the filter strength parameter to zero, preventing unwanted edge smoothing. However, while disabling the filter eliminates blur, the standard and most effect">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/disable-web-p-deblocking-filter-for-pixel-art">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Disable WebP Deblocking Filter for Pixel Art - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/disable-web-p-deblocking-filter-for-pixel-art" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The in-loop deblocking filter in WebP can be completely disabled for lossy compression by setting the filter strength parameter to zero, preventing unwanted edge smoothing. However, while disabling the filter eliminates blur, the standard and most effect" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="disable-webp-deblocking-filter-for-pixel-art">Disable WebP
+Deblocking Filter for Pixel Art</h1>
+<p>The in-loop deblocking filter in WebP can be completely disabled for
+lossy compression by setting the filter strength parameter to zero,
+preventing unwanted edge smoothing. However, while disabling the filter
+eliminates blur, the standard and most effective solution for pixel art
+is using WebP’s lossless mode, which bypasses the VP8 deblocking
+pipeline entirely to preserve exact pixel boundaries.</p>
+<h3 id="why-webp-deblocking-affects-pixel-art">Why WebP Deblocking
+Affects Pixel Art</h3>
+<p>Lossy WebP compression is derived from the VP8 video codec. By
+default, it applies an adaptive in-loop deblocking filter across block
+boundaries (macroblocks) to reduce visible grid-like compression
+artifacts.</p>
+<p>In standard photographic imagery, this smoothing creates a more
+natural appearance. In pixel art, however, hard edges and single-pixel
+contrasts are critical artistic elements. The deblocking filter
+interprets these intentional high-contrast edges as compression
+artifacts, blurring sharp pixel clusters and muddying fine details.</p>
+<h3 id="disabling-the-deblocking-filter-in-lossy-webp">Disabling the
+Deblocking Filter in Lossy WebP</h3>
+<p>If you must use lossy WebP, the deblocking filter can be fully
+deactivated using standard encoding tools like Google's
+<code>cwebp</code> command-line utility:</p>
+<ul>
+<li><strong>Filter Strength (<code>-f 0</code>):</strong> Setting the
+deblocking filter strength to <code>0</code> turns off the in-loop
+filter completely.</li>
+<li><strong>Sharpness (<code>-sharpness 7</code>):</strong> Setting the
+filter sharpness to maximum (<code>7</code>) narrows the filter's scope
+and reduces filtering intensity when the filter is not set to
+<code>0</code>.</li>
+</ul>
+<p>An example command to disable deblocking on a lossy image:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-q</span> 90 <span class="at">-f</span> 0 input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<p>While setting <code>-f 0</code> eliminates algorithmic smoothing
+across macroblocks, lossy compression still relies on quantization and
+discrete cosine transforms. Even without deblocking, lossy encoding can
+introduce ringing artifacts, color drift, and noise around pixel
+clusters.</p>
+<h3 id="the-recommended-approach-webp-lossless-mode">The Recommended
+Approach: WebP Lossless Mode</h3>
+<p>For pixel art, lossy WebP is generally unsuitable regardless of
+filter settings. The WebP format includes a dedicated
+<strong>Lossless</strong> specification that functions completely
+differently from VP8 lossy compression:</p>
+<ul>
+<li><strong>No Deblocking Pipeline:</strong> Lossless WebP does not
+employ macroblock transforms or in-loop filtering. Every pixel value and
+edge remains mathematically identical to the source.</li>
+<li><strong>Superior Compression for Palettes:</strong> Pixel art
+features limited color palettes, flat areas of color, and repeating
+patterns. Lossless WebP utilizes color indexing, spatial prediction, and
+entropy coding (LZ77-based) optimized for graphic assets. It frequently
+produces file sizes 25% to 40% smaller than optimized PNGs without any
+quality loss.</li>
+</ul>
+<p>To encode pixel art using lossless WebP, use the
+<code>-lossless</code> flag:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-lossless</span> input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<p>Disabling the deblocking filter with <code>-f 0</code> allows lossy
+WebP to maintain sharp block edges, but deploying WebP's native lossless
+encoding remains the definitive method to achieve perfect pixel
+fidelity.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

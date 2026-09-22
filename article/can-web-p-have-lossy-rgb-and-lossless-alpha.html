@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can WebP Have Lossy RGB and Lossless Alpha? - webp</title>
+    <meta name="description" content="Yes, a WebP file can combine a lossy RGB color layer with a lossless alpha (transparency) channel. This article provides an overview of how the WebP format achieves this hybrid compression, how the underlying container manages separate color and transpar">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-web-p-have-lossy-rgb-and-lossless-alpha">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can WebP Have Lossy RGB and Lossless Alpha? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-web-p-have-lossy-rgb-and-lossless-alpha" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Yes, a WebP file can combine a lossy RGB color layer with a lossless alpha (transparency) channel. This article provides an overview of how the WebP format achieves this hybrid compression, how the underlying container manages separate color and transpar" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-webp-have-lossy-rgb-and-lossless-alpha">Can WebP Have Lossy
+RGB and Lossless Alpha?</h1>
+<p>Yes, a WebP file can combine a lossy RGB color layer with a lossless
+alpha (transparency) channel. This article provides an overview of how
+the WebP format achieves this hybrid compression, how the underlying
+container manages separate color and transparency data, and why this
+capability offers a major optimization advantage over legacy image
+formats like JPEG and PNG.</p>
+<h3 id="how-webp-combines-lossy-color-and-lossless-transparency">How
+WebP Combines Lossy Color and Lossless Transparency</h3>
+<p>The WebP specification relies on an extended file header known as
+<code>VP8X</code>. When an image requires features beyond basic lossy
+compression—such as an alpha channel, ICC profiles, or animation—the
+file uses this extended container format.</p>
+<p>In a lossy WebP image with transparency:</p>
+<ul>
+<li><strong>RGB Color Data:</strong> Encoded using standard VP8 lossy
+compression, which is ideal for photographic content where imperceptible
+data loss helps drastically reduce file size.</li>
+<li><strong>Alpha Data:</strong> Stored in a separate bitstream chunk
+labeled <code>ALPH</code>. WebP encodes this transparency mask
+independently from the RGB data using VP8L (WebP Lossless) compression
+techniques.</li>
+</ul>
+<p>Because the two streams are handled independently, the color data can
+be aggressively compressed while the transparency mask remains
+mathematically exact and free of compression artifacts.</p>
+<h3 id="why-this-combination-is-beneficial">Why This Combination Is
+Beneficial</h3>
+<p>Prior to modern formats like WebP, developers often faced a tradeoff
+between file size and edge quality:</p>
+<ul>
+<li><strong>PNG</strong> supports lossless transparency, but its
+lossless RGB compression results in massive file sizes for photographic
+or gradient-heavy images.</li>
+<li><strong>JPEG</strong> achieves small file sizes for photographic
+content, but it has no native support for transparency.</li>
+</ul>
+<p>When transparency is subjected to lossy compression, the degradation
+often creates halos, fringing, or semi-transparent smudges around the
+edges of an object. By pairing a lossy RGB layer with a lossless alpha
+channel, WebP allows complex photographic elements to sit on transparent
+backgrounds cleanly, retaining sharp edges and smooth fades without
+inflating the overall file size.</p>
+<h3 id="encoding-lossy-webp-with-lossless-alpha">Encoding Lossy WebP
+with Lossless Alpha</h3>
+<p>Most WebP encoders, including Google's official <code>cwebp</code>
+command-line utility, enable this behavior by default. When you compress
+an image with transparency using lossy mode:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-q</span> 80 input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<p>In this standard configuration:</p>
+<ul>
+<li>The <code>-q 80</code> quality flag applies solely to the lossy VP8
+color layer.</li>
+<li>The alpha channel is compressed losslessly by default.</li>
+</ul>
+<p>If an even smaller file size is required, WebP also permits lossy
+compression of the alpha channel using the <code>-alpha_q</code>
+parameter. However, leaving the alpha channel lossless ensures crisp
+boundaries while still extracting the massive size-reduction benefits of
+lossy color compression.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

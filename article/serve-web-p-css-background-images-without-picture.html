@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serve WebP CSS Background Images Without Picture - webp</title>
+    <meta name="description" content="Serving modern image formats like WebP as CSS background images requires different techniques than standard HTML inline images, as the native <picture> element is unavailable in stylesheets. This article explores the primary methods developers use to con">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/serve-web-p-css-background-images-without-picture">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Serve WebP CSS Background Images Without Picture - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/serve-web-p-css-background-images-without-picture" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Serving modern image formats like WebP as CSS background images requires different techniques than standard HTML inline images, as the native <picture> element is unavailable in stylesheets. This article explores the primary methods developers use to con" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="serve-webp-css-background-images-without-picture">Serve WebP CSS
+Background Images Without Picture</h1>
+<p>Serving modern image formats like WebP as CSS background images
+requires different techniques than standard HTML inline images, as the
+native <code>&lt;picture&gt;</code> element is unavailable in
+stylesheets. This article explores the primary methods developers use to
+conditionally deliver WebP backgrounds with fallbacks to traditional
+formats like JPEG or PNG: the modern CSS <code>image-set()</code>
+function, JavaScript-based feature detection classes, and HTTP content
+negotiation.</p>
+<h3 id="the-modern-approach-css-image-set">The Modern Approach: CSS
+<code>image-set()</code></h3>
+<p>The standard, modern method for conditional background image serving
+in pure CSS is the <code>image-set()</code> functional notation. Similar
+to the <code>srcset</code> attribute in HTML, <code>image-set()</code>
+allows developers to provide a list of image candidates along with
+format and resolution hints, letting the browser download only the
+format it supports.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.hero</span> {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;background.jpg&quot;</span><span class="fu">)</span><span class="op">;</span> <span class="co">/* Fallback for legacy browsers */</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> -webkit-image-set<span class="fu">(</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">url(</span><span class="st">&quot;background.webp&quot;</span><span class="fu">)</span> type<span class="fu">(</span><span class="st">&quot;image/webp&quot;</span><span class="fu">)</span><span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">url(</span><span class="st">&quot;background.jpg&quot;</span><span class="fu">)</span> type<span class="fu">(</span><span class="st">&quot;image/jpeg&quot;</span><span class="fu">)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">)</span><span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">image-set(</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">url(</span><span class="st">&quot;background.webp&quot;</span><span class="fu">)</span> type<span class="fu">(</span><span class="st">&quot;image/webp&quot;</span><span class="fu">)</span><span class="op">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">url(</span><span class="st">&quot;background.jpg&quot;</span><span class="fu">)</span> type<span class="fu">(</span><span class="st">&quot;image/jpeg&quot;</span><span class="fu">)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">)</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>When a browser encounters this property, it evaluates the
+<code>type()</code> attribute. If it supports <code>image/webp</code>,
+it downloads the WebP asset and ignores the fallback. Older browsers
+that do not support <code>image-set()</code> simply use the standard
+<code>url()</code> declared immediately before it.</p>
+<h3 id="class-based-detection-with-javascript">Class-Based Detection
+with JavaScript</h3>
+<p>Before <code>image-set()</code> gained widespread cross-browser
+support, the industry standard was client-side feature detection using
+Modernizr or a tiny inline JavaScript snippet.</p>
+<p>This approach tests whether the browser can decode a tiny
+base64-encoded WebP image. Upon validation, the script appends a
+<code>.webp</code> or <code>.no-webp</code> class to the document's
+<code>&lt;html&gt;</code> element.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Quick inline detection script</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> webp <span class="op">=</span> <span class="kw">new</span> <span class="fu">Image</span>()<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>webp<span class="op">.</span><span class="at">onload</span> <span class="op">=</span> webp<span class="op">.</span><span class="at">onerror</span> <span class="op">=</span> <span class="kw">function</span> () {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (webp<span class="op">.</span><span class="at">height</span> <span class="op">===</span> <span class="dv">2</span>) {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="at">documentElement</span><span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&quot;webp&quot;</span>)<span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="at">documentElement</span><span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&quot;no-webp&quot;</span>)<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>webp<span class="op">.</span><span class="at">src</span> <span class="op">=</span> <span class="st">&quot;data:image/webp;base64,UklGRjoAAABXRUJQVlA4IC4AAACyAgCdASoCAAIALmk0mk0iIiIiIgBoSygABc6WWgAA/veff/0PP8bA//LwYAAA&quot;</span><span class="op">;</span></span></code></pre></div>
+<p>CSS rules then target these classes specifically:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.card</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;card-bg.jpg&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">.webp</span> <span class="fu">.card</span> {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;card-bg.webp&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Because the script runs in the <code>&lt;head&gt;</code> before the
+DOM renders, the browser only initiates a download for the appropriate
+image file, preventing double-fetching.</p>
+<h3 id="server-side-content-negotiation">Server-Side Content
+Negotiation</h3>
+<p>Another seamless method eliminates CSS modifications entirely by
+handling conditional delivery on the web server.</p>
+<p>Browsers that support WebP send an explicit HTTP request header:</p>
+<p><code>Accept: image/webp,image/apng,image/*,*/*;q=0.8</code></p>
+<p>Web servers (such as NGINX or Apache) or Content Delivery Networks
+(CDNs) can be configured to check for the presence of
+<code>image/webp</code> in the <code>Accept</code> header. If present,
+the server serves the WebP variant of the file while maintaining the
+original URL (e.g., <code>background.jpg</code>) and responding with a
+<code>Vary: Accept</code> header to ensure proper caching.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* The CSS requires no format logic */</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">.banner</span> {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;banner.jpg&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="summary">Summary</h3>
+<p>For modern web applications, the native CSS <code>image-set()</code>
+function is the standard solution for format selection without HTML
+wrappers. For projects requiring broader legacy support or streamlined
+stylesheets, class-based detection scripts and server-level content
+negotiation remain robust alternatives.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

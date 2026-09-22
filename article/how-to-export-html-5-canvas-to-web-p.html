@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Export HTML5 Canvas to WebP - webp</title>
+    <meta name="description" content="The HTML5 canvas element can export drawings directly to the WebP format natively using JavaScript without requiring third-party encoding libraries. By utilizing the built-in HTMLCanvasElement.toDataURL() or HTMLCanvasElement.toBlob() methods and passing">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-to-export-html-5-canvas-to-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Export HTML5 Canvas to WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-to-export-html-5-canvas-to-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The HTML5 canvas element can export drawings directly to the WebP format natively using JavaScript without requiring third-party encoding libraries. By utilizing the built-in HTMLCanvasElement.toDataURL() or HTMLCanvasElement.toBlob() methods and passing" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-export-html5-canvas-to-webp">How to Export HTML5 Canvas
+to WebP</h1>
+<p>The HTML5 canvas element can export drawings directly to the WebP
+format natively using JavaScript without requiring third-party encoding
+libraries. By utilizing the built-in
+<code>HTMLCanvasElement.toDataURL()</code> or
+<code>HTMLCanvasElement.toBlob()</code> methods and passing
+<code>image/webp</code> as the MIME type parameter, modern web browsers
+compress the canvas bitmap directly into WebP. This article explains how
+to implement these methods, adjust compression quality, and handle
+browser fallbacks effectively.</p>
+<h2 id="using-todataurl-for-data-uris">Using <code>toDataURL()</code>
+for Data URIs</h2>
+<p>The <code>toDataURL()</code> method synchronously extracts the canvas
+content as a base64-encoded data URL. To export directly to WebP,
+provide <code>'image/webp'</code> as the first argument, and optionally
+provide an image quality value between <code>0.0</code> and
+<code>1.0</code> as the second argument.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> canvas <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;myCanvas&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Export as a WebP data URL with 80% quality</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> webpDataUrl <span class="op">=</span> canvas<span class="op">.</span><span class="fu">toDataURL</span>(<span class="st">&#39;image/webp&#39;</span><span class="op">,</span> <span class="fl">0.8</span>)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Use the data URL (e.g., set to an &lt;img&gt; element)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> image <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;preview&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>image<span class="op">.</span><span class="at">src</span> <span class="op">=</span> webpDataUrl<span class="op">;</span></span></code></pre></div>
+<p>This approach works best for small images or immediate display in an
+<code>&lt;img&gt;</code> tag, though base64 strings consume roughly 33%
+more memory than binary data.</p>
+<h2 id="using-toblob-for-binary-files-and-uploads">Using
+<code>toBlob()</code> for Binary Files and Uploads</h2>
+<p>For larger canvas drawings, performance-critical applications, or
+direct file uploads, <code>toBlob()</code> is the preferred method. It
+processes the export asynchronously and produces a binary
+<code>Blob</code> object instead of a string.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> canvas <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;myCanvas&#39;</span>)<span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Export asynchronously as a WebP blob with 90% quality</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>canvas<span class="op">.</span><span class="fu">toBlob</span>((blob) <span class="kw">=&gt;</span> {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (blob) {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Example: Create a download link for the WebP file</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> url <span class="op">=</span> URL<span class="op">.</span><span class="fu">createObjectURL</span>(blob)<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> link <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">&#39;a&#39;</span>)<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    link<span class="op">.</span><span class="at">href</span> <span class="op">=</span> url<span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    link<span class="op">.</span><span class="at">download</span> <span class="op">=</span> <span class="st">&#39;drawing.webp&#39;</span><span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    link<span class="op">.</span><span class="fu">click</span>()<span class="op">;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Revoke the object URL to free memory</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    URL<span class="op">.</span><span class="fu">revokeObjectURL</span>(url)<span class="op">;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span> <span class="st">&#39;image/webp&#39;</span><span class="op">,</span> <span class="fl">0.9</span>)<span class="op">;</span></span></code></pre></div>
+<p>The resulting <code>Blob</code> can be transmitted directly to an API
+via <code>fetch()</code> or <code>FormData</code> using
+<code>multipart/form-data</code>.</p>
+<h2 id="controlling-webp-compression-quality">Controlling WebP
+Compression Quality</h2>
+<p>The optional quality argument (from <code>0.0</code> for maximum
+compression to <code>1.0</code> for maximum quality) directly controls
+the lossy WebP encoder built into the browser engine:</p>
+<ul>
+<li><strong>1.0</strong>: Near-lossless output with minimal compression
+artifacts.</li>
+<li><strong>0.8 (Default for most implementations)</strong>: Optimal
+balance of high visual fidelity and reduced file size.</li>
+<li><strong>Below 0.5</strong>: Aggressive compression suitable for
+thumbnails or bandwidth-constrained scenarios.</li>
+</ul>
+<p>If the quality parameter is omitted, browsers use their own internal
+default settings (typically around 0.8 to 0.92).</p>
+<h2 id="browser-compatibility-and-fallback-handling">Browser
+Compatibility and Fallback Handling</h2>
+<p>All modern browsers (Chrome, Firefox, Safari 14+, and Edge) support
+exporting canvas to WebP. However, the HTML5 specification dictates that
+if a browser does not support the requested MIME type, it must fall back
+to returning <code>image/png</code>.</p>
+<p>You can verify whether a browser supports native WebP export by
+inspecting the prefix of the returned string:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">checkWebpSupport</span>() {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> dummyCanvas <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">&#39;canvas&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  dummyCanvas<span class="op">.</span><span class="at">width</span> <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  dummyCanvas<span class="op">.</span><span class="at">height</span> <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> dummyCanvas<span class="op">.</span><span class="fu">toDataURL</span>(<span class="st">&#39;image/webp&#39;</span>)<span class="op">.</span><span class="fu">indexOf</span>(<span class="st">&#39;data:image/webp&#39;</span>) <span class="op">===</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>If the function returns <code>true</code>, the browser natively
+encodes to WebP directly from the canvas API.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

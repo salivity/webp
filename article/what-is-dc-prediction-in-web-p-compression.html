@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Is DC Prediction in WebP Compression? - webp</title>
+    <meta name="description" content="DC prediction is a fundamental intra-prediction mode used in the WebP image format to compress pixel data by eliminating spatial redundancy. This article details the mathematical and structural mechanics of DC prediction within WebP's VP8 core, explains">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/what-is-dc-prediction-in-web-p-compression">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="What Is DC Prediction in WebP Compression? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/what-is-dc-prediction-in-web-p-compression" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="DC prediction is a fundamental intra-prediction mode used in the WebP image format to compress pixel data by eliminating spatial redundancy. This article details the mathematical and structural mechanics of DC prediction within WebP's VP8 core, explains" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="what-is-dc-prediction-in-webp-compression">What Is DC Prediction
+in WebP Compression?</h1>
+<p>DC prediction is a fundamental intra-prediction mode used in the WebP
+image format to compress pixel data by eliminating spatial redundancy.
+This article details the mathematical and structural mechanics of DC
+prediction within WebP's VP8 core, explains how it calculates pixel
+values, and outlines the specific encoding conditions under which the
+WebP compression engine chooses it over alternative prediction
+modes.</p>
+<h3 id="what-is-dc-prediction">What Is DC Prediction?</h3>
+<p>WebP lossy compression is derived from the VP8 video codec, which
+breaks images down into smaller blocks—typically 4x4 or 16x16
+macroblocks for luma (brightness) and 8x8 blocks for chroma (color). To
+avoid storing the raw pixel values of every block, the encoder attempts
+to predict the contents of a block using the pixels immediately adjacent
+to it that have already been decoded (specifically, the row directly
+above and the column directly to the left).</p>
+<p>DC prediction (named after the "Direct Current" or zero-frequency
+component in frequency transforms) predicts that all pixels within the
+target block share a single, uniform average color. The encoder
+calculates the arithmetic mean of the neighboring reconstructed
+pixels:</p>
+<ol type="1">
+<li>It sums the available pixels directly above the block.</li>
+<li>It sums the available pixels directly to the left of the block.</li>
+<li>It divides the combined sum by the total number of neighboring
+sample pixels (rounding appropriately).</li>
+<li>The resulting average (the "DC value") is used to fill every pixel
+inside the target block.</li>
+</ol>
+<p>The encoder then subtracts this uniform prediction from the actual
+block data, leaving a "residual" matrix that requires significantly
+fewer bits to encode via Discrete Cosine Transform (DCT) and entropy
+coding.</p>
+<h3 id="when-is-dc-prediction-selected-by-the-webp-engine">When Is DC
+Prediction Selected by the WebP Engine?</h3>
+<p>The WebP encoder selects DC prediction through a process called
+Rate-Distortion Optimization (RDO). During RDO, the encoder evaluates
+all available intra-prediction modes (Vertical, Horizontal, True Motion,
+and DC) to determine which yields the best trade-off between image
+fidelity (distortion) and file size (bitrate).</p>
+<p>DC prediction is typically selected in the following scenarios:</p>
+<ul>
+<li><strong>Flat and Low-Variance Regions:</strong> When an image block
+contains solid colors, flat backgrounds, or very subtle textures without
+sharp directional lines, DC prediction produces the smallest residual
+error with minimal high-frequency artifacts.</li>
+<li><strong>Absence of Clear Directional Edges:</strong> Modes like
+Horizontal (<code>H_PRED</code>) or Vertical (<code>V_PRED</code>) excel
+when contrast lines travel across a block in a specific direction. When
+a block lacks a dominant horizontal or vertical gradient, DC prediction
+often outperforms directional modes by providing an unbiased
+baseline.</li>
+<li><strong>Image Boundaries:</strong> At the borders of an image, full
+sets of neighboring pixels may not exist. If the block is at the top
+border (no pixels above), DC prediction calculates the average using
+only the left pixels. If it is on the left border (no pixels to the
+left), it uses only the top pixels. If neither is available (such as the
+top-left block of an image), the encoder defaults the DC value to a
+neutral mid-gray (value 128 for 8-bit depth).</li>
+<li><strong>High Quantization Levels (High Compression):</strong> At
+lower quality targets, the encoder prioritizes bit-saving over high
+fidelity. Because DC prediction projects a single constant value, its
+residual contains little to no high-frequency energy, making it cheaper
+to compress than modes that introduce complex edge predictions.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

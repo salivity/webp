@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Fuzzing Techniques for Security Testing - webp</title>
+    <meta name="description" content="Security researchers commonly employ fuzz testing on WebP decoders and parsers to uncover critical memory corruption vulnerabilities, such as the widely exploited heap buffer overflow tracked as CVE-2023-4863. Because WebP is a complex format derived fro">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-fuzzing-techniques-for-security-testing">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Fuzzing Techniques for Security Testing - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-fuzzing-techniques-for-security-testing" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Security researchers commonly employ fuzz testing on WebP decoders and parsers to uncover critical memory corruption vulnerabilities, such as the widely exploited heap buffer overflow tracked as CVE-2023-4863. Because WebP is a complex format derived fro" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-fuzzing-techniques-for-security-testing">WebP Fuzzing
+Techniques for Security Testing</h1>
+<p>Security researchers commonly employ fuzz testing on WebP decoders
+and parsers to uncover critical memory corruption vulnerabilities, such
+as the widely exploited heap buffer overflow tracked as CVE-2023-4863.
+Because WebP is a complex format derived from the RIFF container and
+VP8/VP8L video and image compression standards, effective testing
+requires a blend of coverage-guided fuzzing, structure-aware mutation,
+differential testing, and compiler sanitization. This article outlines
+the primary fuzzing methodologies utilized to rigorously test
+<code>libwebp</code> and other WebP processing implementations.</p>
+<h3 id="coverage-guided-in-process-fuzzing">Coverage-Guided In-Process
+Fuzzing</h3>
+<p>Researchers predominantly rely on coverage-guided fuzzers such as
+LibFuzzer and AFL++ to test WebP parsing engines. In-process fuzzing
+targets specific entry-point APIs, such as <code>WebPDecodeRGBA</code>,
+<code>WebPGetInfo</code>, or the incremental decoding functions in
+<code>libwebp</code>. By compiling target harnesses that consume byte
+arrays directly from the fuzzer, researchers achieve execution speeds of
+thousands of executions per second per core. The fuzzer tracks code
+branch coverage via compiler instrumentation (such as Clang's
+<code>-fsanitize-coverage</code>), prioritizing test inputs that trigger
+previously unreached execution paths in the parser.</p>
+<h3 id="structure-aware-and-dictionary-based-mutation">Structure-Aware
+and Dictionary-Based Mutation</h3>
+<p>Purely random bit-flipping often fails to bypass the strict initial
+validation checks of the WebP format, which relies on a standard RIFF
+container wrapping VP8, VP8L, or VP8X chunks. To test deep decoding
+logic, researchers use structure-aware fuzzing techniques:</p>
+<ul>
+<li><strong>Custom Mutators:</strong> Mutators designed with libraries
+like <code>libprotobuf-mutator</code> or AFL++ custom mutator APIs
+construct valid RIFF headers and chunk descriptors while mutating the
+inner compressed payloads (e.g., Huffman coding tables, color
+transforms, and spatial predictors).</li>
+<li><strong>Fuzzing Dictionaries:</strong> Researchers provide
+dictionaries containing valid WebP four-character codes (FourCC) such as
+<code>RIFF</code>, <code>WEBP</code>, <code>VP8 </code>,
+<code>VP8L</code>, and <code>ANIM</code>. This ensures the fuzzer
+rapidly discovers valid chunk arrangements rather than repeatedly
+getting rejected at header parsing.</li>
+</ul>
+<h3 id="integration-with-compiler-sanitizers">Integration with Compiler
+Sanitizers</h3>
+<p>Fuzzing WebP binaries without instrumentation can cause subtle
+vulnerabilities, such as out-of-bounds reads or single-byte overflows,
+to go unnoticed if they do not immediately crash the process.
+Researchers compile targets using multiple sanitizers:</p>
+<ul>
+<li><strong>AddressSanitizer (ASan):</strong> Detects out-of-bounds heap
+access, stack overflows, and use-after-free conditions within
+transformation pipelines.</li>
+<li><strong>UndefinedBehaviorSanitizer (UBSan):</strong> Identifies
+integer overflows, invalid bit shifts, and misaligned pointer
+dereferences, which are common precursors to memory corruption in image
+decoders.</li>
+<li><strong>MemorySanitizer (MSan):</strong> Flags uninitialized memory
+reads occurring during partial pixel rendering or damaged stream
+handling.</li>
+</ul>
+<h3 id="differential-fuzzing">Differential Fuzzing</h3>
+<p>Differential fuzzing compares the behavior of two or more independent
+implementations handling the same input. Security researchers feed
+identical mutated WebP files to <code>libwebp</code>, browser-native
+implementations (such as Safari's ImageIO or custom web engine
+decoders), and alternative libraries (such as Rust-based decoders like
+<code>image-webp</code>). Discrepancies in crash behavior, error
+handling, or the resulting raw pixel output frequently highlight logic
+errors, specification misinterpretations, or potential security
+bypasses.</p>
+<h3 id="continuous-integration-via-oss-fuzz">Continuous Integration via
+OSS-Fuzz</h3>
+<p>To secure open-source WebP implementations perpetually, security
+researchers and maintainers integrate harnesses into Google's OSS-Fuzz
+platform. OSS-Fuzz combines ClusterFuzz infrastructure with LibFuzzer,
+AFL++, and Honggfuzz to run 24/7 continuous tests against the latest
+commits of <code>libwebp</code>. This continuous strategy builds massive
+seed corpuses of valid and semi-valid WebP images, ensuring that newly
+committed features and optimizations do not introduce memory corruption
+regressions.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

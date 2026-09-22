@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How GreenSock Interacts with Animated WebP - webp</title>
+    <meta name="description" content="Web animation frameworks like GreenSock (GSAP) cannot natively control the internal timeline or frame playback of an animated WebP file because browsers decode and play these image formats independently of the JavaScript runtime. However, GSAP interacts">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-green-sock-interacts-with-animated-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How GreenSock Interacts with Animated WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-green-sock-interacts-with-animated-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Web animation frameworks like GreenSock (GSAP) cannot natively control the internal timeline or frame playback of an animated WebP file because browsers decode and play these image formats independently of the JavaScript runtime. However, GSAP interacts" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-greensock-interacts-with-animated-webp">How GreenSock
+Interacts with Animated WebP</h1>
+<p>Web animation frameworks like GreenSock (GSAP) cannot natively
+control the internal timeline or frame playback of an animated WebP file
+because browsers decode and play these image formats independently of
+the JavaScript runtime. However, GSAP interacts effectively with
+animated WebP files at the DOM level by animating their containers,
+controlling visibility, and syncing surrounding elements. Furthermore,
+developers can achieve true frame-by-frame control by converting
+animated WebP sequences into static WebP spritesheets and driving the
+animation with GSAP.</p>
+<h3 id="the-browser-limitation-internal-playback-vs-javascript">The
+Browser Limitation: Internal Playback vs. JavaScript</h3>
+<p>Animated WebP files are pre-rendered raster assets handled directly
+by the browser's graphics engine, much like animated GIFs. Once an
+<code>&lt;img&gt;</code> tag references an animated WebP, the browser
+decodes the frames and loops the animation automatically according to
+the file's internal metadata.</p>
+<p>GSAP operates in JavaScript, altering CSS properties, SVG attributes,
+and canvas coordinates frame-by-frame. Because the browser does not
+expose an API to pause, rewind, scrub, or read the current frame of an
+animated image format, GSAP cannot directly manipulate the internal
+playback of a standard animated WebP file.</p>
+<h3 id="dom-level-control-and-coordination">DOM-Level Control and
+Coordination</h3>
+<p>While GSAP cannot alter the internal frames, it provides full control
+over the WebP element within the Document Object Model (DOM). Developers
+routinely use GSAP to:</p>
+<ul>
+<li><strong>Manipulate Transform and Opacity:</strong> Move, scale,
+rotate, skew, and fade the <code>&lt;img&gt;</code> element displaying
+the WebP.</li>
+<li><strong>Coordinate Entrances and Exits:</strong> Use GSAP timelines
+to fade in an animated WebP at a specific moment, let it loop, and fade
+it out or translate it off-screen.</li>
+<li><strong>Trigger with Scroll:</strong> Pair WebP assets with GSAP's
+ScrollTrigger to reveal the animation precisely when a user reaches a
+specific section of a page.</li>
+<li><strong>Clip and Mask:</strong> Animate CSS <code>clip-path</code>
+or SVG masks over the WebP file to dynamically reveal portions of the
+looping graphic.</li>
+</ul>
+<h3 id="simulating-frame-control-with-webp-spritesheets">Simulating
+Frame Control with WebP Spritesheets</h3>
+<p>When frame-level synchronization, scrubbing, or reverse playback is
+necessary, developers bypass the animated WebP format and instead use a
+static WebP spritesheet combined with GSAP.</p>
+<p>A spritesheet packs every frame of an animation into a single, highly
+compressed WebP image. GSAP can animate the
+<code>background-position</code> property of a container element across
+the dimensions of the spritesheet. By applying GSAP's
+<code>SteppedEase</code> (or the <code>steps()</code> function), GSAP
+jumps between frames rather than interpolating smoothly, perfectly
+emulating an animated WebP while providing total control over:</p>
+<ul>
+<li>Playing, pausing, and reversing the animation programmatically.</li>
+<li>Scrubbing through frames based on user scroll position or drag
+gestures.</li>
+<li>Triggering JavaScript callbacks at specific frames.</li>
+</ul>
+<h3 id="alternatives-for-frame-accurate-synchronization">Alternatives
+for Frame-Accurate Synchronization</h3>
+<p>If an interactive project requires complete control over every frame
+without building large spritesheets, alternative formats provide better
+integration with GSAP:</p>
+<ul>
+<li><strong>HTML5 Video (<code>.webm</code> or
+<code>.mp4</code>):</strong> GSAP can directly animate the
+<code>currentTime</code> property of a <code>&lt;video&gt;</code>
+element, allowing smooth scrubbing and playback control of compressed
+video.</li>
+<li><strong>HTML5 Canvas:</strong> Frames decoded into an array of Image
+objects can be drawn to a <code>&lt;canvas&gt;</code> element using a
+proxy object animated by GSAP.</li>
+<li><strong>Lottie / Vector Formats:</strong> For vector-based motion,
+Lottie (JSON) or inline SVGs offer native timeline control via GSAP
+without raster compression artifacts.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

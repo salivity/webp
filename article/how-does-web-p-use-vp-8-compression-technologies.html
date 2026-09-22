@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Does WebP Use VP8 Compression Technologies? - webp</title>
+    <meta name="description" content="WebP lossy compression is derived directly from the keyframe encoding architecture of the VP8 video codec, adapting video-oriented compression algorithms for still images. By repurposing VP8 intra-frame prediction modes, discrete cosine transform pipelin">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-does-web-p-use-vp-8-compression-technologies">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Does WebP Use VP8 Compression Technologies? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-does-web-p-use-vp-8-compression-technologies" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP lossy compression is derived directly from the keyframe encoding architecture of the VP8 video codec, adapting video-oriented compression algorithms for still images. By repurposing VP8 intra-frame prediction modes, discrete cosine transform pipelin" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-does-webp-use-vp8-compression-technologies">How Does WebP
+Use VP8 Compression Technologies?</h1>
+<p>WebP lossy compression is derived directly from the keyframe encoding
+architecture of the VP8 video codec, adapting video-oriented compression
+algorithms for still images. By repurposing VP8 intra-frame prediction
+modes, discrete cosine transform pipelines, adaptive segment
+quantization, and boolean arithmetic entropy coding, WebP significantly
+outperforms legacy formats like JPEG in both file size and visual
+fidelity.</p>
+<h2 id="intra-frame-block-prediction">Intra-Frame Block Prediction</h2>
+<p>The primary driver of WebP's lossy compression efficiency is spatial
+intra-prediction borrowed directly from VP8 keyframes. Rather than
+encoding each block of pixels independently, the encoder analyzes
+surrounding previously decoded pixels to extrapolate and predict the
+current block's content. The format processes images in 16x16 pixel
+macroblocks, which are subdivided into 4x4 sub-blocks for fine
+details.</p>
+<p>VP8 provides four distinct prediction modes for 16x16 luma
+blocks:</p>
+<ul>
+<li><strong>H_PRED (Horizontal Prediction):</strong> Extrapolates pixel
+values horizontally from the column of pixels directly to the left of
+the block.</li>
+<li><strong>V_PRED (Vertical Prediction):</strong> Extrapolates pixel
+values vertically from the row of pixels directly above the block.</li>
+<li><strong>DC_PRED (DC Prediction):</strong> Calculates a single
+average value from the boundary pixels above and to the left, filling
+the entire block with that uniform value.</li>
+<li><strong>TM_PRED (TrueMotion Prediction):</strong> Uses the pixels
+directly above, directly to the left, and diagonally above-left to model
+subtle gradients and surface shifts.</li>
+</ul>
+<p>For areas with sharp textures or fine edges, the encoder evaluates
+4x4 sub-blocks using nine directional prediction modes. By transmitting
+only the choice of prediction mode and the remaining difference
+(residual error) rather than the raw pixel values, the amount of data
+required to represent uniform surfaces and gradients drops
+substantially.</p>
+<h2 id="residual-transformation-via-discrete-cosine-transform">Residual
+Transformation via Discrete Cosine Transform</h2>
+<p>After predicting a block, the encoder subtracts the predicted values
+from the actual source image to produce a residual block. To compress
+this residual, WebP utilizes the same transformation pipeline found in
+VP8.</p>
+<p>Each 4x4 residual block undergoes a 16-point Discrete Cosine
+Transform (DCT). For the average values (DC coefficients) across the
+sixteen 4x4 luma blocks within a macroblock, a secondary 4x4
+Walsh-Hadamard Transform (WHT) is applied. This two-tier transformation
+concentrates the residual energy into a small number of low-frequency
+coefficients, leaving most high-frequency coefficients near zero and
+making them exceptionally responsive to quantization.</p>
+<h2 id="adaptive-macroblock-quantization-and-segmentation">Adaptive
+Macroblock Quantization and Segmentation</h2>
+<p>Quantization reduces the precision of the transformed coefficients to
+discard imperceptible visual data. WebP inherits VP8's adaptive
+segmentation system, allowing an image to be divided into up to four
+distinct segments.</p>
+<p>Each segment can have its own quantization strength, loop-filtering
+parameters, and prediction biases. Flat regions with minimal detail
+receive higher compression to maximize byte savings, while complex or
+high-contrast edges receive finer quantization to prevent visual
+degradation. This segmentation allows WebP to allocate its bit budget
+selectively across the frame rather than applying a blunt, uniform
+quantization matrix.</p>
+<h2 id="in-loop-deblocking-filter">In-Loop Deblocking Filter</h2>
+<p>Aggressive DCT-based compression frequently causes "blocking
+artifacts" along the grid boundaries of 4x4 and 16x16 macroblocks. WebP
+applies the VP8 in-loop deblocking filter directly during the decoding
+phase.</p>
+<p>The loop filter evaluates pixel gradients across block boundaries. If
+the differences between adjacent edge pixels fall below a calculated
+threshold, the filter applies targeted smoothing to eliminate harsh
+seams while preserving authentic sharp image edges. Because the
+filtering occurs inside the reconstruction loop, subsequent spatial
+predictions rely on filtered, continuous pixels, preventing boundary
+distortion from compounding across the image.</p>
+<h2 id="arithmetic-entropy-coding">Arithmetic Entropy Coding</h2>
+<p>The final stage of the WebP lossy pipeline relies on VP8's boolean
+arithmetic coder rather than conventional Huffman coding.</p>
+<p>Arithmetic coding represents entire sequences of symbols as a single
+fractional number, eliminating the inherent 1-bit-per-symbol floor
+associated with Huffman trees. The VP8 entropy engine maintains dynamic,
+context-sensitive probability tables that adapt to the statistical
+distribution of residual coefficients, block modes, and partition
+structures. This adaptive probability modeling ensures that predictable
+patterns and frequent zero-value coefficients consume minimal bitstream
+space, finalizing a highly compact file structure.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

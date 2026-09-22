@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP vs JPEG Quantization Table Differences - webp</title>
+    <meta name="description" content="Both JPEG and lossy WebP use quantization to discard visually redundant high-frequency details, but they handle quantization tables fundamentally differently. While JPEG relies on fully customizable 8x8 frequency matrices embedded directly into the file">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-vs-jpeg-quantization-table-differences">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP vs JPEG Quantization Table Differences - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-vs-jpeg-quantization-table-differences" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Both JPEG and lossy WebP use quantization to discard visually redundant high-frequency details, but they handle quantization tables fundamentally differently. While JPEG relies on fully customizable 8x8 frequency matrices embedded directly into the file" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-vs-jpeg-quantization-table-differences">WebP vs JPEG
+Quantization Table Differences</h1>
+<p>Both JPEG and lossy WebP use quantization to discard visually
+redundant high-frequency details, but they handle quantization tables
+fundamentally differently. While JPEG relies on fully customizable 8x8
+frequency matrices embedded directly into the file header, lossy WebP
+(derived from the VP8 video codec) uses standardized, index-driven
+scalar lookup tables tied to 4x4 transforms. This architectural shift
+allows WebP to reduce bitstream metadata overhead and dynamically adapt
+compression across different regions of an image.</p>
+<h3 id="transform-block-size-and-matrix-dimensions">Transform Block Size
+and Matrix Dimensions</h3>
+<p>The fundamental difference begins at the block transform level:</p>
+<ul>
+<li><strong>JPEG:</strong> Operates on <strong>8x8 pixel blocks</strong>
+using the Discrete Cosine Transform (DCT). Consequently, a standard JPEG
+quantization table consists of a <strong>64-element matrix</strong>
+(8x8) corresponding to each spatial frequency coefficient in the
+block.</li>
+<li><strong>WebP Lossy:</strong> Operates primarily on <strong>4x4 pixel
+sub-blocks</strong> using an integer approximation of the DCT, alongside
+an additional 4x4 Walsh-Hadamard Transform (WHT) applied to the DC
+coefficients of luma macroblocks (16x16). Instead of an 8x8 matrix, WebP
+assigns specific quantizer step sizes to these 4x4 structures.</li>
+</ul>
+<h3 id="bitstream-storage-and-customization">Bitstream Storage and
+Customization</h3>
+<p>How these tables are defined and stored creates a major divergence in
+bitstream overhead:</p>
+<ul>
+<li><strong>JPEG:</strong> Stores the actual table values directly in
+the image header inside <code>DQT</code> (Define Quantization Table)
+markers. An encoder can write completely custom 64-value matrices for
+luminance and chrominance. While standard tables (like those from Annex
+K of the JPEG standard) are common, encoders are free to fine-tune
+individual frequency coefficients to optimize for particular types of
+visual content or psychoacoustic models.</li>
+<li><strong>WebP Lossy:</strong> Does <strong>not</strong> transmit
+arbitrary 2D quantization matrices in the bitstream. Instead, the VP8
+specification defines fixed lookup tables mapping a base quality index
+(a value from 0 to 127) to specific quantizer step sizes. The WebP
+header simply transmits the base quantizer index along with optional
+deltas for specific components (Y1 DC, Y2 DC, Y2 AC, UV DC, UV AC). The
+decoder computes the actual quantization steps using these predefined
+formulas rather than reading a raw matrix.</li>
+</ul>
+<h3 id="spatial-adaptability-macroblock-segmentation">Spatial
+Adaptability (Macroblock Segmentation)</h3>
+<ul>
+<li><strong>JPEG:</strong> The quantization tables defined in the header
+apply globally across the entire image frame. The encoder cannot switch
+quantization tables mid-stream for different parts of the image to treat
+smooth areas and textured areas differently without complex and
+non-standard workarounds.</li>
+<li><strong>WebP Lossy:</strong> Supports <strong>macroblock
+segmentation</strong>, dividing an image into up to four distinct
+segments. Each segment can specify its own quantizer delta relative to
+the global baseline. This enables spatial adaptation: smooth, flat
+regions can receive lower quantization step sizes to prevent banding,
+while complex, busy textures can receive aggressive quantization to save
+bits.</li>
+</ul>
+<h3 id="quantization-mechanics">Quantization Mechanics</h3>
+<ul>
+<li><strong>JPEG:</strong> Each of the 64 DCT coefficients in an 8x8
+block is divided by its corresponding value in the 8x8 quantization
+matrix, followed by rounding to the nearest integer. Frequency weighting
+is granular across 64 distinct positions.</li>
+<li><strong>WebP Lossy:</strong> Quantization is applied uniformly
+across the AC coefficients of a 4x4 block using a single scalar step
+size derived from the segment's lookup index, with distinct scalar
+values separating DC and AC components for luma and chroma. Rather than
+weighting 64 individual frequency bins, WebP relies on intra-prediction
+modes and spatial segmentation to achieve compression efficiency.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

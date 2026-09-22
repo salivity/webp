@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best SSG Plugins to Automate WebP Generation - webp</title>
+    <meta name="description" content="This article provides an overview of the top build plugins and integrated tools that automate WebP image conversion during static site generator (SSG) compilation. Automatically transforming legacy JPEG and PNG formats into modern, highly compressed WebP">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/best-ssg-plugins-to-automate-web-p-generation">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Best SSG Plugins to Automate WebP Generation - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/best-ssg-plugins-to-automate-web-p-generation" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article provides an overview of the top build plugins and integrated tools that automate WebP image conversion during static site generator (SSG) compilation. Automatically transforming legacy JPEG and PNG formats into modern, highly compressed WebP" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="best-ssg-plugins-to-automate-webp-generation">Best SSG Plugins
+to Automate WebP Generation</h1>
+<p>This article provides an overview of the top build plugins and
+integrated tools that automate WebP image conversion during static site
+generator (SSG) compilation. Automatically transforming legacy JPEG and
+PNG formats into modern, highly compressed WebP images accelerates load
+times, reduces bandwidth usage, and improves Core Web Vitals without
+requiring manual image editing. Below is a focused breakdown of the
+primary tools and plugins available across popular static site
+frameworks.</p>
+<h3 id="eleventy-11ty-11tyeleventy-img">Eleventy (11ty):
+@11ty/eleventy-img</h3>
+<p>For developers using Eleventy, the official
+<code>@11ty/eleventy-img</code> plugin is the standard solution for
+image transformation. During the build step, this plugin can take local
+or remote images, resize them, and output them in multiple modern
+formats, including WebP and AVIF. It integrates directly into templates
+via shortcodes, generating production-ready HTML markup such as
+<code>&lt;picture&gt;</code> and <code>&lt;img&gt;</code> tags complete
+with responsive <code>srcset</code> and <code>sizes</code>
+attributes.</p>
+<h3 id="gatsby-gatsby-plugin-sharp-and-gatsby-plugin-image">Gatsby:
+gatsby-plugin-sharp and gatsby-plugin-image</h3>
+<p>Gatsby handles automated image optimization using a combination of
+<code>gatsby-plugin-image</code> and <code>gatsby-plugin-sharp</code>.
+Powered by the high-performance Sharp image processing library, these
+plugins process images defined in GraphQL queries or static components
+at compile time. By configuring the <code>formats</code> property to
+include <code>['auto', 'webp']</code>, Gatsby automatically compresses
+and generates WebP variants alongside fallback formats for legacy
+browser compatibility.</p>
+<h3 id="astro-built-in-astroassets-service">Astro: Built-in astro:assets
+Service</h3>
+<p>While not an external third-party plugin, Astro features a native
+assets service powered by Sharp that executes during the
+<code>astro build</code> process. By utilizing the
+<code>&lt;Image /&gt;</code> or <code>&lt;Picture /&gt;</code>
+components from <code>astro:assets</code>, developers can define
+<code>formats={['webp']}</code>. The Astro compiler automatically
+processes local source images in the project directory, converts them to
+WebP, calculates dimensional attributes to prevent layout shifts, and
+serves them from the final build output directory.</p>
+<h3 id="nextjs-static-export-next-image-export-optimizer">Next.js
+(Static Export): next-image-export-optimizer</h3>
+<p>While the default <code>next/image</code> component relies on a
+Node.js runtime for on-demand image optimization, fully static Next.js
+deployments (<code>output: 'export'</code>) require build-time
+processing. The <code>next-image-export-optimizer</code> plugin solves
+this by hooking into the static build phase. It scans your assets,
+generates optimized WebP variants at all configured device breakpoints,
+and replaces standard paths so that image optimization occurs entirely
+before deployment to static hosts like Netlify, Vercel, or AWS S3.</p>
+<h3 id="vite-powered-ssgs-vite-plugin-imagemin">Vite-Powered SSGs:
+vite-plugin-imagemin</h3>
+<p>For static site generators built on top of Vite (such as VitePress,
+Nuxt Content, or SvelteKit), <code>vite-plugin-imagemin</code> or
+<code>vite-plugin-image-optimizer</code> can be integrated directly into
+the build configuration. By bundling compressors like
+<code>imagemin-webp</code>, these plugins intercept asset pipelines
+during compilation and automatically generate corresponding
+<code>.webp</code> files alongside or in place of original assets based
+on specified quality thresholds.</p>
+<h3 id="jekyll-jekyll-picture-tag">Jekyll: jekyll-picture-tag</h3>
+<p>For Ruby-based Jekyll sites, the <code>jekyll-picture-tag</code>
+plugin automates the creation of modern responsive images during site
+generation. It accepts standard images and, utilizing libvips or
+ImageMagick, automatically outputs WebP versions alongside original
+files. It then outputs the standard HTML5 <code>&lt;picture&gt;</code>
+wrapper with fallback support, ensuring seamless delivery across all
+user agents.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

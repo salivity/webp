@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert CMYK to sRGB Before WebP Export - webp</title>
+    <meta name="description" content="Converting images from CMYK to sRGB before exporting to WebP is essential for maintaining color accuracy and preventing dull, washed-out, or inverted graphics on the web. Because the WebP format natively supports RGB color spaces, feeding it an untransla">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/convert-cmyk-to-s-rgb-before-web-p-export">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Convert CMYK to sRGB Before WebP Export - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/convert-cmyk-to-s-rgb-before-web-p-export" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Converting images from CMYK to sRGB before exporting to WebP is essential for maintaining color accuracy and preventing dull, washed-out, or inverted graphics on the web. Because the WebP format natively supports RGB color spaces, feeding it an untransla" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="convert-cmyk-to-srgb-before-webp-export">Convert CMYK to sRGB
+Before WebP Export</h1>
+<p>Converting images from CMYK to sRGB before exporting to WebP is
+essential for maintaining color accuracy and preventing dull,
+washed-out, or inverted graphics on the web. Because the WebP format
+natively supports RGB color spaces, feeding it an untranslated CMYK file
+often results in severe color distortion or export failures. This guide
+outlines why this color shift happens and details the standard
+workflows—using both graphic design software and automated command-line
+tools—to accurately map CMYK profiles to sRGB prior to final WebP
+encoding.</p>
+<h3 id="why-cmyk-must-be-converted-first">Why CMYK Must Be Converted
+First</h3>
+<p>CMYK (Cyan, Magenta, Yellow, Key/Black) is a subtractive color model
+designed for physical ink on paper, whereas sRGB is an additive model
+calibrated for digital monitors.</p>
+<p>WebP specifications do not support native CMYK image data. If an
+encoder attempts to interpret a CMYK file without an explicit profile
+conversion, it often reads the four channels as standard RGBA or fails
+to read the embedded color tables entirely. Converting to sRGB ahead of
+time guarantees that out-of-gamut print colors are mapped to the closest
+visual digital equivalents before lossy or lossless compression is
+applied.</p>
+<h3 id="setting-the-correct-rendering-intent">Setting the Correct
+Rendering Intent</h3>
+<p>When transforming colors from a print gamut to a digital screen
+gamut, you must select an appropriate rendering intent:</p>
+<ul>
+<li><strong>Relative Colorimetric:</strong> The recommended choice for
+most graphics, logos, and vector assets. It preserves in-gamut colors
+exactly and maps out-of-gamut colors to the closest reproducible hue,
+shifting the white point to match the destination space.</li>
+<li><strong>Perceptual:</strong> The preferred choice for complex
+photography. It scales the entire color range proportionally to preserve
+visual relationships and gradients, avoiding harsh clipping in highly
+saturated areas.</li>
+</ul>
+<h3 id="conversion-methods">Conversion Methods</h3>
+<h4 id="1-adobe-photoshop">1. Adobe Photoshop</h4>
+<p>To convert assets manually in Photoshop:</p>
+<ol type="1">
+<li>Open the CMYK document.</li>
+<li>Navigate to <strong>Edit &gt; Convert to Profile</strong> (do not
+use <em>Assign Profile</em>, as this merely changes the tag without
+translating color values).</li>
+<li>Set the <strong>Destination Space</strong> to <strong>sRGB
+IEC61966-2.1</strong>.</li>
+<li>Choose <strong>Relative Colorimetric</strong> or
+<strong>Perceptual</strong> depending on the image type.</li>
+<li>Check <strong>Use Black Point Compensation</strong> to prevent
+clipped shadow details.</li>
+<li>Click <strong>OK</strong>, then proceed to <strong>File &gt; Export
+&gt; Export As...</strong> and select <strong>WebP</strong>.</li>
+</ol>
+<h4 id="2-imagemagick-command-line">2. ImageMagick (Command Line)</h4>
+<p>For batch processing or server-side workflows, use ImageMagick with
+International Color Consortium (ICC) profiles. A direct colorspace flag
+can cause color shifts, so referencing actual <code>.icc</code> files
+produces the highest fidelity:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">magick</span> input_cmyk.jpg <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-profile</span> /path/to/USWebCoatedSWOP.icc <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-profile</span> /path/to/sRGB.icc <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-quality</span> 80 <span class="dt">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  output.webp</span></code></pre></div>
+<p>If the original file already contains an embedded CMYK profile, apply
+the sRGB profile directly:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">magick</span> input_cmyk.jpg <span class="at">-profile</span> /path/to/sRGB.icc <span class="at">-quality</span> 80 output.webp</span></code></pre></div>
+<h4 id="3-python-pillow-and-imagecms">3. Python (Pillow and
+ImageCms)</h4>
+<p>When using Python for image pipelines, avoid using simple
+<code>.convert('RGB')</code> directly on CMYK files, as Pillow uses a
+crude fallback calculation that produces neon or washed-out tones.
+Instead, utilize the <code>ImageCms</code> module:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image, ImageCms</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cmyk_to_webp(input_path, output_path):</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    img <span class="op">=</span> Image.<span class="bu">open</span>(input_path)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> img.mode <span class="op">==</span> <span class="st">&#39;CMYK&#39;</span>:</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        srgb_profile <span class="op">=</span> ImageCms.createProfile(<span class="st">&#39;sRGB&#39;</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Check for embedded profile, else provide a standard CMYK profile</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">&#39;icc_profile&#39;</span> <span class="kw">in</span> img.info:</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>            input_profile <span class="op">=</span> ImageCms.getOpenProfile(io.BytesIO(img.info[<span class="st">&#39;icc_profile&#39;</span>]))</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            input_profile <span class="op">=</span> ImageCms.getOpenProfile(<span class="st">&#39;USWebCoatedSWOP.icc&#39;</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        transform <span class="op">=</span> ImageCms.buildTransformFromOpenProfiles(</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>            input_profile, srgb_profile, <span class="st">&#39;CMYK&#39;</span>, <span class="st">&#39;RGB&#39;</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            renderingIntent<span class="op">=</span>ImageCms.Intent.RELATIVE_COLORIMETRIC</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        img <span class="op">=</span> ImageCms.applyTransform(img, transform)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    img.save(output_path, <span class="st">&#39;WEBP&#39;</span>, quality<span class="op">=</span><span class="dv">80</span>)</span></code></pre></div>
+<h3 id="verification-and-best-practices">Verification and Best
+Practices</h3>
+<ul>
+<li><strong>Audit Deep Blacks:</strong> Pure black in CMYK often relies
+on "rich black" combinations (C+M+Y+K). Verify that converted dark zones
+translate cleanly to <code>#000000</code> or the intended dark gray
+values without introducing color casts.</li>
+<li><strong>Metadata Stripping:</strong> Once converted to sRGB,
+embedded ICC profiles can often be stripped to reduce final WebP file
+sizes, since web browsers assume untagged web images reside in the
+standard sRGB color space.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why MP4 and WebM Are Smaller Than Animated WebP - webp</title>
+    <meta name="description" content="Animated WebP files are frequently larger than equivalent MP4 or WebM videos due to fundamental differences in how image formats and video codecs compress motion. While WebP adapts a still-image standard to display sequential frames, modern video contain">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-mp-4-and-web-m-are-smaller-than-animated-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why MP4 and WebM Are Smaller Than Animated WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-mp-4-and-web-m-are-smaller-than-animated-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Animated WebP files are frequently larger than equivalent MP4 or WebM videos due to fundamental differences in how image formats and video codecs compress motion. While WebP adapts a still-image standard to display sequential frames, modern video contain" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-mp4-and-webm-are-smaller-than-animated-webp">Why MP4 and
+WebM Are Smaller Than Animated WebP</h1>
+<p>Animated WebP files are frequently larger than equivalent MP4 or WebM
+videos due to fundamental differences in how image formats and video
+codecs compress motion. While WebP adapts a still-image standard to
+display sequential frames, modern video containers like MP4 (using H.264
+or H.265) and WebM (using VP9 or AV1) employ advanced temporal
+compression algorithms, motion estimation, and chroma subsampling
+designed specifically for moving pictures. Consequently, video formats
+eliminate significantly more redundant data across frames, yielding much
+smaller file sizes at comparable or superior visual quality.</p>
+<h3 id="temporal-compression-and-motion-vectors">Temporal Compression
+and Motion Vectors</h3>
+<p>The primary reason for the size discrepancy is inter-frame
+prediction. True video codecs do not store every frame as a standalone
+image. Instead, they divide footage into three types of frames:</p>
+<ul>
+<li><strong>I-Frames (Keyframes):</strong> Complete, independent
+images.</li>
+<li><strong>P-Frames (Predicted):</strong> Store only the changes
+relative to the previous frame.</li>
+<li><strong>B-Frames (Bidirectional):</strong> Reference both preceding
+and subsequent frames to predict changes.</li>
+</ul>
+<p>Video codecs use <strong>motion vectors</strong> to track blocks of
+pixels moving across the screen. If a camera pans across a background,
+an MP4 or WebM file simply records the vector direction of the shift
+rather than redrawing the pixels.</p>
+<p>In contrast, animated WebP relies on rudimentary frame-diffing. It
+can discard identical pixel regions between adjacent frames, but it
+cannot track motion. If an object moves across the canvas, WebP treats
+the newly revealed and covered areas as fresh pixel data, resulting in
+higher data overhead.</p>
+<h3 id="chroma-subsampling">Chroma Subsampling</h3>
+<p>Human vision is significantly more sensitive to variations in
+brightness (luminance) than in color (chrominance). Video formats take
+full advantage of this via <strong>YUV 4:2:0 chroma
+subsampling</strong>, which reduces the color resolution by 75% without
+noticeable loss of perceived quality.</p>
+<p>Animated WebP supports YUV, but it frequently operates in
+full-resolution color spaces or less aggressive subsampling modes (like
+YUV 4:4:4 or RGBA) to preserve graphical sharpness and alpha
+transparency. Storing this extra chrominance information across every
+frame inflates the final file size considerably.</p>
+<h3 id="advanced-codec-architectures">Advanced Codec Architectures</h3>
+<p>WebP's compression technology is derived from VP8, a video codec
+released in 2008. While efficient for static images compared to legacy
+JPEG or PNG, its animation implementation lacks over a decade of video
+compression advancements.</p>
+<p>Modern video formats leverage far more sophisticated compression
+tools:</p>
+<ul>
+<li><strong>H.264 / AVC:</strong> Employs dynamic macroblock
+partitioning, spatial in-picture prediction, and advanced entropy coding
+(CABAC).</li>
+<li><strong>VP9 and AV1 (WebM):</strong> Utilize flexible transform
+block sizes (up to 64x64 or 128x128), directional intra-prediction, and
+superior in-loop deblocking filters.</li>
+<li><strong>H.265 / HEVC:</strong> Offers highly efficient
+tree-structured coding units that maximize detail retention at ultra-low
+bitrates.</li>
+</ul>
+<h3 id="variable-bitrate-vbr-encoding">Variable Bitrate (VBR)
+Encoding</h3>
+<p>Video encoders utilize two-pass and psycho-visual Variable Bitrate
+(VBR) encoding. This allocates higher bitrates to complex, high-action
+scenes and drastically reduces the bitrate during static moments.
+Animated WebP lacks this level of continuous, rate-controlled streaming
+intelligence; it applies static lossy or lossless compression settings
+universally across frames, missing opportunities to shave off data
+during slow or static sequences.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

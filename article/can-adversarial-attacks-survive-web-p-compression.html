@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can Adversarial Attacks Survive WebP Compression? - webp</title>
+    <meta name="description" content="This article explores whether adversarial visual perturbations can survive WebP lossy compression, functioning effectively against machine learning models. While standard, unoptimized adversarial noise is typically degraded or neutralized by the quantiza">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-adversarial-attacks-survive-web-p-compression">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can Adversarial Attacks Survive WebP Compression? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-adversarial-attacks-survive-web-p-compression" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores whether adversarial visual perturbations can survive WebP lossy compression, functioning effectively against machine learning models. While standard, unoptimized adversarial noise is typically degraded or neutralized by the quantiza" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-adversarial-attacks-survive-webp-compression">Can
+Adversarial Attacks Survive WebP Compression?</h1>
+<p>This article explores whether adversarial visual perturbations can
+survive WebP lossy compression, functioning effectively against machine
+learning models. While standard, unoptimized adversarial noise is
+typically degraded or neutralized by the quantization and transform
+coding stages of WebP, carefully crafted perturbations can indeed
+persist. By incorporating compression-aware optimization techniques—such
+as differentiable compression approximations and low-frequency
+perturbation mapping—attackers can generate robust adversarial examples
+that maintain their potency even after lossy WebP encoding.</p>
+<h2 id="the-impact-of-webp-lossy-compression-on-perturbations">The
+Impact of WebP Lossy Compression on Perturbations</h2>
+<p>WebP lossy compression is based on the VP8 video codec's intra-frame
+encoding. It processes images by partitioning them into macroblocks,
+applying discrete cosine transforms (DCT) or Walsh-Hadamard transforms,
+and quantizing the resulting frequency coefficients.</p>
+<p>Most conventional adversarial attacks, such as basic Fast Gradient
+Sign Method (FGSM) or standard Projected Gradient Descent (PGD),
+introduce high-frequency, low-magnitude noise across pixel values.
+Because lossy WebP compression specifically discards high-frequency
+details that are less noticeable to human eyes, standard adversarial
+perturbations are largely removed or altered during the quantization
+step. As a result, vanilla adversarial samples often fail to fool
+downstream vision models after being converted to WebP.</p>
+<h2 id="how-adversarial-perturbations-can-be-preserved">How Adversarial
+Perturbations Can Be Preserved</h2>
+<p>Despite the natural filtering effect of WebP compression, adversarial
+perturbations can be engineered to survive the process through several
+specialized methodologies:</p>
+<h3 id="1-expectation-over-transformation-eot">1. Expectation Over
+Transformation (EOT)</h3>
+<p>Attackers can use the Expectation Over Transformation framework to
+model the compression process during the optimization phase. By
+optimizing the perturbation over a distribution of randomized
+transformations—including varying WebP quality factors—the attack
+becomes resilient to the artifacts introduced by the codec.</p>
+<h3 id="2-differentiable-codec-approximations">2. Differentiable Codec
+Approximations</h3>
+<p>A primary challenge in attacking compression pipelines is that
+quantization is a non-differentiable operation, which blocks gradient
+flow during backpropagation. To overcome this, researchers use
+differentiable approximations of the WebP pipeline (such as
+straight-through estimators or continuous Fourier-based approximations).
+This allows the attack algorithm to calculate gradients through the
+compression layer and adjust pixel perturbations accordingly.</p>
+<h3 id="3-targeting-low-and-mid-frequencies">3. Targeting Low and Mid
+Frequencies</h3>
+<p>Because lossy WebP heavily compresses high-frequency data while
+preserving lower-frequency structural information, perturbations can be
+explicitly constrained to lower frequency bands. Aligning adversarial
+signals with the DCT coefficients that WebP prioritizes ensures that the
+critical adversarial features pass through the quantization matrix
+virtually intact.</p>
+<h3 id="4-increasing-perturbation-magnitude">4. Increasing Perturbation
+Magnitude</h3>
+<p>When imperceptibility constraints are relaxed, increasing the overall
+magnitude of the perturbation (<span
+class="math inline">\(\epsilon\)</span>) allows the adversarial signal
+to dominate the underlying image features. While this makes the
+modification more visible to humans, it significantly increases the
+likelihood that the adversarial intent survives aggressive
+quantization.</p>
+<h2 id="implications-for-computer-vision-security">Implications for
+Computer Vision Security</h2>
+<p>Using WebP lossy compression as an input pre-processing defense is
+generally considered a form of "gradient masking" or "security through
+obscurity." While it reliably disrupts weak or compression-agnostic
+attacks, it does not provide true robustness against an adversary aware
+of the preprocessing pipeline. Relying solely on lossy format conversion
+is insufficient for secure computer vision systems; effective defense
+requires robust model training, such as adversarial training, combined
+with verified detection frameworks.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

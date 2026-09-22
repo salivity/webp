@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated WebP vs VP9 Video: Compression Quality - webp</title>
+    <meta name="description" content="Animated WebP and VP9 video both originate from Google's media compression initiatives, but VP9 consistently outperforms animated WebP in visual quality at equivalent bitrates. Animated WebP is fundamentally an image sequence format built as a modern rep">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/animated-web-p-vs-vp-9-video-compression-quality">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Animated WebP vs VP9 Video: Compression Quality - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/animated-web-p-vs-vp-9-video-compression-quality" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Animated WebP and VP9 video both originate from Google's media compression initiatives, but VP9 consistently outperforms animated WebP in visual quality at equivalent bitrates. Animated WebP is fundamentally an image sequence format built as a modern rep" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="animated-webp-vs-vp9-video-compression-quality">Animated WebP vs
+VP9 Video: Compression Quality</h1>
+<p>Animated WebP and VP9 video both originate from Google's media
+compression initiatives, but VP9 consistently outperforms animated WebP
+in visual quality at equivalent bitrates. Animated WebP is fundamentally
+an image sequence format built as a modern replacement for legacy GIFs,
+utilizing the older VP8 intra-frame architecture. In contrast, VP9 is an
+advanced video codec engineered to handle continuous temporal motion,
+allowing it to preserve significantly sharper details, smoother
+gradients, and higher fidelity during complex motion sequences where
+animated WebP suffers from severe compression artifacts or ballooning
+file sizes.</p>
+<h3 id="architectural-differences">Architectural Differences</h3>
+<p>The disparity in visual compression stems directly from how each
+format processes temporal data:</p>
+<ul>
+<li><strong>Animated WebP (VP8 Heritage):</strong> Animated WebP
+structures animation by assembling individual frames—either as
+full-frame replacements or localized sub-frame rectangles overlaid on
+previous frames. While it supports basic frame disposal and alpha
+blending, it lacks true inter-frame temporal prediction tools like
+motion vectors.</li>
+<li><strong>VP9 Video:</strong> VP9 is designed specifically for video
+streaming. It breaks frames into dynamic superblocks ranging from 64x64
+down to 4x4 pixels, using sub-pixel motion estimation and advanced
+reference frame buffers. This allows VP9 to track moving objects across
+time and only encode the movement vectors and residual differences,
+rather than redrawing entire changed regions.</li>
+</ul>
+<h3 id="visual-quality-at-equivalent-bitrates">Visual Quality at
+Equivalent Bitrates</h3>
+<p>When matching target file sizes, VP9 delivers vastly superior visual
+fidelity.</p>
+<p>At low to moderate bitrates, animated WebP exhibits heavy
+macroblocking, color banding, and noticeable edge ringing around moving
+elements. To maintain clean edges and smooth color transitions, WebP
+requires significantly higher bitrates. Conversely, VP9's advanced
+in-loop deblocking filters and multi-parameter transforms mitigate
+visible artifacts even in high-motion or noisy scenes, keeping the
+output clean and visually cohesive at a fraction of WebP’s
+bandwidth.</p>
+<h3 id="color-depth-and-artifact-handling">Color Depth and Artifact
+Handling</h3>
+<p>Animated WebP is restricted to 8-bit color depth (4:2:0 YUV converted
+to sRGB, or direct lossy/lossless RGB). In scenes with subtle lighting
+changes or expansive gradients—such as sunsets or smoke—animated WebP
+frequently introduces severe color banding.</p>
+<p>VP9 supports Profile 2 and Profile 3, enabling 10-bit and 12-bit
+color depth with multiple subsampling profiles (4:2:0, 4:2:2, 4:4:4).
+The 10-bit capability virtually eliminates banding artifacts, delivering
+cleaner color gradients and significantly better dynamic range.</p>
+<h3 id="transparency-and-alpha-channels">Transparency and Alpha
+Channels</h3>
+<p>One area where animated WebP maintains an advantage is its native,
+frictionless support for 8-bit alpha transparency. WebP allows partial
+transparency seamlessly within an image container, making it ideal for
+UI animations, floating badges, and stickers. While VP9 can support an
+alpha channel inside a WebM container, playback support is inconsistent
+across hardware decoders, web browsers, and media frameworks, often
+leading to fallback rendering issues.</p>
+<h3 id="practical-implementation">Practical Implementation</h3>
+<p>Use <strong>animated WebP</strong> when:</p>
+<ul>
+<li>You need short, transparent animations (such as animated stickers or
+icons) where a full video container is impractical.</li>
+<li>Platform restrictions require an <code>&lt;img&gt;</code> tag
+instead of a <code>&lt;video&gt;</code> tag.</li>
+<li>Animations consist of flat graphics with minimal frame-to-frame
+changes.</li>
+</ul>
+<p>Use <strong>VP9 video</strong> when:</p>
+<ul>
+<li>Delivering long-form animation, photorealistic content, or
+camera-recorded footage.</li>
+<li>Minimizing bandwidth and page weight is a primary objective.</li>
+<li>Preserving fine details, complex textures, and smooth color
+transitions without blocking or banding artifacts.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Caching Issues Without Vary: Accept Header - webp</title>
+    <meta name="description" content="Serving modern image formats like WebP at the same URL as legacy JPEG or PNG fallbacks relies on HTTP content negotiation. When a Content Delivery Network (CDN) fails to include the Vary: Accept header in its response, it treats requests from different b">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-caching-issues-without-vary-accept-header">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Caching Issues Without Vary: Accept Header - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-caching-issues-without-vary-accept-header" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Serving modern image formats like WebP at the same URL as legacy JPEG or PNG fallbacks relies on HTTP content negotiation. When a Content Delivery Network (CDN) fails to include the Vary: Accept header in its response, it treats requests from different b" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-caching-issues-without-vary-accept-header">WebP Caching
+Issues Without Vary: Accept Header</h1>
+<p>Serving modern image formats like WebP at the same URL as legacy JPEG
+or PNG fallbacks relies on HTTP content negotiation. When a Content
+Delivery Network (CDN) fails to include the <code>Vary: Accept</code>
+header in its response, it treats requests from different browsers
+identically. This failure causes serious caching anomalies, resulting in
+either broken images on older browsers or lost performance optimizations
+on modern ones.</p>
+<h3 id="how-content-negotiation-works-for-webp">How Content Negotiation
+Works for WebP</h3>
+<p>Modern browsers explicitly state which image formats they support by
+sending an <code>Accept</code> request header. For example, a modern
+browser might send:</p>
+<pre class="http"><code>Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8</code></pre>
+<p>Older browsers or specialized HTTP clients omit
+<code>image/webp</code>. An origin server configured for dynamic format
+delivery inspects this header. If <code>image/webp</code> is present, it
+returns WebP data; otherwise, it returns standard JPEG or PNG data.</p>
+<h3 id="the-critical-role-of-vary-accept">The Critical Role of
+<code>Vary: Accept</code></h3>
+<p>A CDN caches responses keyed primarily by URL. Without instructions
+to do otherwise, the CDN considers
+<code>https://example.com/hero.jpg</code> to have only one valid cached
+representation.</p>
+<p>The <code>Vary: Accept</code> HTTP response header tells the CDN
+cache: <em>"The response for this URL changes depending on the client's
+<code>Accept</code> request header. Store and serve separate cache
+entries based on that value."</em></p>
+<h3 id="the-two-major-caching-failures">The Two Major Caching
+Failures</h3>
+<p>When the <code>Vary: Accept</code> header is omitted, the CDN serves
+whatever format it cached first to every subsequent visitor, regardless
+of browser compatibility.</p>
+<h4 id="1-cache-poisoning-by-webp-broken-images">1. Cache Poisoning by
+WebP (Broken Images)</h4>
+<p>If a modern browser (such as modern Chrome or Safari) visits the page
+first:</p>
+<ol type="1">
+<li>The CDN requests the image from the origin, passing along the
+browser's <code>Accept: image/webp</code> header.</li>
+<li>The origin responds with WebP image data.</li>
+<li>Because <code>Vary: Accept</code> is missing, the CDN caches this
+WebP payload under the standard URL key.</li>
+<li>An older browser, email client, or legacy application visits the
+same URL.</li>
+<li>The CDN delivers the cached WebP data.</li>
+<li>The legacy client cannot decode WebP, resulting in broken image
+icons, failed page rendering, or unexpected download prompts.</li>
+</ol>
+<h4 id="2-cache-poisoning-by-fallbacks-degraded-performance">2. Cache
+Poisoning by Fallbacks (Degraded Performance)</h4>
+<p>If an older browser, search engine crawler, or bot that lacks WebP
+support visits the page first:</p>
+<ol type="1">
+<li>The origin receives a request without <code>image/webp</code> in the
+<code>Accept</code> header and returns a heavier JPEG or PNG file.</li>
+<li>The CDN caches the legacy format under the generic URL key.</li>
+<li>Subsequent visits from modern browsers are served the cached JPEG or
+PNG instead of the optimized WebP.</li>
+<li>The site loses all bandwidth savings and visual load-time
+improvements associated with modern formats, leading to degraded Core
+Web Vitals.</li>
+</ol>
+<h3 id="edge-caching-complications-with-vary-accept">Edge Caching
+Complications with <code>Vary: Accept</code></h3>
+<p>While <code>Vary: Accept</code> prevents format mismatches, raw
+<code>Accept</code> headers vary widely between different browsers and
+versions. For example, one browser may request AVIF before WebP, while
+another specifies different quality weights (<code>q=0.8</code> vs.
+<code>q=0.9</code>).</p>
+<p>If a CDN strictly caches on the exact string of the
+<code>Accept</code> header, cache hit ratios plummet because each
+browser version generates a separate cache entry.</p>
+<h3 id="how-to-fix-the-problem">How to Fix the Problem</h3>
+<p>To prevent cache poisoning while maintaining high cache hit
+ratios:</p>
+<ol type="1">
+<li><strong>Emit the Header at Origin:</strong> Ensure the origin web
+server or image optimization service explicitly outputs
+<code>Vary: Accept</code> on all dynamic image responses.</li>
+<li><strong>Normalize the Header at the CDN:</strong> Configure the CDN
+to normalize the <code>Accept</code> header at the edge. The CDN should
+inspect incoming requests and rewrite the internal cache key to simple
+variants (e.g., <code>supports-webp=true</code> vs
+<code>supports-webp=false</code>) before checking the cache.</li>
+<li><strong>Use Explicit URLs Instead:</strong> Avoid dynamic content
+negotiation entirely by using the HTML <code>&lt;picture&gt;</code>
+element. By serving distinct URLs for each format (e.g.,
+<code>image.webp</code> and <code>image.jpg</code>), each asset is
+cached under a unique key, eliminating the dependency on the
+<code>Vary</code> header.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

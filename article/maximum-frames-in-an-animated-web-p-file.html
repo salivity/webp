@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Frames in an Animated WebP File - webp</title>
+    <meta name="description" content="The WebP image specification does not impose a hard numerical limit on the maximum number of frames an animated file can contain. Instead, the true ceiling on frame count is governed by the structural limits of the Resource Interchange File Format (RIFF)">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/maximum-frames-in-an-animated-web-p-file">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Maximum Frames in an Animated WebP File - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/maximum-frames-in-an-animated-web-p-file" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The WebP image specification does not impose a hard numerical limit on the maximum number of frames an animated file can contain. Instead, the true ceiling on frame count is governed by the structural limits of the Resource Interchange File Format (RIFF)" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="maximum-frames-in-an-animated-webp-file">Maximum Frames in an
+Animated WebP File</h1>
+<p>The WebP image specification does not impose a hard numerical limit
+on the maximum number of frames an animated file can contain. Instead,
+the true ceiling on frame count is governed by the structural limits of
+the Resource Interchange File Format (RIFF) container and practical
+system memory constraints during playback. This article examines the
+file structure, the mathematical ceiling for frames, and the real-world
+performance limitations associated with animated WebP files.</p>
+<h3 id="the-webp-container-and-frame-structure">The WebP Container and
+Frame Structure</h3>
+<p>WebP animations utilize an extended RIFF file structure containing an
+<code>ANIM</code> chunk for global animation parameters and multiple
+<code>ANMF</code> (Animation Frame) chunks for each individual
+frame.</p>
+<p>The specification does not include a global "total frame count"
+field. The <code>ANIM</code> chunk only defines:</p>
+<ul>
+<li>A 32-bit background color.</li>
+<li>A 16-bit loop count.</li>
+</ul>
+<p>Because there is no dedicated integer field defining total frames,
+decoders process <code>ANMF</code> chunks sequentially until the end of
+the file is reached.</p>
+<h3 id="the-theoretical-maximum">The Theoretical Maximum</h3>
+<p>Because the format does not set an arbitrary frame limit, the
+absolute maximum is bounded by the 4 GB (<span
+class="math inline">\(2^{32} - 1\)</span> bytes) limit imposed by the
+standard 32-bit RIFF file size header.</p>
+<p>Each frame in an animated WebP file requires:</p>
+<ul>
+<li>An <code>ANMF</code> chunk header (16 bytes).</li>
+<li>Image sub-chunks (either VP8 or VP8L data), which require at least a
+minimal header and payload.</li>
+</ul>
+<p>If an animation were constructed using the smallest possible lossless
+frame payloads (roughly 30 to 40 bytes per frame), a 4 GB container
+could mathematically store over 100 million frames. In realistic
+scenarios with actual image data, file size reaches the 4 GB threshold
+much faster, meaning the effective frame limit scales inversely with
+frame resolution and compression efficiency.</p>
+<h3 id="practical-and-browser-limitations">Practical and Browser
+Limitations</h3>
+<p>While the specification allows millions of frames, real-world
+execution is constrained by decoder hardware and software:</p>
+<ul>
+<li><strong>Decoder Memory:</strong> Many rendering engines unpack and
+cache decoded animation frames in system memory. Loading an animation
+with tens of thousands of frames will rapidly exhaust available RAM and
+crash the browser tab or viewing application.</li>
+<li><strong>Duration Handling:</strong> Each frame contains an unsigned
+24-bit integer representing its duration in milliseconds (allowing up to
+roughly 4.6 hours per frame). While long durations are supported, high
+frame counts at standard playback rates (such as 30 or 60 frames per
+second) demand sustained decoding throughput that can cause dropped
+frames.</li>
+<li><strong>Tooling Constraints:</strong> Popular encoding tools like
+<code>cwebp</code>, <code>img2webp</code>, and <code>libwebp</code>
+wrapper libraries may hit internal buffer limits or standard heap
+allocation limits before approaching the 4 GB RIFF maximum.</li>
+</ul>
+<p>In practical web deployment, animated WebP files are generally kept
+under a few hundred to a few thousand frames to maintain fast load times
+and stable client-side playback.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

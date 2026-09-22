@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP CLI Settings for Crisp Pixel Art - webp</title>
+    <meta name="description" content="Converting pixel art to the WebP format can inadvertently introduce blur, edge smearing, and color bleeding if default lossy compression routines are applied. This guide provides the exact command-line parameters required using Google's official cwebp to">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-cli-settings-for-crisp-pixel-art">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP CLI Settings for Crisp Pixel Art - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-cli-settings-for-crisp-pixel-art" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Converting pixel art to the WebP format can inadvertently introduce blur, edge smearing, and color bleeding if default lossy compression routines are applied. This guide provides the exact command-line parameters required using Google's official cwebp to" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-cli-settings-for-crisp-pixel-art">WebP CLI Settings for
+Crisp Pixel Art</h1>
+<p>Converting pixel art to the WebP format can inadvertently introduce
+blur, edge smearing, and color bleeding if default lossy compression
+routines are applied. This guide provides the exact command-line
+parameters required using Google's official <code>cwebp</code> tool to
+ensure your sprites and pixel artwork retain perfectly sharp edges,
+accurate color boundaries, and zero artifacting.</p>
+<h3 id="the-essential-command">The Essential Command</h3>
+<p>To preserve the 1:1 crispness of pixel art, you must encode the image
+using true lossless mode and preserve transparent pixel color values.
+Use the following command:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-lossless</span> <span class="at">-exact</span> input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<h3 id="breakdown-of-key-settings">Breakdown of Key Settings</h3>
+<ul>
+<li><strong><code>-lossless</code></strong>: This is the most critical
+flag. By default, <code>cwebp</code> applies lossy compression, which
+relies on discrete cosine transforms and spatial predictions that smooth
+out hard edges. The <code>-lossless</code> flag completely bypasses
+these transforms, guaranteeing that every pixel coordinate and color
+value is retained exactly as in the source file.</li>
+<li><strong><code>-exact</code></strong>: Pixel art often uses
+transparency for sprites. By default, <code>cwebp</code> alters RGB data
+in fully transparent areas to improve compression. Adding
+<code>-exact</code> preserves the invisible RGB values, preventing
+outline discoloration, dark fringing, or alpha-bleed when the asset is
+rendered against varying backgrounds in game engines or browsers.</li>
+<li><strong><code>-z 9</code></strong> (Optional, Compression Level):
+Add <code>-z 9</code> to apply the slowest, most aggressive lossless
+compression. This does not degrade visual quality; it only expends more
+CPU time to minimize the final file size.</li>
+</ul>
+<h3 id="avoid-detrimental-flags">Avoid Detrimental Flags</h3>
+<p>Do not use quality flags (<code>-q</code>) without
+<code>-lossless</code>. In lossy mode, even <code>-q 100</code>
+introduces subtle edge-smoothing filters. Similarly, avoid deblocking
+filters (<code>-f</code>), strength filters, or auto-scaling arguments
+during encoding, as these algorithms inherently resample and blur
+high-contrast pixel boundaries.</p>
+<h3 id="presentation-on-the-web">Presentation on the Web</h3>
+<p>Even a perfectly encoded WebP will appear blurry if scaled up in
+modern web browsers due to default bilinear interpolation. To maintain
+crispness at enlarged display sizes, pair your WebP asset with the
+following CSS property:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>img<span class="fu">.pixel-art</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">image-rendering</span><span class="ch">:</span> <span class="dv">pixelated</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

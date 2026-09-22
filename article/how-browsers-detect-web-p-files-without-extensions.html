@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Browsers Detect WebP Files Without Extensions - webp</title>
+    <meta name="description" content="Modern web browsers do not rely solely on file extensions or server-provided HTTP headers to determine the format of an image. Instead, they employ a process known as MIME sniffing, which inspects the actual binary data of a file to determine its true me">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-browsers-detect-web-p-files-without-extensions">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Browsers Detect WebP Files Without Extensions - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-browsers-detect-web-p-files-without-extensions" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern web browsers do not rely solely on file extensions or server-provided HTTP headers to determine the format of an image. Instead, they employ a process known as MIME sniffing, which inspects the actual binary data of a file to determine its true me" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-browsers-detect-webp-files-without-extensions">How Browsers
+Detect WebP Files Without Extensions</h1>
+<p>Modern web browsers do not rely solely on file extensions or
+server-provided HTTP headers to determine the format of an image.
+Instead, they employ a process known as MIME sniffing, which inspects
+the actual binary data of a file to determine its true media type. By
+analyzing specific byte sequences known as "magic numbers" embedded at
+the beginning of the file, browser sniffing engines can accurately
+identify and decode a WebP file even if it has been renamed with a
+<code>.jpg</code> or <code>.png</code> extension, or served without any
+extension at all.</p>
+<h3 id="the-role-of-mime-sniffing">The Role of MIME Sniffing</h3>
+<p>MIME sniffing is a standardized algorithm, defined by the WHATWG
+specification, designed to prevent rendering errors caused by
+misconfigured web servers. If a server serves a WebP file with a generic
+<code>application/octet-stream</code> header, an incorrect
+<code>image/jpeg</code> header, or an incorrect file extension, the
+browser suspends assumption and inspects the initial chunk of the
+downloaded payload—usually the first 512 to 1440 bytes—before deciding
+how to render it.</p>
+<h3 id="the-riff-container-structure">The RIFF Container Structure</h3>
+<p>WebP files use the Resource Interchange File Format (RIFF) container
+structure. Because of this rigid binary layout, the browser's sniffing
+engine can identify the file by checking for specific ASCII characters
+and byte offsets in the file header:</p>
+<ol type="1">
+<li><strong>Bytes 0–3 (RIFF Header):</strong> The first four bytes of
+any WebP file must correspond to the ASCII characters <code>RIFF</code>
+(hexadecimal: <code>52 49 46 46</code>). This identifies the file as a
+generic RIFF container.</li>
+<li><strong>Bytes 4–7 (File Size):</strong> The next four bytes
+represent a 32-bit little-endian integer indicating the total size of
+the file minus the first eight bytes. The sniffing engine typically
+skips or bounds-checks these bytes.</li>
+<li><strong>Bytes 8–11 (WebP Signature):</strong> The four bytes
+immediately following the file size must correspond to the ASCII
+characters <code>WEBP</code> (hexadecimal:
+<code>57 45 42 50</code>).</li>
+</ol>
+<p>If a file begins with <code>RIFF</code>, followed by a four-byte
+length, followed immediately by <code>WEBP</code>, the sniffing engine
+classifies the stream as <code>image/webp</code>.</p>
+<h3 id="chunk-identification-and-validation">Chunk Identification and
+Validation</h3>
+<p>To confirm the format and determine the appropriate decoding
+pipeline, browsers often inspect the chunk header located at byte offset
+12:</p>
+<ul>
+<li><strong><code>VP8 </code> (Lossy):</strong> Hexadecimal
+<code>56 50 38 20</code> indicates standard lossy WebP compression.</li>
+<li><strong><code>VP8L</code> (Lossless):</strong> Hexadecimal
+<code>56 50 38 4C</code> indicates lossless WebP compression.</li>
+<li><strong><code>VP8X</code> (Extended):</strong> Hexadecimal
+<code>56 50 38 58</code> indicates an extended format containing
+metadata, ICC profiles, animation frames, or alpha transparency.</li>
+</ul>
+<h3 id="execution-in-the-browser-engine">Execution in the Browser
+Engine</h3>
+<p>When network data arrives, the browser's networking layer passes the
+initial byte buffer to its media-type sniffer. The sniffer executes a
+pattern-matching mask against the buffer. Once the
+<code>RIFF....WEBP</code> sequence matches, the browser overrides
+conflicting file extensions or inaccurate <code>Content-Type</code>
+headers (unless strict MIME-type checking is enforced via headers like
+<code>X-Content-Type-Options: nosniff</code>). The stream is then routed
+directly to the WebP image decoder, allowing the image to render
+correctly regardless of its file name.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

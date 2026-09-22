@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can Sketch and Adobe XD Export to WebP? - webp</title>
+    <meta name="description" content="Modern web design frequently relies on the WebP format for its superior compression and quality, leading designers to question whether primary UI tools like Sketch and Adobe XD support it directly. In short, Sketch offers native export support for the We">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-sketch-and-adobe-xd-export-to-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can Sketch and Adobe XD Export to WebP? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-sketch-and-adobe-xd-export-to-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern web design frequently relies on the WebP format for its superior compression and quality, leading designers to question whether primary UI tools like Sketch and Adobe XD support it directly. In short, Sketch offers native export support for the We" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-sketch-and-adobe-xd-export-to-webp">Can Sketch and Adobe XD
+Export to WebP?</h1>
+<p>Modern web design frequently relies on the WebP format for its
+superior compression and quality, leading designers to question whether
+primary UI tools like Sketch and Adobe XD support it directly. In short,
+Sketch offers native export support for the WebP format, whereas Adobe
+XD does not support WebP natively and requires third-party plugins or
+external conversion tools. Furthermore, because WebP is inherently a
+flattened raster image format, neither tool can export an image file
+that preserves editable, distinct design layers within a single WebP
+asset.</p>
+<h3 id="webp-export-in-sketch">WebP Export in Sketch</h3>
+<p>Sketch supports direct WebP export natively. Designers can select any
+artboard, group, or individual component and set the export format to
+WebP in the Inspector panel.</p>
+<ul>
+<li><strong>Native Export:</strong> You can choose WebP from the format
+dropdown alongside standard options like PNG, JPG, and SVG without
+installing extra software.</li>
+<li><strong>Component Handling:</strong> If you have layered interface
+components, Sketch will flatten the visible content of that specific
+component into a single WebP image.</li>
+<li><strong>Transparency:</strong> Sketch preserves alpha-channel
+transparency when exporting to WebP, making it a viable, lightweight
+replacement for transparent PNG assets.</li>
+</ul>
+<h3 id="webp-export-in-adobe-xd">WebP Export in Adobe XD</h3>
+<p>Adobe XD does not include native support for exporting assets
+directly to the WebP format. The application’s built-in export options
+are strictly limited to PNG, SVG, JPG, and PDF.</p>
+<ul>
+<li><strong>Lack of Native Support:</strong> To generate WebP assets
+from Adobe XD, users must rely on third-party plugins available through
+the XD Plugin Manager, such as "WebP Exporter."</li>
+<li><strong>External Workflows:</strong> Without plugins, designers must
+export components as high-quality PNGs and convert them to WebP using
+external tools, command-line utilities, or image-processing software
+like Adobe Photoshop.</li>
+</ul>
+<h3 id="the-layered-limitation-of-webp">The "Layered" Limitation of
+WebP</h3>
+<p>A critical technical distinction involves how WebP handles
+layers:</p>
+<ol type="1">
+<li><strong>Flat Raster Format:</strong> Unlike working formats such as
+PSD, AI, or native <code>.sketch</code> and <code>.xd</code> files, WebP
+is an end-user delivery format designed for web browsers. It does not
+support a multi-layer internal structure with non-destructive,
+independent editing capabilities.</li>
+<li><strong>Flattened Output:</strong> Exporting a "layered component"
+simply means taking an element built with multiple vector and text
+layers in the design canvas and rasterizing the composite view into a
+single flat image.</li>
+<li><strong>Animations vs. Layers:</strong> While WebP supports
+animation frames (similar to animated GIFs), these represent sequential
+time frames rather than inspectable, overlapping UI component
+layers.</li>
+</ol>
+<h3 id="summary">Summary</h3>
+<p>Sketch allows you to select layered components and export them
+directly into flat WebP files natively. Adobe XD requires a plugin or an
+intermediary conversion process to generate WebP files. In both tools,
+the resulting WebP file will always be flattened, retaining visual
+appearance and transparency, but discarding the underlying layer
+structure.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

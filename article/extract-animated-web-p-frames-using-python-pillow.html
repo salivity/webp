@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract Animated WebP Frames Using Python Pillow - webp</title>
+    <meta name="description" content="Extracting frames from animated WebP files using Python's Pillow library relies on internal frame-seeking mechanisms and sequence iterators. This guide explains how Pillow parses animated WebP containers, navigates through individual frames sequentially">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/extract-animated-web-p-frames-using-python-pillow">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Extract Animated WebP Frames Using Python Pillow - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/extract-animated-web-p-frames-using-python-pillow" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Extracting frames from animated WebP files using Python's Pillow library relies on internal frame-seeking mechanisms and sequence iterators. This guide explains how Pillow parses animated WebP containers, navigates through individual frames sequentially" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="extract-animated-webp-frames-using-python-pillow">Extract
+Animated WebP Frames Using Python Pillow</h1>
+<p>Extracting frames from animated WebP files using Python's Pillow
+library relies on internal frame-seeking mechanisms and sequence
+iterators. This guide explains how Pillow parses animated WebP
+containers, navigates through individual frames sequentially using the
+<code>seek()</code> method or the <code>ImageSequence</code> module,
+handles alpha transparency and frame state, and exports those frames to
+standalone image files.</p>
+<h3 id="opening-animated-webp-files">Opening Animated WebP Files</h3>
+<p>When you open an animated WebP file using <code>Image.open()</code>,
+Pillow initializes the image at the first frame (frame <code>0</code>)
+without loading the entire animation into memory. Pillow identifies
+multi-frame capabilities through the <code>is_animated</code> attribute
+and stores the total number of frames in the <code>n_frames</code>
+attribute.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> Image.<span class="bu">open</span>(<span class="st">&quot;animation.webp&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Is animated: </span><span class="sc">{</span><span class="bu">getattr</span>(image, <span class="st">&#39;is_animated&#39;</span>, <span class="va">False</span>)<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Total frames: </span><span class="sc">{</span><span class="bu">getattr</span>(image, <span class="st">&#39;n_frames&#39;</span>, <span class="dv">1</span>)<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 id="navigating-frames-with-seek-and-tell">Navigating Frames with
+<code>seek()</code> and <code>tell()</code></h3>
+<p>Pillow maintains an internal frame pointer. You can inspect the
+current frame index using <code>tell()</code> and move to a specific
+frame using <code>seek(frame_index)</code>.</p>
+<p>When moving from one frame to another, Pillow relies on
+<code>libwebp</code> to decode the frame data. If an invalid frame index
+is requested, Pillow raises an <code>EOFError</code>.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Jump to the 5th frame</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>image.seek(<span class="dv">4</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Current frame: </span><span class="sc">{</span>image<span class="sc">.</span>tell()<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
+<h3 id="idiomatic-extraction-with-imagesequence">Idiomatic Extraction
+with <code>ImageSequence</code></h3>
+<p>The cleanest way to process every frame in an animated WebP is using
+Pillow's <code>ImageSequence.Iterator</code>. It wraps the
+<code>seek()</code> mechanism in an iterable interface.</p>
+<p>When extracting frames, you must call <code>.copy()</code> or convert
+the frame mode (such as to <code>RGBA</code>). Because Pillow mutates
+the underlying image object as it iterates, failing to make a copy will
+result in references pointing to the final state of the iterator rather
+than distinct frames.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image, ImageSequence</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> Image.<span class="bu">open</span>(<span class="st">&quot;animation.webp&quot;</span>) <span class="im">as</span> im:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index, frame <span class="kw">in</span> <span class="bu">enumerate</span>(ImageSequence.Iterator(im)):</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create an independent copy to preserve frame data</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        extracted_frame <span class="op">=</span> frame.copy()</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        extracted_frame.save(<span class="ss">f&quot;frame_</span><span class="sc">{</span>index<span class="sc">:03d}</span><span class="ss">.png&quot;</span>, <span class="bu">format</span><span class="op">=</span><span class="st">&quot;PNG&quot;</span>)</span></code></pre></div>
+<h3 id="handling-transparency-and-disposal">Handling Transparency and
+Disposal</h3>
+<p>Animated WebP images often use frame disposal and blending techniques
+to optimize file size, storing only the rectangular sub-region that
+changes between frames.</p>
+<p>Pillow's WebP plugin automatically handles background disposal and
+canvas reconstruction as it iterates sequentially. When jumping randomly
+using <code>seek()</code>, Pillow renders intermediate frames in the
+background to ensure the target frame is visually complete and
+composite-accurate. To retain transparency during export, ensure the
+destination format supports an alpha channel (such as PNG or WebP) and
+verify the image is in <code>RGBA</code> mode.</p>
+<h3 id="extracting-frame-metadata">Extracting Frame Metadata</h3>
+<p>Individual frames inside an animated WebP can carry metadata, such as
+display duration. Pillow exposes this through the <code>info</code>
+dictionary:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>duration <span class="op">=</span> frame.info.get(<span class="st">&quot;duration&quot;</span>, <span class="dv">100</span>)  <span class="co"># Duration in milliseconds</span></span></code></pre></div>
+<p>This metadata allows you to retain timing information if you intend
+to reassemble the extracted frames into another format or sequence.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

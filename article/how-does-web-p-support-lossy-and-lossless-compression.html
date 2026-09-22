@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Does WebP Support Lossy and Lossless Compression? - webp</title>
+    <meta name="description" content="WebP achieves both lossy and lossless compression within a single specification by utilizing two entirely distinct internal compression engines encapsulated inside a shared Resource Interchange File Format (RIFF) container. While lossy WebP adapts intra-">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-does-web-p-support-lossy-and-lossless-compression">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Does WebP Support Lossy and Lossless Compression? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-does-web-p-support-lossy-and-lossless-compression" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP achieves both lossy and lossless compression within a single specification by utilizing two entirely distinct internal compression engines encapsulated inside a shared Resource Interchange File Format (RIFF) container. While lossy WebP adapts intra-" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-does-webp-support-lossy-and-lossless-compression">How Does
+WebP Support Lossy and Lossless Compression?</h1>
+<p>WebP achieves both lossy and lossless compression within a single
+specification by utilizing two entirely distinct internal compression
+engines encapsulated inside a shared Resource Interchange File Format
+(RIFF) container. While lossy WebP adapts intra-frame prediction and
+transform coding directly from the VP8 video codec, lossless WebP relies
+on an independent specification built around spatial transformations,
+color indexing, and entropy coding via LZ77 and canonical Huffman
+coding. The overarching container architecture inspects specific FourCC
+chunk identifiers to route image payloads to the correct decoding
+pipeline, enabling a unified file format to serve two completely
+different compression paradigms.</p>
+<h2 id="the-riff-container-architecture">The RIFF Container
+Architecture</h2>
+<p>The foundation of WebP’s dual capability is its lightweight bitstream
+container, derived from the Resource Interchange File Format (RIFF).
+Every WebP file begins with a standard header that identifies the
+resource as RIFF and indicates a WebP payload (<code>WEBP</code>).
+Crucially, the bitstream relies on FourCC (four-character code) chunk
+identifiers to inform the decoder which compression engine to
+invoke:</p>
+<ul>
+<li><strong><code>VP8 </code> (VP8 Chunk):</strong> Signals a raw lossy
+keyframe bitstream matching the VP8 video encoding standard.</li>
+<li><strong><code>VP8L</code> (VP8L Chunk):</strong> Signals a lossless
+bitstream executing the distinct VP8L specification.</li>
+<li><strong><code>VP8X</code> (Extended Chunk):</strong> Signals an
+extended format containing optional metadata such as ICC color profiles,
+EXIF/XMP data, animation sequences, or an alpha channel.</li>
+</ul>
+<p>When an extended <code>VP8X</code> header is present, the decoder
+reads feature flags that declare what subsequent chunks contain. For
+instance, an image with lossy RGB data alongside an alpha mask stores
+color data in a <code>VP8 </code> chunk and alpha information in an
+<code>ALPH</code> chunk, which itself uses lossless VP8L compression to
+preserve edge transparency without artifacts.</p>
+<h2 id="the-lossy-engine-vp8-intra-prediction">The Lossy Engine: VP8
+Intra-Prediction</h2>
+<p>Lossy WebP directly packages the intra-frame prediction techniques
+developed for the VP8 video format. Instead of treating pixels as
+static, independent grids, the lossy engine attempts to predict block
+values based on adjacent, previously processed pixels:</p>
+<ol type="1">
+<li><strong>Macroblock Partitioning:</strong> The image is divided into
+16x16 macroblocks for luma (brightness) and 8x8 sub-blocks for chroma
+(color).</li>
+<li><strong>Intra-Prediction:</strong> The encoder analyzes already
+decoded pixels directly above and to the left of the current block,
+applying prediction modes (such as DC, Horizontal, Vertical, or
+TrueMotion) to forecast what the current block looks like.</li>
+<li><strong>Residual Transform:</strong> Subtracting the prediction from
+the original pixels yields a residual error. This difference matrix is
+transformed via a discrete cosine transform (DCT) approximation called
+the Walsh-Hadamard Transform (WHT) for DC components and an integer DCT
+for remaining coefficients.</li>
+<li><strong>Quantization and Arithmetic Coding:</strong> High-frequency
+coefficients are discarded or stepped down during quantization, creating
+lossy data degradation tailored to human visual perception. The
+quantized values are finally packed using a boolean arithmetic
+coder.</li>
+</ol>
+<h2 id="the-lossless-engine-vp8l-transformations">The Lossless Engine:
+VP8L Transformations</h2>
+<p>Lossless WebP (VP8L) does not borrow from VP8 video encoding.
+Instead, it operates through a series of reversible spatial and color
+transforms designed to reduce entropy before encoding:</p>
+<ul>
+<li><strong>Predictor Transform:</strong> Similar to PNG filters, VP8L
+uses up to 14 spatial predictors to calculate expected pixel values from
+surrounding neighbors, recording only the residual differences.</li>
+<li><strong>Color Transform:</strong> Decorrelates color channels by
+projecting green onto red and blue, eliminating redundant cross-channel
+data.</li>
+<li><strong>Color Indexing Transform:</strong> Evaluates whether an
+image contains a limited palette (typically under 256 unique colors). If
+so, it constructs a sub-byte color map and stores pixels as palette
+indices.</li>
+<li><strong>Color Cache:</strong> Maintains a dynamically updated list
+of recently seen colors, allowing recurrent pixel values to be addressed
+with small index numbers rather than full RGBA values.</li>
+</ul>
+<p>Once these reversible transforms finish, the residual data enters an
+LZ77-style backward reference search to match repeated pixel patterns
+across a 2D sliding window, followed by final entropy reduction using
+canonical Huffman coding.</p>
+<h2 id="unified-handling-across-browsers-and-decoders">Unified Handling
+Across Browsers and Decoders</h2>
+<p>WebP unifies these separate pipelines into a single interface for
+client software. A decoder reads the initial 12 bytes of the RIFF
+header, checks the chunk tag, and hands execution off to either the VP8
+parser or the VP8L decompressor. Because both algorithms produce
+standard RGBA pixel buffers in memory, downstream rendering engines
+receive a consistent pixel output regardless of whether the underlying
+bits were derived from lossy DCT quantization or lossless entropy
+modeling.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

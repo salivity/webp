@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Linting Tools for WebP Assets - webp</title>
+    <meta name="description" content="Serving modern image formats like WebP is essential for optimizing web performance, improving Core Web Vitals, and maintaining strong search engine rankings. This article explores the automated linting tools, CI/CD integrations, and static analysis workf">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/automated-linting-tools-for-web-p-assets">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Automated Linting Tools for WebP Assets - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/automated-linting-tools-for-web-p-assets" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Serving modern image formats like WebP is essential for optimizing web performance, improving Core Web Vitals, and maintaining strong search engine rankings. This article explores the automated linting tools, CI/CD integrations, and static analysis workf" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="automated-linting-tools-for-webp-assets">Automated Linting Tools
+for WebP Assets</h1>
+<p>Serving modern image formats like WebP is essential for optimizing
+web performance, improving Core Web Vitals, and maintaining strong
+search engine rankings. This article explores the automated linting
+tools, CI/CD integrations, and static analysis workflows available to
+verify that all public assets on a website have corresponding WebP
+equivalents before or during deployment.</p>
+<h2 id="lighthouse-ci-lhci">Lighthouse CI (LHCI)</h2>
+<p>Lighthouse CI is the industry standard for auditing web page assets
+in continuous integration pipelines. It includes an explicit audit for
+"Serve images in next-gen formats," which flags JPEG or PNG assets that
+could yield significant byte savings if converted to WebP or AVIF.</p>
+<p>To enforce WebP equivalents across your public pages:</p>
+<ul>
+<li>Install <code>@lhci/cli</code> in your project.</li>
+<li>Configure an assertion rule inside <code>.lighthouserc.json</code>
+targeting <code>modern-image-formats</code>.</li>
+<li>Set the assertion level to <code>error</code> to break the build
+whenever an asset is served without a modern format equivalent.</li>
+</ul>
+<p>LHCI operates against built production code, making it an effective
+end-to-end verification step.</p>
+<h2 id="html-validate">html-validate</h2>
+<p>For static sites and template-driven architectures,
+<code>html-validate</code> is a standalone HTML linter that checks the
+rendered or template output. While it focuses primarily on HTML
+standards and accessibility, its rule configuration and plugin
+architecture allow developers to enforce specific markup patterns, such
+as requiring <code>&lt;picture&gt;</code> wrappers with WebP
+<code>&lt;source&gt;</code> elements instead of standalone
+<code>&lt;img&gt;</code> tags.</p>
+<p>You can create custom rules in <code>html-validate</code> to:</p>
+<ul>
+<li>Ensure every <code>&lt;img&gt;</code> referencing a legacy extension
+(<code>.jpg</code>, <code>.png</code>) is nested inside a
+<code>&lt;picture&gt;</code> element.</li>
+<li>Verify that an adjacent
+<code>&lt;source type="image/webp"&gt;</code> exists pointing to the
+corresponding WebP version.</li>
+</ul>
+<h2 id="pre-commit-and-static-directory-linters">Pre-Commit and Static
+Directory Linters</h2>
+<p>When assets live in a static directory (such as <code>/public</code>,
+<code>/static</code>, or <code>/assets</code>), static file-system
+linters provide the fastest feedback loop by validating assets before
+compilation occurs.</p>
+<h3 id="custom-nodejs--glob-linters">Custom Node.js / Glob Linters</h3>
+<p>Because standard linters often ignore binary assets, many teams
+implement custom scripts using <code>glob</code> or
+<code>fast-glob</code> as a pre-commit or pre-build step. A standard
+static check:</p>
+<ol type="1">
+<li>Scans the public directory for all <code>.png</code> and
+<code>.jpg</code>/<code>.jpeg</code> files.</li>
+<li>Checks if a file with the same base name and a <code>.webp</code>
+extension exists in the same path.</li>
+<li>Exits with process code <code>1</code> and lists missing WebP files
+if discrepancies are found.</li>
+</ol>
+<h3 id="lint-staged-integration">lint-staged Integration</h3>
+<p>Pairing a custom asset verification script with
+<code>lint-staged</code> and <code>husky</code> ensures that developers
+cannot commit a raster image without also committing its WebP
+equivalent, catching unoptimized assets at the developer environment
+level.</p>
+<h2 id="framework-specific-eslint-plugins">Framework-Specific ESLint
+Plugins</h2>
+<p>Modern frameworks often manage image optimization and asset serving
+directly through dedicated components. Automated linting can be applied
+to verify image usage:</p>
+<ul>
+<li><strong>Next.js (<code>@next/next</code>):</strong> The
+<code>@next/next/no-img-element</code> rule prevents using raw HTML
+<code>&lt;img&gt;</code> elements, forcing the use of the
+<code>next/image</code> component. Next.js handles WebP generation
+dynamically or verifies static imports at build time.</li>
+<li><strong>Nuxt and SvelteKit:</strong> Similar ecosystem linters
+enforce the use of <code>@nuxt/image</code> or
+<code>@sveltejs/enhanced-img</code>, which perform build-time validation
+to verify that modern formats exist or are generated automatically
+during the build process.</li>
+</ul>
+<h2 id="playwright--puppeteer-network-scrapers">Playwright / Puppeteer
+Network Scrapers</h2>
+<p>For dynamically rendered sites, headless browser suites like
+Playwright or Puppeteer can serve as automated integration linters. A
+simple CI test script can navigate through all published sitemap URLs,
+intercept network requests, and assert that every requested image asset
+either delivers <code>image/webp</code> content or includes an
+alternative WebP candidate in the DOM's <code>srcset</code>
+attributes.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

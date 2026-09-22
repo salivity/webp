@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Images and Mobile Safari Memory Limits - webp</title>
+    <meta name="description" content="WebP files can trigger mobile Safari memory limits on long-scroll web pages. While WebP dramatically reduces image file sizes for network transfer, mobile browsers must decode these compressed files into uncompressed raw bitmaps in system RAM to display">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-images-and-mobile-safari-memory-limits">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Images and Mobile Safari Memory Limits - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-images-and-mobile-safari-memory-limits" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP files can trigger mobile Safari memory limits on long-scroll web pages. While WebP dramatically reduces image file sizes for network transfer, mobile browsers must decode these compressed files into uncompressed raw bitmaps in system RAM to display" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-images-and-mobile-safari-memory-limits">WebP Images and
+Mobile Safari Memory Limits</h1>
+<p>WebP files can trigger mobile Safari memory limits on long-scroll web
+pages. While WebP dramatically reduces image file sizes for network
+transfer, mobile browsers must decode these compressed files into
+uncompressed raw bitmaps in system RAM to display them. On
+long-scrolling websites with numerous or high-resolution images, this
+decoded memory footprint can rapidly exceed iOS WebKit memory
+thresholds, resulting in dropped frames, blank spaces, or page crashes
+accompanied by the "a problem repeatedly occurred" error.</p>
+<h3 id="the-disconnect-between-file-size-and-decoded-memory">The
+Disconnect Between File Size and Decoded Memory</h3>
+<p>A common misconception in web optimization is equating file download
+size with memory consumption. Image formats like WebP, JPEG, and PNG are
+compression algorithms designed to minimize data sent over the network.
+Once downloaded, Safari’s rendering engine must allocate memory for
+every single pixel.</p>
+<p>The memory required to store an image in RAM is determined by its
+physical pixel dimensions, not its file size:</p>
+<p><span class="math display">\[\text{Decoded Memory} = \text{Width}
+\times \text{Height} \times 4\text{ bytes (RGBA)}\]</span></p>
+<p>For example, a high-resolution 4000×3000 WebP photo might compress
+down to a mere 300 KB file on disk. However, once mobile Safari decodes
+it, that single image consumes roughly 48 megabytes of RAM. If a
+long-scroll webpage includes 20 such images, the download size is only 6
+MB, but the decoded memory cost reaches nearly 1 GB.</p>
+<h3 id="mobile-safaris-memory-architecture">Mobile Safari's Memory
+Architecture</h3>
+<p>iOS enforces strict memory constraints through its Jetsam system
+mechanism, which monitors per-process memory usage. Mobile Safari runs
+on a multi-process architecture where the WebContent process renders the
+page.</p>
+<p>Depending on the specific iPhone or iPad model, the WebContent
+process has an upper memory threshold—often between 1 GB and 2 GB on
+modern devices, and significantly less on older models. If a webpage
+breaches this ceiling, iOS terminates the WebContent process instantly.
+This manifests to the user as a sudden white screen or an automatic page
+reload.</p>
+<h3 id="why-long-scroll-pages-exacerbate-the-problem">Why Long-Scroll
+Pages Exacerbate the Problem</h3>
+<p>Standard web pages free up resources as users navigate from URL to
+URL. Long-scroll pages (such as infinite feeds, portfolios, or catalogs)
+continuously accumulate assets in the Document Object Model (DOM).</p>
+<p>Mobile Safari retains decoded image buffers in memory even when
+elements scroll far outside the visible viewport. If the page does not
+proactively detach offscreen images or clean up DOM nodes, every image
+viewed remains in active memory, causing linear memory growth until the
+operating system terminates the process.</p>
+<h3 id="strategies-to-prevent-mobile-safari-memory-crashes">Strategies
+to Prevent Mobile Safari Memory Crashes</h3>
+<p>To prevent memory-related crashes when using WebP on long pages,
+implement the following techniques:</p>
+<ul>
+<li><strong>Serve Correct Dimensions via Responsive Images:</strong>
+Never use CSS to resize massive WebP images down to mobile screens. Use
+the <code>&lt;picture&gt;</code> element or <code>srcset</code>
+attribute to serve images scaled strictly to the target viewport
+dimensions. Reducing a 4000px wide image to an 800px wide image cuts
+memory usage by 96%.</li>
+<li><strong>Implement Native Lazy Loading:</strong> Apply
+<code>loading="lazy"</code> to images below the fold so that Safari only
+downloads and decodes assets as the user approaches them.</li>
+<li><strong>Virtualize the DOM:</strong> For infinitely scrolling
+layouts, implement DOM virtualization (recycling). Remove offscreen
+elements from the DOM or replace them with lightweight placeholders when
+they exit the viewport to allow Safari's garbage collector to reclaim
+memory.</li>
+<li><strong>Leverage CSS Content-Visibility:</strong> Use the
+<code>content-visibility: auto</code> CSS property on offscreen
+sections. This instructs the rendering engine to skip layout and
+painting for offscreen content, significantly reducing both rendering
+overhead and active memory consumption.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

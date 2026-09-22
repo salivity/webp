@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Android Uses Native Libraries for WebP Images - webp</title>
+    <meta name="description" content="Android processes and renders WebP assets by offloading decoding and rasterization directly to native C/C++ system libraries rather than handling computationally heavy operations within the Java or Kotlin runtime. By combining the open-source libwebp cod">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-android-uses-native-libraries-for-web-p-images">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Android Uses Native Libraries for WebP Images - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-android-uses-native-libraries-for-web-p-images" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Android processes and renders WebP assets by offloading decoding and rasterization directly to native C/C++ system libraries rather than handling computationally heavy operations within the Java or Kotlin runtime. By combining the open-source libwebp cod" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-android-uses-native-libraries-for-webp-images">How Android
+Uses Native Libraries for WebP Images</h1>
+<p>Android processes and renders WebP assets by offloading decoding and
+rasterization directly to native C/C++ system libraries rather than
+handling computationally heavy operations within the Java or Kotlin
+runtime. By combining the open-source <code>libwebp</code> codec with
+the native Skia graphics engine, the Android platform leverages the Java
+Native Interface (JNI) to decode WebP byte streams directly into native
+memory buffers. This approach minimizes memory consumption, reduces
+garbage collection overhead, and feeds decoded pixels directly into
+hardware-accelerated rendering pipelines.</p>
+<h3 id="the-native-decoding-pipeline">The Native Decoding Pipeline</h3>
+<p>When an application loads a WebP asset using framework APIs such as
+<code>BitmapFactory</code> or <code>ImageDecoder</code>, the processing
+is routed through the Android Framework to the native layer:</p>
+<ol type="1">
+<li><strong>JNI Transition:</strong> The framework API calls into native
+C++ code within Android's <code>libhwui</code> (Hardware UI) library via
+JNI.</li>
+<li><strong>Skia Integration:</strong> Android uses Skia as its core 2D
+graphics engine. Skia encapsulates various image codecs, acting as an
+abstraction layer over native decoding libraries.</li>
+<li><strong>Delegation to <code>libwebp</code>:</strong> Skia identifies
+the WebP format header (RIFF/WEBP) and routes the compressed data to
+Android’s compiled version of Google's <code>libwebp</code>
+library.</li>
+</ol>
+<h3 id="memory-management-and-zero-copy-decoding">Memory Management and
+Zero-Copy Decoding</h3>
+<p>A primary benefit of delegating WebP parsing to native libraries is
+efficient memory allocation. When <code>libwebp</code> decodes an
+asset:</p>
+<ul>
+<li><strong>Direct Buffer Allocation:</strong> Instead of allocating
+large byte arrays inside the managed Java heap, <code>libwebp</code>
+allocates pixel memory in native memory (Ashmem or Android's
+<code>GraphicBuffer</code>).</li>
+<li><strong>HardwareBitmaps:</strong> On modern Android versions (API
+26+), decoding can target a <code>HardwareBuffer</code>. This allows the
+decoded WebP data to be directly uploaded to GPU memory without
+intermediate copies between CPU and GPU spaces.</li>
+<li><strong>Lossless and Lossy Handlers:</strong> <code>libwebp</code>
+applies specific C routines depending on the asset type—VP8
+decompression for lossy WebP, or specialized spatial prediction
+algorithms for lossless WebP—maximizing execution speed through
+CPU-specific SIMD instructions (such as ARM NEON).</li>
+</ul>
+<h3 id="animated-webp-processing">Animated WebP Processing</h3>
+<p>For animated WebP images, the framework uses
+<code>AnimatedImageDrawable</code>, which relies on
+<code>libwebpdemux</code> natively. The demuxing library extracts
+individual frames and their timing metadata without needing to decode
+the entire image sequence into memory at once. Skia then decodes
+individual frames on demand, storing only the active and neighboring
+frame buffers to maintain a small memory footprint while rendering frame
+animations at 60 or 120 frames per second.</p>
+<h3 id="hardware-acceleration-and-display">Hardware Acceleration and
+Display</h3>
+<p>Once <code>libwebp</code> converts the compressed data into raw RGBA
+or planar pixel arrays in native memory, Skia wraps this data as a
+native texture. Android's <code>RenderThread</code> communicates
+directly with SurfaceFlinger—the system compositor—via OpenGL ES or
+Vulkan APIs. SurfaceFlinger layers the decoded WebP texture onto the
+display surface, completing the pipeline entirely in native code without
+requiring the managed runtime to touch raw pixel data.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP Compression on WebP: Why Savings Are Minimal - webp</title>
+    <meta name="description" content="Applying HTTP content encoding algorithms like Gzip or Brotli to WebP image files results in negligible file size reductions, and in some cases can even increase the overall payload size. This article explains the technical reasons behind this behavior,">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/http-compression-on-web-p-why-savings-are-minimal">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="HTTP Compression on WebP: Why Savings Are Minimal - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/http-compression-on-web-p-why-savings-are-minimal" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Applying HTTP content encoding algorithms like Gzip or Brotli to WebP image files results in negligible file size reductions, and in some cases can even increase the overall payload size. This article explains the technical reasons behind this behavior," />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="http-compression-on-webp-why-savings-are-minimal">HTTP
+Compression on WebP: Why Savings Are Minimal</h1>
+<p>Applying HTTP content encoding algorithms like Gzip or Brotli to WebP
+image files results in negligible file size reductions, and in some
+cases can even increase the overall payload size. This article explains
+the technical reasons behind this behavior, focusing on data entropy,
+the internal compression mechanisms of WebP, and how general-purpose
+HTTP compression algorithms function when processing pre-compressed
+binary media.</p>
+<h2 id="pre-existing-compression-and-high-data-entropy">Pre-Existing
+Compression and High Data Entropy</h2>
+<p>HTTP content encoding algorithms rely on finding repetitive patterns,
+redundant strings, and uneven character frequencies within an
+uncompressed data stream. Plain text assets such as HTML, CSS,
+JavaScript, and SVG files contain high redundancy, making them ideal
+candidates for significant size reduction via HTTP encoding.</p>
+<p>WebP, however, is a specialized image format that is already deeply
+compressed. Whether using lossy or lossless compression, the WebP format
+actively removes spatial redundancy and packs image data into an
+extremely dense representation. This process results in high data
+entropy, meaning the byte sequences appear almost entirely random from a
+mathematical standpoint.</p>
+<h2 id="the-internal-mechanisms-of-webp">The Internal Mechanisms of
+WebP</h2>
+<p>The WebP specification uses techniques that make secondary
+compression redundant:</p>
+<ul>
+<li><strong>Lossy WebP:</strong> Based on the VP8 video codec keyframe
+encoding, it uses predictive coding to anticipate pixel values based on
+neighboring blocks. The residual differences are then transformed using
+Discrete Cosine Transform (DCT) or similar techniques, quantized, and
+packed using an arithmetic entropy coder.</li>
+<li><strong>Lossless WebP (VP8L):</strong> Uses advanced transformations
+such as spatial prediction, color transform, subtract green transform,
+and color indexing, followed by LZ77-style backward referencing and
+canonical Huffman coding.</li>
+</ul>
+<p>Because WebP already applies both pattern deduplication (similar to
+LZ77) and entropy reduction (similar to Huffman coding) natively, there
+are no remaining patterns for external compression algorithms to
+exploit.</p>
+<h2 id="how-http-content-encoding-interacts-with-webp">How HTTP Content
+Encoding Interacts with WebP</h2>
+<p>Standard HTTP compression methods—primarily Gzip (DEFLATE) and
+Brotli—operate at the transport layer without understanding image
+semantics:</p>
+<ol type="1">
+<li><strong>Lack of Matchable Sequences:</strong> The dictionary-based
+phase of algorithms like LZ77 scans the stream for repeated byte
+sequences. In a WebP file, duplicate byte strings have already been
+eradicated.</li>
+<li><strong>Exhausted Entropy Coding:</strong> The entropy-coding phase
+(Huffman or ANS) looks for symbol distribution biases. Since WebP data
+is already uniformly distributed across the byte spectrum, standard
+frequency-based compression yields virtually no savings.</li>
+<li><strong>Format Overhead:</strong> Compressing an incompressible
+binary stream still requires the algorithm to write block headers,
+compression trees, and framing metadata. This overhead frequently
+exceeds the few bytes saved, causing the resulting "compressed" payload
+to be slightly larger than the original WebP file.</li>
+</ol>
+<h2 id="performance-and-resource-implications">Performance and Resource
+Implications</h2>
+<p>Attempting to apply Gzip or Brotli to WebP files causes unnecessary
+performance degradation:</p>
+<ul>
+<li><strong>Wasted Server CPU Cycles:</strong> The server must dedicate
+processing threads to scan and attempt to compress binary data that
+cannot be made smaller.</li>
+<li><strong>Increased Time to First Byte (TTFB):</strong> On-the-fly
+dynamic compression introduces server-side latency before transmitting
+the image chunks over the network.</li>
+<li><strong>Client CPU Overhead:</strong> The receiving browser must
+allocate memory and CPU cycles to decompress a stream that provided no
+bandwidth savings.</li>
+</ul>
+<h2 id="recommended-best-practice">Recommended Best Practice</h2>
+<p>Web servers and Content Delivery Networks (CDNs) should explicitly
+exclude WebP images (MIME type <code>image/webp</code>) from dynamic
+HTTP compression rules. Optimization for WebP should instead focus
+entirely on original asset generation—such as fine-tuning quality
+thresholds, stripping unnecessary EXIF metadata, and utilizing modern
+WebP encoders—while serving the resulting assets directly with
+appropriate cache headers.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

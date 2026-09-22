@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Did Apple Delay WebP Support in Safari? - webp</title>
+    <meta name="description" content="Apple delayed native WebP support in Safari for a decade, finally introducing it in 2020 with iOS 14 and macOS Big Sur. This delay was primarily driven by strategic resistance to Google-dominated web standards, the absence of dedicated hardware decoding">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-did-apple-delay-web-p-support-in-safari">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Did Apple Delay WebP Support in Safari? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-did-apple-delay-web-p-support-in-safari" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Apple delayed native WebP support in Safari for a decade, finally introducing it in 2020 with iOS 14 and macOS Big Sur. This delay was primarily driven by strategic resistance to Google-dominated web standards, the absence of dedicated hardware decoding" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-did-apple-delay-webp-support-in-safari">Why Did Apple Delay
+WebP Support in Safari?</h1>
+<p>Apple delayed native WebP support in Safari for a decade, finally
+introducing it in 2020 with iOS 14 and macOS Big Sur. This delay was
+primarily driven by strategic resistance to Google-dominated web
+standards, the absence of dedicated hardware decoding which threatened
+battery life, concerns regarding image quality and color management in
+early versions of the format, and Apple’s heavy investment in
+alternative image compression technologies like HEIF.</p>
+<h3 id="strategic-resistance-to-google-standards">Strategic Resistance
+to Google Standards</h3>
+<p>Google released WebP in 2010 to reduce image sizes across the web,
+quickly integrating it into Chrome and Android. Apple has historically
+resisted adopting web formats championed primarily by a single
+competitor, particularly when those formats are pushed onto the open web
+without broad consensus through traditional standardization bodies like
+the W3C or ISO. Apple favored maintaining engine autonomy in WebKit
+rather than following Google's Blink engine specifications, fearing that
+rapid adoption of proprietary-leaning technologies would accelerate
+Google's web monoculture.</p>
+<h3 id="battery-life-and-hardware-acceleration">Battery Life and
+Hardware Acceleration</h3>
+<p>Hardware efficiency and battery optimization are core pillars of
+Apple's device strategy. Traditional formats like JPEG and H.264 video
+benefit from dedicated silicon decoders built into Apple’s A-series and
+M-series chips. Because older Apple chips lacked hardware-level decoding
+for WebP, decoding the format required software rendering through the
+CPU. This raised CPU usage, generated more heat, and drained battery
+life on mobile devices like iPhones and iPads. Apple routinely avoids
+native web feature rollouts until the underlying performance impact
+meets its mobile efficiency standards.</p>
+<h3 id="investment-in-heic-and-heif">Investment in HEIC and HEIF</h3>
+<p>While Google advanced WebP, Apple invested heavily in the High
+Efficiency Image File Format (HEIF/HEIC), developed by the Moving
+Picture Experts Group (MPEG). Introduced across iOS and macOS in 2017,
+HEIF offered superior compression efficiency, 16-bit color capability,
+and support for multi-image sequences (such as Live Photos) compared to
+WebP’s original design. Because Apple had already committed its hardware
+encoders and decoders to HEIF, allocating engineering resources to
+integrate a rival standard was a lower priority.</p>
+<h3 id="quality-and-color-limitations-of-early-webp">Quality and Color
+Limitations of Early WebP</h3>
+<p>Initial iterations of WebP faced technical criticism from developers
+and imaging experts. Early versions exhibited noticeable loss of fine
+detail and texture, often producing blurring artifacts in complex
+photographic areas compared to properly optimized JPEG files.
+Furthermore, early WebP had limited support for advanced color profiles
+(such as Apple's preferred Display P3 wide color gamut) and lacked
+native high-dynamic-range (HDR) capabilities. Apple held off until the
+format matured and addressed these functional shortcomings.</p>
+<h3 id="the-shift-to-adoption">The Shift to Adoption</h3>
+<p>By 2020, WebP had evolved into a stable, versatile format with
+widespread cross-platform adoption. Major Content Delivery Networks
+(CDNs), web servers, and rival browsers universally supported it, and a
+significant portion of modern web traffic relied on it for reduced
+payload sizes. As the performance gap narrowed and omitting support
+began causing broken web experiences for Safari users, Apple finally
+implemented native WebP decoding across its ecosystem.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

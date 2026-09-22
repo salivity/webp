@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Google Maps Uses WebP for Aerial Imagery - webp</title>
+    <meta name="description" content="Modern mapping platforms like Google Maps stream billions of aerial imagery tiles daily to users across diverse devices and network conditions. To maintain seamless, real-time panning and zooming without overwhelming bandwidth, these services predominant">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-google-maps-uses-web-p-for-aerial-imagery">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Google Maps Uses WebP for Aerial Imagery - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-google-maps-uses-web-p-for-aerial-imagery" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Modern mapping platforms like Google Maps stream billions of aerial imagery tiles daily to users across diverse devices and network conditions. To maintain seamless, real-time panning and zooming without overwhelming bandwidth, these services predominant" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-google-maps-uses-webp-for-aerial-imagery">Why Google Maps
+Uses WebP for Aerial Imagery</h1>
+<p>Modern mapping platforms like Google Maps stream billions of aerial
+imagery tiles daily to users across diverse devices and network
+conditions. To maintain seamless, real-time panning and zooming without
+overwhelming bandwidth, these services predominantly deliver satellite
+and aerial tiles in the WebP format. This article explains the technical
+reasons behind adopting WebP, focusing on compression efficiency,
+network performance, visual quality, and client-side rendering
+capabilities.</p>
+<h3 id="superior-compression-and-reduced-file-sizes">Superior
+Compression and Reduced File Sizes</h3>
+<p>Aerial photography contains dense visual complexity, including sharp
+color shifts, intricate textures like foliage and road surfaces, and
+high-contrast boundaries. Traditional formats like JPEG struggle to
+compress these complex patterns without introducing noticeable
+compression artifacts or producing excessively large files.</p>
+<p>WebP utilizes predictive coding derived from the VP8 video codec. It
+analyzes adjacent pixel blocks to predict values, encoding only the
+difference (residual) between the prediction and the actual image. This
+approach allows WebP to produce lossy images that are 25% to 34% smaller
+than equivalent JPEG images at comparable structural similarity (SSIM)
+visual quality. For a mapping service, a 30% reduction in tile size
+directly translates to substantial storage savings across petabytes of
+imagery.</p>
+<h3 id="faster-tile-loading-and-reduced-latency">Faster Tile Loading and
+Reduced Latency</h3>
+<p>Map interfaces operate as "slippy maps," where viewing an area
+triggers dozens of simultaneous HTTP requests for individual 256x256 or
+512x512 pixel tiles. If each tile requires 50 to 100 kilobytes, a single
+pan or zoom action could demand several megabytes of data transfer.</p>
+<p>Smaller tile payloads ensure that the browser or mobile application
+reaches the rendering phase faster. By cutting down total byte
+transfers, WebP prevents network congestion, reduces packet loss on
+unstable mobile connections, and lowers round-trip latency. As a result,
+the map viewport populates rapidly, minimizing the appearance of blank
+gray grids during fast navigation.</p>
+<h3 id="support-for-alpha-transparency">Support for Alpha
+Transparency</h3>
+<p>Standard satellite layers are frequently blended with vector data,
+such as road networks, terrain contours, and dynamic labels. Unlike
+standard lossy JPEG, lossy WebP natively supports 8-bit alpha channel
+transparency with minimal overhead.</p>
+<p>This feature allows map providers to deliver partially transparent
+imagery layers—such as cloud covers, weather overlays, or specialized
+hybrid satellite layers—in a single compressed format. Services no
+longer need to alternate between bloated PNGs for transparency and JPEGs
+for photographic content; WebP handles both scenarios efficiently.</p>
+<h3 id="wide-ecosystem-support-and-efficient-decoding">Wide Ecosystem
+Support and Efficient Decoding</h3>
+<p>Adopting a web-scale format requires broad client compatibility. WebP
+is supported natively across all modern web browsers, including Chrome,
+Safari, Firefox, and Edge, as well as native mobile operating systems
+like Android and iOS.</p>
+<p>Additionally, WebP decoding routines are lightweight and often
+optimized for modern CPU architectures and hardware decoders. This
+ensures that the client device can decompress dozens of incoming tiles
+concurrently without causing frame drops or draining device battery
+life, sustaining a smooth 60-frames-per-second navigation
+experience.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

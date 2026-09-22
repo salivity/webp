@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why CMYK to WebP Conversion Causes Color Shifts - webp</title>
+    <meta name="description" content="Graphic designers frequently experience unexpected color shifts when converting CMYK assets to the WebP format because of fundamental differences in color models, automated color profile stripping, and browser rendering limitations. This article explores">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-cmyk-to-web-p-conversion-causes-color-shifts">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why CMYK to WebP Conversion Causes Color Shifts - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-cmyk-to-web-p-conversion-causes-color-shifts" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Graphic designers frequently experience unexpected color shifts when converting CMYK assets to the WebP format because of fundamental differences in color models, automated color profile stripping, and browser rendering limitations. This article explores" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-cmyk-to-webp-conversion-causes-color-shifts">Why CMYK to
+WebP Conversion Causes Color Shifts</h1>
+<p>Graphic designers frequently experience unexpected color shifts when
+converting CMYK assets to the WebP format because of fundamental
+differences in color models, automated color profile stripping, and
+browser rendering limitations. This article explores why this visual
+distortion happens—ranging from subtractive versus additive color spaces
+to inconsistent color management workflows—and outlines the core
+mechanics behind these frustrating hue shifts.</p>
+<h3 id="the-fundamental-clash-cmyk-vs-rgb">The Fundamental Clash: CMYK
+vs. RGB</h3>
+<p>The primary cause of color shifts is the mismatch between the source
+and target color models. CMYK (Cyan, Magenta, Yellow, Key/Black) is a
+subtractive color model designed specifically for physical ink on paper.
+WebP, on the other hand, is a modern digital format designed exclusively
+for screens and digital displays, meaning it operates entirely within
+additive RGB (Red, Green, Blue) color spaces.</p>
+<p>When a design is authored in CMYK, colors are calculated based on how
+light absorbs into ink. Converting that data to WebP requires
+translating those ink values into pixel light values. Because the two
+systems do not share identical color gamuts—some CMYK tones have no
+direct, one-to-one numerical match in standard RGB (sRGB)—the conversion
+software must approximate the closest possible equivalent, often
+resulting in dull, overly saturated, or shifted hues.</p>
+<h3 id="webp-lacks-native-cmyk-support">WebP Lacks Native CMYK
+Support</h3>
+<p>Unlike legacy formats like TIFF or JPEG, which can technically store
+native CMYK pixel data (even if browsers struggle to display it
+properly), the WebP specification does not support the CMYK color space.
+Every WebP image must be encoded as RGB.</p>
+<p>When graphic designers upload a CMYK file directly to a web exporter,
+automated optimization pipeline, or Content Delivery Network (CDN) that
+generates WebP images, the converter must force a conversion on the fly.
+If that automated tool uses a naive mathematical formula rather than a
+proper Color Management System (CMS), vibrant brand colors, deep blacks,
+and balanced skin tones are often distorted.</p>
+<h3 id="discarded-icc-color-profiles">Discarded ICC Color Profiles</h3>
+<p>Color shifts are heavily exacerbated by metadata stripping. In an
+effort to minimize file sizes, many automated compression tools and WebP
+encoders strip embedded ICC profiles by default.</p>
+<p>An ICC profile acts as a translator, telling software exactly how a
+file's specific CMYK or RGB values should look in real-world color
+spaces. When an ICC profile is discarded during conversion:</p>
+<ul>
+<li>The rendering engine must guess how to display the image.</li>
+<li>The browser defaults to standard, uncalibrated sRGB.</li>
+<li>Rich blacks built with multiple inks (rich black) often collapse
+into flat, washed-out grays, while cyan and magenta highlights
+frequently skew neon or muddy.</li>
+</ul>
+<h3 id="rendering-intents-and-gamut-mapping">Rendering Intents and Gamut
+Mapping</h3>
+<p>During the conversion process, color management engines must choose a
+"rendering intent" (such as Perceptual, Relative Colorimetric, Absolute
+Colorimetric, or Saturation). Different design applications and
+command-line encoders default to different intents.</p>
+<p>If an automated converter uses Absolute Colorimetric, for instance,
+out-of-gamut colors will simply clip to the nearest edge of the target
+color space, causing severe banding, loss of detail, and abrupt color
+shifts in gradients.</p>
+<h3 id="the-reliable-solution">The Reliable Solution</h3>
+<p>To eliminate unexpected color shifts, conversion should never be left
+to an automated WebP encoder while the file is still in a print format.
+Graphic designers should always convert their artwork to the sRGB color
+profile inside a dedicated color-managed design application (such as
+Adobe Photoshop or Illustrator) prior to exporting to WebP. This allows
+designers to visually preview, soft-proof, and manually adjust gamut
+shifts before final compression occurs.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

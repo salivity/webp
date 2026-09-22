@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fallback Open Graph Images for WebP Assets - webp</title>
+    <meta name="description" content="While modern image formats like WebP significantly reduce bandwidth on websites, social media crawlers and messaging platforms frequently fail to render them when scraping Open Graph metadata. Web developers must implement reliable fallback strategies to">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/fallback-open-graph-images-for-web-p-assets">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fallback Open Graph Images for WebP Assets - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/fallback-open-graph-images-for-web-p-assets" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While modern image formats like WebP significantly reduce bandwidth on websites, social media crawlers and messaging platforms frequently fail to render them when scraping Open Graph metadata. Web developers must implement reliable fallback strategies to" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="fallback-open-graph-images-for-webp-assets">Fallback Open Graph
+Images for WebP Assets</h1>
+<p>While modern image formats like WebP significantly reduce bandwidth
+on websites, social media crawlers and messaging platforms frequently
+fail to render them when scraping Open Graph metadata. Web developers
+must implement reliable fallback strategies to ensure link previews
+display properly across platforms like Facebook, LinkedIn, X, and
+WhatsApp without sacrificing the performance benefits of WebP on the
+actual page. This guide covers how to structure meta tags, leverage
+format fallbacks, and use server-side negotiation to serve the right
+image format to both browsers and social scrapers.</p>
+<h3 id="the-problem-with-webp-and-social-crawlers">The Problem with WebP
+and Social Crawlers</h3>
+<p>Web browsers widely support WebP, but social media platforms rely on
+automated scrapers (such as <code>facebookexternalhit</code> or
+<code>Twitterbot</code>) that use older image processing pipelines. Many
+of these crawlers do not decode WebP or AVIF formats. If an
+<code>og:image</code> tag points exclusively to a WebP asset, the shared
+link often displays a broken preview or no image at all.</p>
+<h3
+id="strategy-1-declare-universal-formats-in-open-graph-tags">Strategy 1:
+Declare Universal Formats in Open Graph Tags</h3>
+<p>The most straightforward approach is to decouple your on-page web
+assets from your Open Graph assets. While your page content can use WebP
+inside modern <code>&lt;picture&gt;</code> elements, your Open Graph
+tags should prioritize a universally supported format like JPEG or
+PNG.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- On-page content uses modern formats --&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> srcset</span><span class="op">=</span><span class="st">&quot;/images/hero.webp&quot;</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;/images/hero.jpg&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;Hero representation&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Open Graph metadata uses fallback formats --&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;https://example.com/images/share.jpg&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:secure_url&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;https://example.com/images/share.jpg&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:type&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;image/jpeg&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:width&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;1200&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:height&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;630&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span></code></pre></div>
+<p>Because social preview images are only downloaded when a link is
+shared, using a high-quality, properly compressed JPEG (typically around
+1200x630 pixels and under 300KB) avoids crawler compatibility issues
+without impacting initial page-load metrics for regular users.</p>
+<h3 id="strategy-2-array-based-open-graph-declarations">Strategy 2:
+Array-Based Open Graph Declarations</h3>
+<p>The Open Graph protocol allows developers to define multiple image
+tags as an array. When doing this, order and explicit MIME types
+matter.</p>
+<p>Some platforms parse through the list until they find a MIME type
+they support. When declaring an array, you can declare the WebP version
+first, followed immediately by the fallback JPEG or PNG:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Primary WebP Option --&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;https://example.com/images/share.webp&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:type&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:width&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;1200&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:height&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;630&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Fallback JPEG Option --&gt;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;https://example.com/images/share.jpg&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:type&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;image/jpeg&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:width&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;1200&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> property</span><span class="op">=</span><span class="st">&quot;og:image:height&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;630&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span></code></pre></div>
+<p><em>Note:</em> Some aggressive parsers stop at the very first
+<code>og:image</code> tag they encounter. If that tag points to an
+unsupported WebP file, they will fail to process the fallback. If broad
+compatibility is your highest priority, reverse the order or default
+strictly to JPEG/PNG in your metadata.</p>
+<h3 id="strategy-3-dynamic-server-side-content-negotiation">Strategy 3:
+Dynamic Server-Side Content Negotiation</h3>
+<p>If you prefer using a single URL for all preview assets (for example,
+<code>https://example.com/og-image</code>), you can handle format
+negotiation on the server or via edge functions.</p>
+<ol type="1">
+<li><strong>Check the <code>Accept</code> Header:</strong> If a client
+explicitly includes <code>image/webp</code> in the <code>Accept</code>
+header, return the WebP asset with a
+<code>Content-Type: image/webp</code> header.</li>
+<li><strong>Check the <code>User-Agent</code>:</strong> Identify known
+social media bots (e.g., <code>facebookexternalhit</code>,
+<code>LinkedInBot</code>, <code>Twitterbot</code>,
+<code>Slackbot</code>) and force-serve a JPEG or PNG response regardless
+of requested formats.</li>
+<li><strong>Include the <code>Vary: Accept</code> Header:</strong>
+Ensure your caching layer (like a CDN) caches separate versions for
+different <code>Accept</code> headers to prevent serving WebP to
+crawlers that cannot parse it.</li>
+</ol>
+<h3 id="testing-and-validation">Testing and Validation</h3>
+<p>Once fallback tags or dynamic endpoints are deployed, validate the
+output using official preview tools:</p>
+<ul>
+<li><strong>Facebook Sharing Debugger:</strong> Clears the platform's
+cache and shows the exact extracted image.</li>
+<li><strong>X Card Validator:</strong> Verifies how the link card
+renders.</li>
+<li><strong>LinkedIn Post Inspector:</strong> Displays parsed metadata
+and indicates format-related scraping errors.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

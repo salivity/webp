@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Vertical Prediction and Upper Pixel Boundaries - webp</title>
+    <meta name="description" content="Vertical prediction in WebP is a spatial intra-prediction technique derived from the VP8 video format that reduces image file sizes by eliminating vertical redundancy within macroblocks. By taking the reconstructed pixel values from the row immediately a">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-vertical-prediction-and-upper-pixel-boundaries">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Vertical Prediction and Upper Pixel Boundaries - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-vertical-prediction-and-upper-pixel-boundaries" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Vertical prediction in WebP is a spatial intra-prediction technique derived from the VP8 video format that reduces image file sizes by eliminating vertical redundancy within macroblocks. By taking the reconstructed pixel values from the row immediately a" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-vertical-prediction-and-upper-pixel-boundaries">WebP
+Vertical Prediction and Upper Pixel Boundaries</h1>
+<p>Vertical prediction in WebP is a spatial intra-prediction technique
+derived from the VP8 video format that reduces image file sizes by
+eliminating vertical redundancy within macroblocks. By taking the
+reconstructed pixel values from the row immediately above a current
+macroblock and copying them downward across every row, the encoder
+creates a baseline estimate of the block's contents. This article
+explains how WebP accesses these upper boundary pixels, maps them across
+macroblock columns, and calculates residual data to achieve efficient
+image compression.</p>
+<h3 id="the-role-of-intra-prediction-in-webp">The Role of
+Intra-Prediction in WebP</h3>
+<p>WebP divides images into segments known as macroblocks—typically
+16x16 pixels for luma (brightness) data, subdivided into 4x4 sub-blocks,
+along with 8x8 blocks for chroma (color) data. Because images are
+encoded and decoded sequentially from left to right and top to bottom,
+adjacent blocks that sit above and to the left of the current target
+block have already been fully reconstructed.</p>
+<p>Intra-prediction exploits this spatial correlation. Rather than
+storing raw pixel data for every block, WebP predicts what the block
+looks like based on its decoded borders and encodes only the difference
+(the residual).</p>
+<h3 id="accessing-upper-boundary-pixels">Accessing Upper Boundary
+Pixels</h3>
+<p>In vertical prediction mode (labeled as <code>B_VE_PRED</code> in 4x4
+blocks or <code>V_PRED</code> in 16x16 macroblocks), the encoder
+exclusively references the horizontal line of pixels located at <span
+class="math inline">\(y = -1\)</span> relative to the top of the current
+block.</p>
+<ul>
+<li>For a <strong>16x16 macroblock</strong>, the algorithm reads the 16
+reconstructed pixels directly touching the top edge.</li>
+<li>For a <strong>4x4 sub-block</strong>, the algorithm reads the 4
+reconstructed pixels directly above that specific <span
+class="math inline">\(4\times4\)</span> grid.</li>
+</ul>
+<p>The pixels to the left, top-left, and top-right are ignored during
+pure vertical prediction, isolating the top boundary as the sole
+reference vector.</p>
+<h3 id="the-downward-projection-process">The Downward Projection
+Process</h3>
+<p>Once the upper boundary values are retrieved, the prediction process
+is straightforward:</p>
+<ol type="1">
+<li><strong>Column-Wise Replication:</strong> For any column <span
+class="math inline">\(x\)</span> within the macroblock (where <span
+class="math inline">\(x\)</span> ranges from <span
+class="math inline">\(0\)</span> to <span
+class="math inline">\(N-1\)</span>), the pixel value at the upper
+boundary <span class="math inline">\(P(x, -1)\)</span> is projected
+straight down.</li>
+<li><strong>Uniform Columns:</strong> Every pixel in that specific
+column is assigned the value of the boundary pixel above it: <span
+class="math display">\[\hat{I}(x, y) = P(x, -1)\]</span> for all rows
+<span class="math inline">\(y\)</span> from <span
+class="math inline">\(0\)</span> to <span
+class="math inline">\(N-1\)</span>.</li>
+</ol>
+<p>If an upper boundary pixel has a brightness value of 180, every pixel
+in the column beneath it will be predicted as 180. This creates an
+idealized block composed of vertical stripes or uniform vertical
+gradients.</p>
+<h3 id="calculating-and-compressing-residuals">Calculating and
+Compressing Residuals</h3>
+<p>Real-world image features rarely match the projected boundary pixels
+perfectly. To preserve visual fidelity, WebP calculates a residual
+matrix:</p>
+<p><span class="math display">\[\text{Residual}(x, y) = \text{Actual}(x,
+y) - \hat{I}(x, y)\]</span></p>
+<ul>
+<li><strong>High Correlation:</strong> If the image features vertical
+structures, stripes, or gradual vertical fades, the predicted values
+will closely match the real values, driving the residual values toward
+zero.</li>
+<li><strong>Frequency Transform:</strong> The resulting residual values
+are converted into frequency space using the Discrete Cosine Transform
+(DCT). Near-zero residuals translate to high-frequency coefficients of
+zero, which are aggressively compressed and discarded during
+quantization without significant visual loss.</li>
+</ul>
+<h3 id="boundary-availability-and-fallbacks">Boundary Availability and
+Fallbacks</h3>
+<p>Vertical prediction requires a valid reconstructed top boundary. If a
+macroblock sits at the very top edge of an image (<span
+class="math inline">\(y = 0\)</span>), the upper boundary does not
+exist. In this scenario, vertical prediction cannot be selected by the
+encoder. WebP will automatically disallow the mode for that block,
+falling back to modes that rely solely on left boundary pixels
+(horizontal prediction) or a flat value (DC prediction using default
+mid-gray values).</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

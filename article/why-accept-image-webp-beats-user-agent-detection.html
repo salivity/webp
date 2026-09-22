@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Accept image/webp Beats User-Agent Detection - webp</title>
+    <meta name="description" content="Serving modern, lightweight image formats like WebP significantly improves website loading speeds, but servers must first determine if a visitor's browser actually supports the format. While developers historically relied on user-agent sniffing to identi">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-accept-image-webp-beats-user-agent-detection">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why Accept image/webp Beats User-Agent Detection - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-accept-image-webp-beats-user-agent-detection" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Serving modern, lightweight image formats like WebP significantly improves website loading speeds, but servers must first determine if a visitor's browser actually supports the format. While developers historically relied on user-agent sniffing to identi" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-accept-imagewebp-beats-user-agent-detection">Why Accept
+image/webp Beats User-Agent Detection</h1>
+<p>Serving modern, lightweight image formats like WebP significantly
+improves website loading speeds, but servers must first determine if a
+visitor's browser actually supports the format. While developers
+historically relied on user-agent sniffing to identify browser
+capabilities, standard HTTP content negotiation via the
+<code>Accept: image/webp</code> header has become the universally
+preferred method. Relying on the <code>Accept</code> header provides a
+faster, more reliable, and cache-friendly approach that eliminates the
+maintenance headaches and performance bottlenecks associated with
+parsing complex user-agent strings.</p>
+<h3 id="standardized-content-negotiation">Standardized Content
+Negotiation</h3>
+<p>The <code>Accept</code> header is built directly into the HTTP
+specification specifically for content negotiation. When a browser
+requests an asset, it explicitly lists the MIME types it understands in
+the <code>Accept</code> request header, such as
+<code>image/webp</code>.</p>
+<p>Relying on this mechanism allows the browser to explicitly declare
+its own capabilities rather than forcing the server to guess. If a
+browser supports WebP, it sends <code>image/webp</code> in the header;
+if it does not, the token is omitted. This creates a clean contract
+between client and server without relying on assumptions.</p>
+<h3 id="superior-caching-and-cdn-compatibility">Superior Caching and CDN
+Compatibility</h3>
+<p>One of the greatest advantages of using the <code>Accept</code>
+header is its synergy with caching layers, reverse proxies, and Content
+Delivery Networks (CDNs).</p>
+<p>HTTP caching relies heavily on the <code>Vary</code> header to serve
+different versions of the same URL. By configuring your server to return
+<code>Vary: Accept</code>, intermediate caches know to store only two
+main variants of an image: one for browsers that support WebP, and one
+for legacy browsers that do not.</p>
+<p>In contrast, attempting to cache based on user-agent strings is
+notoriously inefficient. Because there are tens of thousands of unique
+user-agent strings across different devices, OS versions, and browser
+builds, setting <code>Vary: User-Agent</code> effectively fragments the
+cache. This results in disastrously low cache hit rates, higher origin
+server load, and slower delivery for users.</p>
+<h3 id="fragility-of-user-agent-sniffing">Fragility of User-Agent
+Sniffing</h3>
+<p>User-agent strings are notoriously messy, inconsistent, and easily
+spoofed. Over the decades, browsers have added keywords of competing
+browsers into their user-agent strings to avoid breaking legacy
+websites, making accurate detection difficult.</p>
+<p>Furthermore, user-agent sniffing requires maintaining an up-to-date
+database or complex regular expressions on the server. Whenever a new
+browser or major version is released, your detection logic risks
+breaking or failing to identify WebP support until the regex database is
+manually updated. Modern browsers are also actively freezing and
+reducing the detail contained in user-agent strings to prevent
+cross-site tracking, making UA detection even less viable over time.</p>
+<h3 id="lower-processing-overhead">Lower Processing Overhead</h3>
+<p>Evaluating an incoming request header for a specific substring like
+<code>image/webp</code> requires minimal computing power. Servers or
+edge workers can evaluate this condition almost instantaneously.</p>
+<p>Conversely, running extensive regular expressions against long
+user-agent strings on every inbound request consumes unnecessary CPU
+cycles. At scale, this processing overhead can degrade server
+performance and increase response latency.</p>
+<h3 id="future-proofing">Future-Proofing</h3>
+<p>Using the <code>Accept</code> header ensures your infrastructure
+behaves predictably with emerging platforms, web-view wrappers, and
+smaller niche browsers. As long as a client platform follows web
+standards and adds WebP rendering capability, it will automatically
+include <code>image/webp</code> in its request headers. Your server will
+seamlessly deliver the optimized image immediately—with zero code
+changes, configuration adjustments, or library updates required on your
+end.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

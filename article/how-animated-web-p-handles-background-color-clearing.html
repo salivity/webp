@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Animated WebP Handles Background Color Clearing - webp</title>
+    <meta name="description" content="Animated WebP manages background color clearing between frames using dedicated metadata flags stored within its container structure. Rather than redrawing an entire canvas for every frame, the format relies on a combination of a globally defined backgrou">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-animated-web-p-handles-background-color-clearing">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Animated WebP Handles Background Color Clearing - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-animated-web-p-handles-background-color-clearing" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Animated WebP manages background color clearing between frames using dedicated metadata flags stored within its container structure. Rather than redrawing an entire canvas for every frame, the format relies on a combination of a globally defined backgrou" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-animated-webp-handles-background-color-clearing">How
+Animated WebP Handles Background Color Clearing</h1>
+<p>Animated WebP manages background color clearing between frames using
+dedicated metadata flags stored within its container structure. Rather
+than redrawing an entire canvas for every frame, the format relies on a
+combination of a globally defined background color in the animation
+header and per-frame disposal instructions. This system allows decoders
+to clear only specific rectangular regions to the designated background
+color before rendering the subsequent frame, significantly optimizing
+playback efficiency and file size.</p>
+<h3 id="the-global-canvas-and-the-anim-chunk">The Global Canvas and the
+ANIM Chunk</h3>
+<p>Animated WebP files are structured using the RIFF container format.
+The foundational properties of the animation are defined in the
+<code>ANIM</code> chunk, which appears once near the beginning of the
+file.</p>
+<p>The <code>ANIM</code> chunk contains two primary properties:</p>
+<ol type="1">
+<li><strong>Canvas Background Color</strong>: A 32-bit value
+representing the default color of the canvas in BGRA (Blue, Green, Red,
+Alpha) order. This color serves as the fill value whenever a frame
+dictates that an area should be cleared. If the color has an alpha value
+of zero, the cleared region becomes fully transparent.</li>
+<li><strong>Loop Count</strong>: Defines the repetition count for the
+sequence.</li>
+</ol>
+<h3 id="frame-level-control-via-the-anmf-chunk">Frame-Level Control via
+the ANMF Chunk</h3>
+<p>Each individual frame in a WebP animation is wrapped in an
+<code>ANMF</code> (Animation Frame) chunk. This chunk defines the
+frame’s payload (lossy VP8 or lossless VP8L image data), its coordinates
+on the canvas (X and Y offsets), its dimensions (width and height), its
+duration, and two 1-bit flags: <strong>Blending Method</strong> and
+<strong>Disposal Method</strong>.</p>
+<p>The <strong>Disposal Method</strong> flag specifically determines how
+the decoder treats the current frame's canvas area after its display
+duration ends and before the next frame is drawn:</p>
+<ul>
+<li><strong>Disposal Method 0 (Do Not Dispose)</strong>: The decoder
+leaves the current frame's pixels on the canvas. The next frame renders
+directly over the existing content.</li>
+<li><strong>Disposal Method 1 (Dispose to Background)</strong>: The
+decoder clears the rectangular area occupied by the current frame,
+filling that exact bounding box with the background color defined in the
+<code>ANIM</code> chunk.</li>
+</ul>
+<h3 id="the-clearing-process-in-practice">The Clearing Process in
+Practice</h3>
+<p>When a decoder advances through a WebP animation sequence:</p>
+<ol type="1">
+<li><strong>Initialization</strong>: The full canvas is populated with
+the background color specified in the <code>ANIM</code> chunk.</li>
+<li><strong>Frame Rendering</strong>: The frame is drawn within its
+defined sub-rectangle (<code>Frame_X</code>, <code>Frame_Y</code>,
+<code>Frame_Width</code>, <code>Frame_Height</code>). Depending on the
+blending flag, it either replaces existing pixels completely or blends
+with them using alpha compositing.</li>
+<li><strong>Disposal Execution</strong>: Once the display duration
+expires, the decoder checks the frame's disposal flag:
+<ul>
+<li>If set to dispose, the decoder redraws the frame's specific bounding
+box using the global background color.</li>
+<li>Adjacent areas outside this sub-rectangle remain untouched.</li>
+</ul></li>
+<li><strong>Next Frame Display</strong>: The subsequent frame renders
+onto the freshly prepared canvas state.</li>
+</ol>
+<h3 id="blending-considerations">Blending Considerations</h3>
+<p>Background clearing works alongside the frame's <strong>Blending
+Method</strong> flag. While disposal determines what happens to the
+canvas <em>after</em> a frame finishes, blending determines how the
+<em>next</em> frame is applied to the canvas:</p>
+<ul>
+<li><strong>No Blending</strong>: New pixels completely overwrite the
+canvas pixels within the new frame's rectangle.</li>
+<li><strong>Blending</strong>: Alpha values in the new frame are
+composited over whatever remains on the canvas (whether that is residual
+data from a non-disposed frame or the cleared background color).</li>
+</ul>
+<p>By isolating background clearing to explicitly bounded sub-rectangles
+and matching them with a single global background definition, WebP
+prevents full-frame canvas redrawing while ensuring transparent and
+partially transparent animated sequences clear cleanly without visual
+artifacts.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

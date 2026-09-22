@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated WebP Decoding Memory Characteristics - webp</title>
+    <meta name="description" content="Decoding animated WebP files requires balancing CPU processing and RAM usage, where total memory consumption depends heavily on canvas dimensions, frame disposal methods, and whether the decoder caches frames or renders them on the fly. This article exam">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/animated-web-p-decoding-memory-characteristics">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Animated WebP Decoding Memory Characteristics - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/animated-web-p-decoding-memory-characteristics" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Decoding animated WebP files requires balancing CPU processing and RAM usage, where total memory consumption depends heavily on canvas dimensions, frame disposal methods, and whether the decoder caches frames or renders them on the fly. This article exam" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="animated-webp-decoding-memory-characteristics">Animated WebP
+Decoding Memory Characteristics</h1>
+<p>Decoding animated WebP files requires balancing CPU processing and
+RAM usage, where total memory consumption depends heavily on canvas
+dimensions, frame disposal methods, and whether the decoder caches
+frames or renders them on the fly. This article examines the internal
+memory footprint during WebP animation decoding, breaking down canvas
+buffers, scratch memory for VP8/VP8L chunks, and the trade-offs between
+dynamic decoding and frame caching.</p>
+<h3 id="full-canvas-allocation">Full Canvas Allocation</h3>
+<p>Animated WebP files define a global canvas size, and decoders must
+maintain this full canvas in uncompressed memory. Because WebP supports
+8-bit alpha channels, decoded frames are typically stored in 32-bit RGBA
+(or BGRA) format.</p>
+<p>The baseline memory required for a single canvas buffer is calculated
+as:</p>
+<p><span class="math display">\[\text{Memory} = \text{Width} \times
+\text{Height} \times 4 \text{ bytes}\]</span></p>
+<p>For example, an animated WebP with a canvas size of 1920×1080
+requires approximately 8.3 MB for a single uncompressed frame buffer,
+regardless of how small the compressed <code>.webp</code> file is on
+disk.</p>
+<h3 id="dual-buffer-requirements-for-frame-blending">Dual-Buffer
+Requirements for Frame Blending</h3>
+<p>WebP animation uses frame disposal and blending techniques to
+optimize file size, including partial-frame updates (sub-rectangles) and
+two disposal methods:</p>
+<ul>
+<li><strong>Do Not Dispose:</strong> Leaves the current frame on the
+canvas to serve as the base for the next frame.</li>
+<li><strong>Dispose to Background:</strong> Clears the frame's rendering
+area to fully transparent black before rendering the next frame.</li>
+</ul>
+<p>To support alpha blending over previous frames and handle "dispose to
+previous" operations, most production decoders (such as
+<code>libwebp</code>) must maintain at least two full canvas buffers
+simultaneously:</p>
+<ol type="1">
+<li><strong>Current Canvas Buffer:</strong> The active surface where the
+current frame's sub-rectangle is decompressed and blended.</li>
+<li><strong>Reference/Previous Buffer:</strong> A saved state of the
+previous frame used to restore pixels or blend transparent regions.</li>
+</ol>
+<p>Consequently, dynamic decoding for a 1920×1080 animation typically
+requires at least 16.6 MB of RAM just for canvas state management.</p>
+<h3 id="intermediate-decompression-buffers">Intermediate Decompression
+Buffers</h3>
+<p>Before pixels are blended onto the main canvas, individual frames
+must be decompressed from their raw format:</p>
+<ul>
+<li><strong>Lossy Frames (VP8):</strong> Decoded from YUV420 color
+space, requiring temporary YUV macroblock buffers and a color-space
+conversion step to convert to RGBA.</li>
+<li><strong>Lossless Frames (VP8L):</strong> Utilize entropy coding,
+spatial predictors, and color transform tables, requiring scratch memory
+to hold Huffman trees, transform matrices, and intermediate ARGB
+data.</li>
+</ul>
+<p>These intermediate structures typically scale with the dimensions of
+the specific frame chunk being decoded rather than the full global
+canvas, but they still add an auxiliary memory overhead of a few hundred
+kilobytes to several megabytes per frame.</p>
+<h3 id="caching-strategies-on-the-fly-vs-pre-decoded">Caching
+Strategies: On-the-Fly vs. Pre-Decoded</h3>
+<p>Application decoders usually implement one of two strategies, which
+fundamentally dictates real-world memory consumption:</p>
+<ol type="1">
+<li><strong>Streaming / Dynamic Decoding:</strong> The decoder keeps
+only the minimal state buffers (1–2 canvas buffers plus scratchpad
+memory) and decodes each frame just in time for display. This keeps
+memory usage low and constant over time, but it demands continuous
+CPU/GPU utilization during playback loops.</li>
+<li><strong>Full-Frame Caching:</strong> To minimize CPU usage and
+prevent frame drops in UI environments (such as web browsers or mobile
+apps), decoders often pre-decode and cache every frame in RAM. Under
+this model, memory consumption scales linearly with frame count: <span
+class="math display">\[\text{Total Memory} \approx \text{Width} \times
+\text{Height} \times 4 \text{ bytes} \times \text{Frame Count}\]</span>
+Under full caching, a 100-frame animation at 1080p will consume over 800
+MB of RAM, creating a high risk of out-of-memory (OOM) conditions on
+resource-constrained devices.</li>
+</ol>
+<h3 id="sub-frame-optimization-limitations">Sub-Frame Optimization
+Limitations</h3>
+<p>While authors can reduce compressed file sizes by saving only the
+bounding box of moving elements (sub-frames), this provides zero memory
+reduction for the display surface. The decoder must still instantiate
+the full logical canvas in memory to composite those sub-frames
+correctly. Sub-frames only reduce the transient scratchpad memory used
+during the individual chunk decompression phase.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

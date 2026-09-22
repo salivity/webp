@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Cloudflare Polish Optimizes Images with WebP - webp</title>
+    <meta name="description" content="Cloudflare Polish is a one-click image optimization feature that automatically reduces image file sizes to accelerate website load times. This article explains how Polish detects browser capabilities, converts standard image formats into next-generation">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-cloudflare-polish-optimizes-images-with-web-p">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Cloudflare Polish Optimizes Images with WebP - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-cloudflare-polish-optimizes-images-with-web-p" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Cloudflare Polish is a one-click image optimization feature that automatically reduces image file sizes to accelerate website load times. This article explains how Polish detects browser capabilities, converts standard image formats into next-generation" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-cloudflare-polish-optimizes-images-with-webp">How Cloudflare
+Polish Optimizes Images with WebP</h1>
+<p>Cloudflare Polish is a one-click image optimization feature that
+automatically reduces image file sizes to accelerate website load times.
+This article explains how Polish detects browser capabilities, converts
+standard image formats into next-generation WebP files at the network
+edge, and delivers substantial bandwidth savings without requiring
+manual code changes or asset management on your origin server.</p>
+<h3 id="understanding-cloudflare-polish">Understanding Cloudflare
+Polish</h3>
+<p>Images frequently account for the majority of a webpage's total
+payload. Cloudflare Polish resolves this by intercepting requests for
+images at Cloudflare’s edge servers and applying automated compression
+before delivering the files to the visitor. Polish operates directly on
+the edge network, meaning your original images remain untouched on your
+origin host.</p>
+<h3 id="the-mechanism-of-automated-webp-conversion">The Mechanism of
+Automated WebP Conversion</h3>
+<p>WebP is a modern image format developed by Google that provides
+superior lossless and lossy compression compared to legacy formats like
+JPEG and PNG. Polish automates the adoption of WebP through a
+streamlined, multi-step process:</p>
+<ol type="1">
+<li><strong>Browser Support Detection:</strong> When a user visits a
+website, their browser sends an HTTP request containing an
+<code>Accept</code> header. If the browser supports WebP, it includes
+<code>image/webp</code> in this header.</li>
+<li><strong>Edge Interception:</strong> Cloudflare’s edge server
+inspects this incoming header. If WebP support is indicated and the WebP
+feature is enabled in Polish, the edge proceeds with
+transformation.</li>
+<li><strong>On-the-Fly Conversion:</strong> When an image (JPEG, PNG, or
+GIF) is first requested, Cloudflare fetches it from the origin server,
+optimizes it, and converts it into a WebP version.</li>
+<li><strong>Edge Caching:</strong> The newly generated WebP file is
+stored in Cloudflare's global cache. Subsequent visitors with
+WebP-compatible browsers receive this cached version instantly.</li>
+<li><strong>Graceful Fallback:</strong> If an older client or crawler
+does not advertise support for WebP, Cloudflare bypasses the WebP file
+and delivers a standard, optimized version of the original image format
+instead.</li>
+</ol>
+<h3 id="compression-levels-in-polish">Compression Levels in Polish</h3>
+<p>Cloudflare Polish offers two primary modes of operation, both of
+which can be paired with the automated WebP conversion toggle:</p>
+<ul>
+<li><strong>Lossless:</strong> This setting reduces file size without
+altering any pixel data. It achieves reduction by stripping unnecessary
+metadata—such as EXIF data, camera profiles, and geolocation tags—while
+compressing image data strictly without visual degradation.</li>
+<li><strong>Lossy:</strong> This setting applies advanced compression
+algorithms to remove redundant visual information alongside stripping
+metadata. It produces substantially smaller files with minimal,
+typically imperceptible differences in visual quality.</li>
+</ul>
+<p>When the "WebP" checkbox is enabled alongside either mode, Polish
+converts eligible formats into WebP using the chosen compression
+standard.</p>
+<h3 id="core-benefits-for-web-performance">Core Benefits for Web
+Performance</h3>
+<ul>
+<li><strong>Substantial Size Reduction:</strong> WebP images are
+typically 25% to 35% smaller than comparable JPEGs and PNGs at
+equivalent visual quality, drastically decreasing overall page
+weight.</li>
+<li><strong>Improved Core Web Vitals:</strong> Delivering smaller image
+payloads speeds up page rendering, directly improving metrics such as
+Largest Contentful Paint (LCP).</li>
+<li><strong>Zero Code Modification:</strong> Implementing WebP manually
+often requires re-encoding entire media libraries and rewriting HTML to
+include HTML5 <code>&lt;picture&gt;</code> tags with multiple source
+fallbacks. Polish handles format negotiation and delivery entirely at
+the edge, requiring no HTML or code changes.</li>
+<li><strong>Reduced Origin Bandwidth:</strong> Because Cloudflare caches
+and serves the optimized WebP assets directly from its edge data
+centers, requests to your origin server decrease significantly.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

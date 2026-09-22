@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrubbing Animated WebP with HTML5 Canvas - webp</title>
+    <meta name="description" content="Animated WebP files provide superior compression compared to traditional GIFs, but standard web implementations lack native controls for interactive scrubbing, seeking, or reverse playback. Because the HTML <img> tag treats animated WebP as a continuous,">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/scrubbing-animated-web-p-with-html-5-canvas">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Scrubbing Animated WebP with HTML5 Canvas - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/scrubbing-animated-web-p-with-html-5-canvas" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Animated WebP files provide superior compression compared to traditional GIFs, but standard web implementations lack native controls for interactive scrubbing, seeking, or reverse playback. Because the HTML <img> tag treats animated WebP as a continuous," />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="scrubbing-animated-webp-with-html5-canvas">Scrubbing Animated
+WebP with HTML5 Canvas</h1>
+<p>Animated WebP files provide superior compression compared to
+traditional GIFs, but standard web implementations lack native controls
+for interactive scrubbing, seeking, or reverse playback. Because the
+HTML <code>&lt;img&gt;</code> tag treats animated WebP as a continuous,
+uncontrolled loop, developers must intercept the individual frame data
+and render it onto an HTML5 <code>&lt;canvas&gt;</code>. By parsing the
+WebP container, decoding its constituent frames into memory, and mapping
+a user input like a slider to the canvas render loop, you can achieve
+smooth, frame-by-frame scrubbing.</p>
+<h3 id="the-challenge-with-native-webp-playback">The Challenge with
+Native WebP Playback</h3>
+<p>Browsers lack an API to control the playback timeline of animated
+images directly. While the HTML5 <code>&lt;video&gt;</code> element
+provides a <code>.currentTime</code> property for seeking, standard
+animated WebP elements do not expose playback position, duration, or
+individual frame indices to JavaScript. To enable scrubbing, the WebP
+file must be demuxed and decoded into discrete image buffers that the
+HTML5 2D rendering context can draw on demand.</p>
+<h3 id="step-1-parsing-and-demuxing-the-webp-container">Step 1: Parsing
+and Demuxing the WebP Container</h3>
+<p>An animated WebP file uses the RIFF container format, packing
+metadata (<code>VP8X</code>), frame positioning, duration
+(<code>ANMF</code>), and raw image payloads (<code>VP8</code> or
+<code>VP8L</code>). To read these frames:</p>
+<ol type="1">
+<li><strong>Fetch the Binary Data:</strong> Download the file as an
+<code>ArrayBuffer</code> using the <code>fetch</code> API.</li>
+<li><strong>Decode via WebAssembly or JavaScript:</strong> Use a
+dedicated demuxer library (such as a WebAssembly-compiled build of
+Google's official <code>libwebp</code> or a pure JavaScript parser) to
+traverse the RIFF chunks and extract the raw frame payloads alongside
+their frame delays and blend modes.</li>
+<li><strong>Handle Disposal and Blending:</strong> Animated WebP frames
+can be smaller sub-rectangles of the total canvas that either blend with
+the previous frame or overwrite it. The parser must account for these
+disposal methods to construct the correct visual output for each
+frame.</li>
+</ol>
+<h3 id="step-2-storing-frames-in-memory">Step 2: Storing Frames in
+Memory</h3>
+<p>Once frames are resolved into complete images, convert them into
+high-performance graphical representations. Avoid keeping raw canvas
+instances for each frame, as this rapidly exhausts browser memory.
+Instead, create <code>ImageBitmap</code> objects:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Example of converting decoded frame pixel data to ImageBitmap</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">cacheFrames</span>(decodedFrames) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> frameBitmaps <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">const</span> frame <span class="kw">of</span> decodedFrames) {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> bitmap <span class="op">=</span> <span class="cf">await</span> <span class="fu">createImageBitmap</span>(frame<span class="op">.</span><span class="at">imageData</span>)<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    frameBitmaps<span class="op">.</span><span class="fu">push</span>({</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      bitmap<span class="op">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">duration</span><span class="op">:</span> frame<span class="op">.</span><span class="at">duration</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> frameBitmaps<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><code>ImageBitmap</code> objects are stored in GPU-friendly memory
+and allow for asynchronous, non-blocking rendering using the canvas
+API.</p>
+<h3 id="step-3-mapping-input-to-canvas-rendering">Step 3: Mapping Input
+to Canvas Rendering</h3>
+<p>With the frame array established, connect the canvas drawing
+mechanism to an input mechanism, such as an
+<code>&lt;input type="range"&gt;</code>, a mouse drag event, or a scroll
+position.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> canvas <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;scrubCanvas&#39;</span>)<span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ctx <span class="op">=</span> canvas<span class="op">.</span><span class="fu">getContext</span>(<span class="st">&#39;2d&#39;</span>)<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> scrubber <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;scrubRange&#39;</span>)<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> currentFrameIndex <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> frames <span class="op">=</span> []<span class="op">;</span> <span class="co">// Populated with cached ImageBitmap objects</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">renderFrame</span>(index) {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="op">!</span>frames[index]) <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Clear the canvas and draw the selected frame</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  ctx<span class="op">.</span><span class="fu">clearRect</span>(<span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> canvas<span class="op">.</span><span class="at">width</span><span class="op">,</span> canvas<span class="op">.</span><span class="at">height</span>)<span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  ctx<span class="op">.</span><span class="fu">drawImage</span>(frames[index]<span class="op">.</span><span class="at">bitmap</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>scrubber<span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">&#39;input&#39;</span><span class="op">,</span> (e) <span class="kw">=&gt;</span> {</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> progress <span class="op">=</span> <span class="pp">parseFloat</span>(e<span class="op">.</span><span class="at">target</span><span class="op">.</span><span class="at">value</span>)<span class="op">;</span> <span class="co">// Value between 0 and 1</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  currentFrameIndex <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">floor</span>(progress <span class="op">*</span> (frames<span class="op">.</span><span class="at">length</span> <span class="op">-</span> <span class="dv">1</span>))<span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">requestAnimationFrame</span>(() <span class="kw">=&gt;</span> <span class="fu">renderFrame</span>(currentFrameIndex))<span class="op">;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p>Using <code>requestAnimationFrame</code> ensures that the canvas only
+redraws during the browser's refresh cycles, preventing rendering
+bottlenecks during rapid mouse or touch scrubbing.</p>
+<h3 id="performance-and-memory-optimization">Performance and Memory
+Optimization</h3>
+<p>To keep scrubbing responsive on mobile devices and low-spec
+hardware:</p>
+<ul>
+<li><strong>Downsample on Ingestion:</strong> If the animated WebP is
+displayed at a fixed size smaller than its source, pass resize options
+into <code>createImageBitmap()</code> during decoding to reduce memory
+usage.</li>
+<li><strong>Release Bitmap Resources:</strong> Call
+<code>.close()</code> on <code>ImageBitmap</code> objects when the
+player component unmounts to prevent memory leaks.</li>
+<li><strong>Use an OffscreenCanvas:</strong> For complex decoding or
+post-processing pipelines, execute decoding and canvas preparation
+inside a Web Worker using <code>OffscreenCanvas</code> to prevent frame
+drops on the main UI thread.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lazy Loading WebP vs JPEG Performance Advantages - webp</title>
+    <meta name="description" content="Lazy loading WebP images provides distinct performance advantages over lazy loading traditional JPEG files. While lazy loading optimizes resource delivery by deferring offscreen requests regardless of format, the underlying file type determines how quick">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/lazy-loading-web-p-vs-jpeg-performance-advantages">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lazy Loading WebP vs JPEG Performance Advantages - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/lazy-loading-web-p-vs-jpeg-performance-advantages" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Lazy loading WebP images provides distinct performance advantages over lazy loading traditional JPEG files. While lazy loading optimizes resource delivery by deferring offscreen requests regardless of format, the underlying file type determines how quick" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="lazy-loading-webp-vs-jpeg-performance-advantages">Lazy Loading
+WebP vs JPEG Performance Advantages</h1>
+<p>Lazy loading WebP images provides distinct performance advantages
+over lazy loading traditional JPEG files. While lazy loading optimizes
+resource delivery by deferring offscreen requests regardless of format,
+the underlying file type determines how quickly deferred images
+transfer, decode, and render once triggered. Combining lazy loading with
+WebP addresses both request timing and data weight, resulting in
+significantly reduced data transfer, faster rendering times, and an
+improved overall user experience compared to lazy-loaded JPEGs.</p>
+<h3 id="the-intersection-of-delivery-timing-and-file-size">The
+Intersection of Delivery Timing and File Size</h3>
+<p>Lazy loading alters <em>when</em> an asset is requested, but it does
+not change <em>how much</em> data must be transferred once that asset
+enters the viewport. When a user scrolls and triggers an image load,
+network latency and file size dictate how quickly the asset appears.</p>
+<p>WebP images are generally 25% to 34% smaller than comparable JPEG
+images at equivalent visual quality. Because lazy loading delays
+requests until the moment an image is needed, smaller file sizes become
+even more critical. A lazy-loaded WebP downloads faster over mobile or
+constrained networks, minimizing the time a user spends looking at an
+empty placeholder, a low-resolution preview, or a blank space.</p>
+<h3 id="bandwidth-and-data-efficiency">Bandwidth and Data
+Efficiency</h3>
+<p>Lazy loading saves bandwidth by avoiding the transfer of images the
+user never sees. However, when a user does scroll through an entire
+page, the total data consumed relies entirely on image formatting.</p>
+<p>A page using lazy-loaded WebP images consumes considerably less
+aggregate bandwidth than the same page using lazy-loaded JPEGs. This
+reduction lowers data usage for mobile users, decreases server egress
+costs, and frees up connection queues for other critical assets such as
+scripts and stylesheets.</p>
+<h3 id="decoding-and-rendering-speed">Decoding and Rendering Speed</h3>
+<p>Performance extends beyond download speeds to how quickly the browser
+can process and paint an image:</p>
+<ul>
+<li><strong>Download Latency:</strong> The smaller payload of WebP
+reduces time-to-first-byte (TTFB) and overall download duration.</li>
+<li><strong>Decoding Overhead:</strong> Modern browsers and mobile
+chipsets feature native, highly optimized decoding for WebP. While early
+implementations exhibited slightly higher CPU usage for WebP decoding
+compared to JPEG, modern benchmarks show negligible differences. The
+time saved during network transfer far outweighs any minor decoding
+variance.</li>
+<li><strong>Visual Stability:</strong> Because WebP files arrive faster
+after being triggered, layout stability improves, and visual artifacts
+or delayed asset pops are minimized.</li>
+</ul>
+<h3 id="impact-on-core-web-vitals">Impact on Core Web Vitals</h3>
+<p>The combination of lazy loading and WebP positively influences key
+performance metrics:</p>
+<ul>
+<li><strong>Largest Contentful Paint (LCP):</strong> While hero images
+should typically load eagerly, any secondary image that qualifies as an
+LCP candidate on scroll will render faster when formatted as WebP.</li>
+<li><strong>Cumulative Layout Shift (CLS):</strong> Faster asset
+delivery ensures that dynamically sized containers render final graphics
+rapidly, reducing visual instability.</li>
+<li><strong>Interaction to Next Paint (INP):</strong> Reducing network
+overhead and transfer sizes frees the main thread from handling large
+network buffers, keeping the page responsive to user inputs.</li>
+</ul>
+<h3 id="final-verdict">Final Verdict</h3>
+<p>Lazy loading is not an alternative to modern image compression;
+rather, the two techniques complement each other. While lazy loading
+JPEG files delays unnecessary requests, pairing lazy loading with WebP
+maximizes efficiency by ensuring that when images are finally requested,
+they load, decode, and display with minimal delay.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

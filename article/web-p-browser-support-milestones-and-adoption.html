@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Browser Support Milestones and Adoption - webp</title>
+    <meta name="description" content="This article examines the critical browser support milestones that transformed Google’s WebP image format from an experimental alternative into a universal web standard. By tracing the adoption timeline across major rendering engines—culminating in k">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-browser-support-milestones-and-adoption">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Browser Support Milestones and Adoption - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-browser-support-milestones-and-adoption" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the critical browser support milestones that transformed Google’s WebP image format from an experimental alternative into a universal web standard. By tracing the adoption timeline across major rendering engines—culminating in k" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-browser-support-milestones-and-adoption">WebP Browser
+Support Milestones and Adoption</h1>
+<p>This article examines the critical browser support milestones that
+transformed Google’s WebP image format from an experimental alternative
+into a universal web standard. By tracing the adoption timeline across
+major rendering engines—culminating in key updates from Microsoft,
+Mozilla, and Apple—we explore the exact turning points that enabled
+developers to serve WebP without relying heavily on legacy
+fallbacks.</p>
+<h3 id="the-chrome-and-chromium-foundation-20102013">The Chrome and
+Chromium Foundation (2010–2013)</h3>
+<p>Google introduced WebP in 2010 to reduce image payload sizes without
+sacrificing visual fidelity. Google Chrome gained native WebP decoding
+in 2011 (Chrome 9 for lossy, Chrome 23 for lossless and transparency).
+Opera adopted WebP shortly thereafter when it migrated to the
+Chromium-based Blink engine in 2013 with Opera 15. While this gave WebP
+significant market share through sheer volume of Chrome users, the
+format remained largely impractical as a single-source format due to
+resistance from other major browser vendors.</p>
+<h3 id="the-microsoft-edge-shift-20182020">The Microsoft Edge Shift
+(2018–2020)</h3>
+<p>Microsoft was the first non-Google platform vendor to shift stance.
+EdgeHTML 18 introduced native WebP decoding in October 2018 with the
+Windows 10 October 2018 Update. However, the true milestone for
+Microsoft’s ecosystem arrived in January 2020 with the release of the
+Chromium-powered Microsoft Edge (Edge 79). This transition unified
+Edge's media engine with Blink, ensuring seamless feature parity for
+WebP animations, alpha transparency, and lossy/lossless modes across
+Windows and macOS installations.</p>
+<h3 id="firefox-65-removes-the-gecko-barrier-january-2019">Firefox 65
+Removes the Gecko Barrier (January 2019)</h3>
+<p>Mozilla resisted WebP for nearly a decade, debating its compression
+advantages versus format fragmentation. That stance changed with the
+release of Firefox 65 in January 2019, which enabled native WebP support
+across desktop and Android platforms. Firefox’s integration proved
+crucial because it demonstrated that non-Chromium independent browser
+engines recognized WebP’s performance dividends. With Firefox aboard,
+global browser support crossed the 75% threshold, making WebP delivery
+via the <code>&lt;picture&gt;</code> element standard practice for web
+performance optimization.</p>
+<h3 id="safari-14-the-final-frontier-for-parity-september-2020">Safari
+14: The Final Frontier for Parity (September 2020)</h3>
+<p>Apple’s Safari was the final and most significant barrier to
+universal WebP adoption. Because iOS restricts all third-party mobile
+browsers to Apple’s WebKit engine, the absence of WebP support in Safari
+meant that hundreds of millions of mobile users could not view WebP
+assets natively.</p>
+<p>The decisive tipping point occurred with the release of Safari 14 in
+September 2020 on iOS 14 and iPadOS 14, followed shortly by its
+availability on macOS Big Sur and macOS Catalina. Safari 14 introduced
+native support for both lossy and lossless WebP images. This update
+resolved the mobile Safari bottleneck and immediately propelled global
+WebP support beyond 90%.</p>
+<h3 id="universal-mainstream-baseline">Universal Mainstream
+Baseline</h3>
+<p>By late 2020, all four dominant browser engines—Blink, Gecko, WebKit,
+and modern Edge—offered full support parity for WebP decoding. This
+unified support allowed content delivery networks (CDNs), modern content
+management systems, and web frameworks to transition WebP from an
+optional progressive enhancement into a safe, primary default format for
+web delivery.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Distinguishes Simple and Extended Headers - webp</title>
+    <meta name="description" content="The WebP image format relies on the Resource Interchange File Format (RIFF) container structure, which enables decoders to determine an image's underlying features rapidly. The container differentiates between simple and extended file headers by reading">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-distinguishes-simple-and-extended-headers">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Distinguishes Simple and Extended Headers - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-distinguishes-simple-and-extended-headers" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The WebP image format relies on the Resource Interchange File Format (RIFF) container structure, which enables decoders to determine an image's underlying features rapidly. The container differentiates between simple and extended file headers by reading" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-distinguishes-simple-and-extended-headers">How WebP
+Distinguishes Simple and Extended Headers</h1>
+<p>The WebP image format relies on the Resource Interchange File Format
+(RIFF) container structure, which enables decoders to determine an
+image's underlying features rapidly. The container differentiates
+between simple and extended file headers by reading the Four-Character
+Code (FourCC) located at byte offset 12, immediately following the
+standard 12-byte RIFF header. If this FourCC is <code>VP8 </code> or
+<code>VP8L</code>, the file uses a simple header for lossy or lossless
+data, respectively; if the FourCC is <code>VP8X</code>, the file uses an
+extended header to accommodate advanced features like alpha channels,
+animations, and metadata.</p>
+<h3 id="the-riff-header-baseline">The RIFF Header Baseline</h3>
+<p>Every WebP file begins with a mandatory 12-byte RIFF header:</p>
+<ul>
+<li><strong>Bytes 0–3:</strong> The ASCII characters
+<code>'RIFF'</code>.</li>
+<li><strong>Bytes 4–7:</strong> A 32-bit little-endian integer
+indicating the total size of the file minus 8 bytes.</li>
+<li><strong>Bytes 8–11:</strong> The ASCII characters
+<code>'WEBP'</code>.</li>
+</ul>
+<p>A WebP parser reads these initial 12 bytes to confirm that the file
+is a valid WebP resource. The distinguishing logic begins immediately
+after byte 11, where the first chunk header resides.</p>
+<h3 id="identifying-simple-headers-vp8--and-vp8l">Identifying Simple
+Headers (<code>VP8 </code> and <code>VP8L</code>)</h3>
+<p>A WebP file is classified as having a simple format if the first
+chunk immediately following the RIFF header is either a lossy or
+lossless image stream.</p>
+<ul>
+<li><strong>Lossy WebP (<code>VP8 </code>):</strong> If bytes 12–15
+match the FourCC <code>'VP8 '</code> (with a trailing space), the parser
+identifies the file as a basic lossy image. The payload of this chunk
+directly contains the VP8 bitstream, frame dimensions, and encoded
+macroblocks.</li>
+<li><strong>Lossless WebP (<code>VP8L</code>):</strong> If bytes 12–15
+match the FourCC <code>'VP8L'</code>, the parser treats the file as a
+basic lossless image. The chunk payload directly contains the VP8L
+bitstream, which includes the image size and entropy-coded pixel
+data.</li>
+</ul>
+<p>In both simple cases, no additional header layer exists between the
+container's base header and the raw image bitstream. This minimizes
+overhead for standard, single-frame images without auxiliary data.</p>
+<h3 id="identifying-extended-headers-vp8x">Identifying Extended Headers
+(<code>VP8X</code>)</h3>
+<p>When an image requires advanced capabilities beyond a single, basic
+image frame, the container employs an extended header signified by the
+FourCC <code>'VP8X'</code>.</p>
+<ul>
+<li><strong>Extended WebP (<code>VP8X</code>):</strong> If bytes 12–15
+match the FourCC <code>'VP8X'</code>, the decoder branches into extended
+parsing mode.</li>
+</ul>
+<p>The <code>VP8X</code> chunk is mandatory for any WebP file that
+includes:</p>
+<ul>
+<li><strong>ICC Profiles:</strong> Embedded color management data.</li>
+<li><strong>Alpha Channels:</strong> Independent transparency layers
+paired with lossy <code>VP8 </code> data.</li>
+<li><strong>EXIF or XMP Metadata:</strong> Non-pixel descriptive
+data.</li>
+<li><strong>Animation:</strong> Multiple frames defined through
+<code>ANIM</code> and <code>ANMF</code> chunks.</li>
+</ul>
+<h3 id="structure-of-the-vp8x-chunk">Structure of the <code>VP8X</code>
+Chunk</h3>
+<p>When the parser encounters <code>VP8X</code>, it reads a standardized
+10-byte payload that defines the global properties of the image
+canvas:</p>
+<ol type="1">
+<li><strong>Reserved Bits and Flags (Bytes 0–3 of the payload):</strong>
+A 32-bit field containing individual bit flags that notify the parser
+which optional chunks follow later in the file:
+<ul>
+<li>Bit 1: Animation flag</li>
+<li>Bit 2: XMP metadata flag</li>
+<li>Bit 3: EXIF metadata flag</li>
+<li>Bit 4: Alpha channel flag</li>
+<li>Bit 5: ICC profile flag</li>
+</ul></li>
+<li><strong>Canvas Width (Bytes 4–6 of the payload):</strong> A 24-bit
+integer representing the canvas width minus one.</li>
+<li><strong>Canvas Height (Bytes 7–9 of the payload):</strong> A 24-bit
+integer representing the canvas height minus one.</li>
+</ol>
+<h3 id="summary-of-parsing-flow">Summary of Parsing Flow</h3>
+<p>A WebP decoder differentiates between simple and extended formats
+through the following sequence:</p>
+<ol type="1">
+<li>Validate bytes 0–3 (<code>'RIFF'</code>) and bytes 8–11
+(<code>'WEBP'</code>).</li>
+<li>Read the FourCC at byte 12.</li>
+<li>If the FourCC is <code>'VP8 '</code> or <code>'VP8L'</code>, parse
+the payload immediately as a single-frame, self-contained simple image
+stream.</li>
+<li>If the FourCC is <code>'VP8X'</code>, parse the canvas dimensions
+and bit flags, then iterate sequentially through subsequent chunks (such
+as <code>ICCP</code>, <code>ALPH</code>, <code>VP8</code>,
+<code>VP8L</code>, <code>EXIF</code>, or <code>XMP </code>) as indicated
+by the flags.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

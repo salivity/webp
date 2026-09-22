@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Detect Animated WebP Support in Browsers - webp</title>
+    <meta name="description" content="Detecting browser support for animated WebP is essential for serving performant, high-quality animations without breaking user experiences on older clients. Because support for static WebP images does not guarantee support for the animated format, develo">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-to-detect-animated-web-p-support-in-browsers">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Detect Animated WebP Support in Browsers - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-to-detect-animated-web-p-support-in-browsers" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Detecting browser support for animated WebP is essential for serving performant, high-quality animations without breaking user experiences on older clients. Because support for static WebP images does not guarantee support for the animated format, develo" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-detect-animated-webp-support-in-browsers">How to Detect
+Animated WebP Support in Browsers</h1>
+<p>Detecting browser support for animated WebP is essential for serving
+performant, high-quality animations without breaking user experiences on
+older clients. Because support for static WebP images does not guarantee
+support for the animated format, developers cannot rely on generic image
+tests. This article explains the limitations of CSS feature queries
+regarding image codec detection, how Modernizr handles animated WebP
+detection asynchronously, and how to implement a lightweight, native
+JavaScript test to verify animated WebP capabilities.</p>
+<h3 id="the-limitation-of-css-feature-queries">The Limitation of CSS
+Feature Queries</h3>
+<p>Native CSS feature queries (<code>@supports</code>) cannot detect
+specific image codecs or sub-formats like animated WebP. The
+<code>@supports</code> rule is designed to evaluate whether a browser
+parses and understands specific CSS property-value pairs (such as
+<code>@supports (display: grid)</code>), not whether the underlying
+rendering engine can successfully decode a specific image container
+format.</p>
+<p>Attempting to test image support using syntax like
+<code>@supports (background-image: url("test.webp"))</code> will always
+evaluate to <code>true</code> in modern browsers because the
+<code>url()</code> syntax itself is valid, regardless of whether the
+browser can decode the target file. Consequently, animated WebP
+detection must be handled through JavaScript-driven feature detection
+rather than pure CSS.</p>
+<h3 id="detecting-animated-webp-with-modernizr">Detecting Animated WebP
+with Modernizr</h3>
+<p>Modernizr tests image format support by attempting to decode actual
+minimal image files encoded as base64 data URIs. Because image decoding
+is an asynchronous process, Modernizr's WebP tests are asynchronous and
+grouped under sub-features.</p>
+<p>To test specifically for animated WebP using Modernizr:</p>
+<ol type="1">
+<li>Build a custom Modernizr package that includes the
+<code>webp.animation</code> feature detect.</li>
+<li>Listen for the detection result using Modernizr’s asynchronous event
+handler:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Modernizr<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;webpanimation&#39;</span><span class="op">,</span> <span class="kw">function</span>(result) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (result) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Browser supports animated WebP</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="at">documentElement</span><span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&#39;webp-animation&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Browser does not support animated WebP</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="at">documentElement</span><span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&#39;no-webp-animation&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p>Modernizr injects a two-frame animated WebP data URI into an
+in-memory <code>Image</code> object. If the image successfully triggers
+an <code>onload</code> event and exhibits dimensions matching the test
+payload, the <code>webpanimation</code> flag resolves to
+<code>true</code>.</p>
+<h3 id="native-javascript-feature-detection">Native JavaScript Feature
+Detection</h3>
+<p>If you do not want to load the entire Modernizr library, you can
+replicate the exact detection mechanism using a standalone JavaScript
+function. The following implementation uses a minimal base64-encoded
+animated WebP image (a 1x1 pixel file containing two frames) and returns
+a Promise:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">checkAnimatedWebPSupport</span>() {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="kw">new</span> <span class="bu">Promise</span>((resolve) <span class="kw">=&gt;</span> {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Minimal 1x1 pixel animated WebP data URI</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> animatedWebPData <span class="op">=</span> <span class="st">&#39;data:image/webp;base64,UklGRlIAAABXRUJQVlA4WAoAAAASAAAAAAAAAAAAQU5JTQYAAAD/////AABBTk1GJgAAAAAAAAAAAAAAAAAAAGQAAABWUD4yAAAACAMAnQEqAQABAAEAiUlpsAC4A34AAP7/twAAAA==&#39;</span><span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> image <span class="op">=</span> <span class="kw">new</span> <span class="fu">Image</span>()<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    image<span class="op">.</span><span class="at">onload</span> <span class="op">=</span> <span class="kw">function</span> () {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Check if image decoded successfully and has correct dimensions</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">const</span> hasSupport <span class="op">=</span> image<span class="op">.</span><span class="at">width</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> image<span class="op">.</span><span class="at">height</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">resolve</span>(hasSupport)<span class="op">;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    image<span class="op">.</span><span class="at">onerror</span> <span class="op">=</span> <span class="kw">function</span> () {</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">resolve</span>(<span class="kw">false</span>)<span class="op">;</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    image<span class="op">.</span><span class="at">src</span> <span class="op">=</span> animatedWebPData<span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="implementing-the-detection-result">Implementing the Detection
+Result</h3>
+<p>Once the Promise resolves, you can update the DOM to enable CSS-based
+fallbacks or conditionally serve media formats in your application:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">checkAnimatedWebPSupport</span>()<span class="op">.</span><span class="fu">then</span>((isSupported) <span class="kw">=&gt;</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (isSupported) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="at">documentElement</span><span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&#39;webp-anim&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="at">documentElement</span><span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&#39;no-webp-anim&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p>With this class in place, you can safely configure CSS background
+fallbacks to serve animated GIFs or APNG files to unsupported browsers
+while delivering smaller animated WebP files to modern environments:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.hero-animation</span> {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&#39;animation.gif&#39;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">.webp-anim</span> <span class="fu">.hero-animation</span> {</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&#39;animation.webp&#39;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>For inline content, you can bypass JavaScript detection entirely by
+using the HTML <code>&lt;picture&gt;</code> element with appropriate
+MIME types, allowing the browser engine to handle selection
+natively:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> srcset</span><span class="op">=</span><span class="st">&quot;animation.webp&quot;</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;animation.gif&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;Animated illustration&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span></code></pre></div></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

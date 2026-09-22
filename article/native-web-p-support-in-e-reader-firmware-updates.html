@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Native WebP Support in E-Reader Firmware Updates - webp</title>
+    <meta name="description" content="As the lightweight WebP image format has become a web standard and an official Core Media Type under the EPUB 3.3 specification, dedicated commercial e-reader manufacturers have rolled out firmware updates to support native WebP rendering. This article d">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/native-web-p-support-in-e-reader-firmware-updates">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Native WebP Support in E-Reader Firmware Updates - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/native-web-p-support-in-e-reader-firmware-updates" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="As the lightweight WebP image format has become a web standard and an official Core Media Type under the EPUB 3.3 specification, dedicated commercial e-reader manufacturers have rolled out firmware updates to support native WebP rendering. This article d" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="native-webp-support-in-e-reader-firmware-updates">Native WebP
+Support in E-Reader Firmware Updates</h1>
+<p>As the lightweight WebP image format has become a web standard and an
+official Core Media Type under the EPUB 3.3 specification, dedicated
+commercial e-reader manufacturers have rolled out firmware updates to
+support native WebP rendering. This article details the specific
+firmware releases and software environments across major e-reader
+brands—including PocketBook, Onyx Boox, Kobo, and Amazon Kindle—that
+introduced or expanded native playback for WebP images in digital books,
+standalone documents, and comic archives.</p>
+<h2 id="pocketbook-firmware-68-and-beyond">PocketBook: Firmware 6.8 and
+Beyond</h2>
+<p>PocketBook was among the first dedicated Linux-based e-reader
+manufacturers to deploy system-level, native support for WebP.</p>
+<ul>
+<li><strong>Firmware Version:</strong> PocketBook OS 6.8 (and subsequent
+6.8.x incremental rollouts).</li>
+<li><strong>Supported Hardware:</strong> PocketBook Era, InkPad 4,
+InkPad Color 2, Touch Lux 5, and Touch HD 3.</li>
+<li><strong>Implementation Details:</strong> The 6.8 firmware release
+upgraded the built-in reading engine and gallery viewer. PocketBook
+added native recognition for WebP files within the operating system's
+file manager, allowing standalone viewing in the Photo app and native
+decoding inside EPUB and CBZ/CBR archives without requiring third-party
+tools like KOReader.</li>
+</ul>
+<h2 id="onyx-boox-firmware-os-33-and-os-35">Onyx Boox: Firmware OS 3.3
+and OS 3.5</h2>
+<p>Onyx Boox devices run modified versions of Android, meaning
+system-level WebP decoding has been theoretically possible for years.
+However, native reading integration inside the proprietary NeoReader
+engine required dedicated firmware updates.</p>
+<ul>
+<li><strong>Firmware Versions:</strong> Boox OS 3.3.x through OS
+3.5.</li>
+<li><strong>Supported Hardware:</strong> Note Air series, Nova Air, Tab
+Ultra, Tab Mini C, and Palma.</li>
+<li><strong>Implementation Details:</strong> Prior to OS 3.3, embedded
+WebP images in EPUB 3 files or CBZ comic containers often caused
+NeoReader to display broken image placeholders. Onyx updated NeoReader’s
+core parsing libraries in OS 3.3, followed by a major rendering pipeline
+overhaul in OS 3.5. These updates enabled hardware-accelerated decoding
+of both lossy and lossless WebP assets directly inside NeoReader,
+eliminating the need to install third-party Android viewing apps.</li>
+</ul>
+<h2 id="kobo-firmware-438-and-kepub-rendering">Kobo: Firmware 4.38 and
+KePub Rendering</h2>
+<p>Kobo devices use a dual-engine architecture: the standard Adobe
+Reader Mobile SDK (RMSDK) for traditional EPUBs and a proprietary
+WebKit-based engine for Kobo EPUBs (KePub).</p>
+<ul>
+<li><strong>Firmware Version:</strong> Kobo Firmware 4.38.21908 (and
+subsequent 4.38.x/4.39.x builds).</li>
+<li><strong>Supported Hardware:</strong> Kobo Clara 2E, Libra 2, Sage,
+Elipsa 2E, and earlier compatible hardware.</li>
+<li><strong>Implementation Details:</strong> While legacy RMSDK does not
+natively process WebP, Kobo updated its internal WebKit-based rendering
+engine in Firmware 4.38. Because the KePub engine functions similarly to
+a modernized browser environment, this update enabled seamless native
+rendering of WebP assets contained within <code>.kepub.epub</code>
+files. Standalone support remains prioritized for KePub rather than
+sideloaded, generic EPUB files parsed by the older Adobe stack.</li>
+</ul>
+<h2 id="amazon-kindle-ingestion-support-via-firmware-516x">Amazon
+Kindle: Ingestion Support via Firmware 5.16.x</h2>
+<p>Amazon does not maintain open format support to the same degree as
+its competitors, utilizing proprietary formats (AZW3, KFX) rather than
+native EPUB rendering.</p>
+<ul>
+<li><strong>Firmware Version:</strong> Kindle Firmware 5.16.7 and 5.16.8
+(alongside Amazon Cloud Ingestion Updates).</li>
+<li><strong>Supported Hardware:</strong> Kindle Paperwhite (10th &amp;
+11th Gen), Kindle Oasis (9th &amp; 10th Gen), Kindle Basic (11th Gen),
+and Kindle Scribe.</li>
+<li><strong>Implementation Details:</strong> Amazon enabled native WebP
+support primarily through its delivery pipeline rather than direct
+on-device decoders for open formats. As part of its transition away from
+MOBI toward EPUB 3.3 standards, Amazon’s Send to Kindle conversion
+backend was updated to accept WebP images embedded in EPUBs. When
+processed, Kindle Firmware 5.16.x correctly displays these images via
+the updated KFX engine, rendering them as native illustrations without
+rasterization errors.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

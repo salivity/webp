@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated WebP Disposal Method for Transparency - webp</title>
+    <meta name="description" content="Animated WebP images rely on frame-level disposal methods to control how previous visual data is cleared before the next frame is rendered. To restore the canvas area to full transparency, animated WebP uses the "Dispose to background color" method (repr">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/animated-web-p-disposal-method-for-transparency">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Animated WebP Disposal Method for Transparency - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/animated-web-p-disposal-method-for-transparency" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Animated WebP images rely on frame-level disposal methods to control how previous visual data is cleared before the next frame is rendered. To restore the canvas area to full transparency, animated WebP uses the "Dispose to background color" method (repr" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="animated-webp-disposal-method-for-transparency">Animated WebP
+Disposal Method for Transparency</h1>
+<p>Animated WebP images rely on frame-level disposal methods to control
+how previous visual data is cleared before the next frame is rendered.
+To restore the canvas area to full transparency, animated WebP uses the
+"Dispose to background color" method (represented as disposal method
+<code>1</code>) combined with an alpha value of zero in the container's
+background color settings. This article explains how this disposal
+method functions within the WebP file format specifications, how it
+clears previous frame content, and how it interacts with the canvas.</p>
+<h3 id="the-webp-animation-disposal-mechanism">The WebP Animation
+Disposal Mechanism</h3>
+<p>Unlike the GIF format, which provides four distinct disposal methods,
+the WebP container specification simplifies frame disposal down to a
+single 1-bit flag inside the Animation Frame (<code>ANMF</code>)
+chunk.</p>
+<p>This 1-bit flag defines two operational states:</p>
+<ul>
+<li><strong>Method 0 (Do Not Dispose):</strong> Leaves the current frame
+on the canvas. The next frame renders directly on top of the existing
+pixels without clearing the previous frame’s area.</li>
+<li><strong>Method 1 (Dispose to Background Color):</strong> Clears the
+rectangular region occupied by the current frame on the canvas, filling
+it with the background color specified in the animation's header chunk
+before the subsequent frame is drawn.</li>
+</ul>
+<h3 id="restoring-canvas-to-full-transparency">Restoring Canvas to Full
+Transparency</h3>
+<p>To achieve full transparency upon disposal, WebP couples Disposal
+Method <code>1</code> with the animation metadata defined in the
+<code>ANIM</code> (Animation Control) chunk:</p>
+<ol type="1">
+<li><strong>The Background Color Parameter:</strong> The
+<code>ANIM</code> chunk contains a 32-bit field specifying the default
+canvas background color in blue, green, red, and alpha (BGRA) byte
+order.</li>
+<li><strong>Setting the Alpha Channel:</strong> When this 32-bit
+background color has an alpha channel value of <code>0x00</code> (such
+as <code>0x00000000</code> for transparent black), applying Disposal
+Method <code>1</code> fills the frame rectangle with full
+transparency.</li>
+<li><strong>Execution:</strong> Once the frame display duration
+finishes, the decoder erases the pixels bounded by that frame’s width,
+height, and offset coordinates, returning that specific canvas area back
+to fully transparent pixels.</li>
+</ol>
+<h3 id="disposal-vs-blending-in-webp">Disposal vs. Blending in WebP</h3>
+<p>Achieving clean transparency also depends on separating frame
+disposal from frame blending:</p>
+<ul>
+<li><strong>Disposal</strong> dictates what happens to the area
+<em>after</em> the frame has finished its duration and before the next
+frame is drawn.</li>
+<li><strong>Blending</strong> (controlled by a separate 1-bit flag in
+the <code>ANMF</code> chunk) determines how the <em>incoming</em> frame
+is composited onto the canvas. Setting blending to "do not blend"
+(<code>0</code>) completely replaces canvas pixels with the new frame's
+pixels, whereas "blend" (<code>1</code>) uses alpha blending.</li>
+</ul>
+<p>To completely reset an area to transparency between changes,
+developers and encoding tools configure the outgoing frame with Disposal
+Method <code>1</code> ("Dispose to background color") and guarantee the
+file's global canvas background color contains an alpha value of
+zero.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

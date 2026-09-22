@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP ANMF Chunk Frame Offsets and Dimensions - webp</title>
+    <meta name="description" content="This article explains how animated WebP images use the ANMF (Animation Frame) chunk to define the spatial positioning and dimensions of individual frames. Readers will learn the precise binary layout used to encode frame coordinates and sizes, including">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-anmf-chunk-frame-offsets-and-dimensions">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP ANMF Chunk Frame Offsets and Dimensions - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-anmf-chunk-frame-offsets-and-dimensions" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how animated WebP images use the ANMF (Animation Frame) chunk to define the spatial positioning and dimensions of individual frames. Readers will learn the precise binary layout used to encode frame coordinates and sizes, including" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-anmf-chunk-frame-offsets-and-dimensions">WebP ANMF Chunk
+Frame Offsets and Dimensions</h1>
+<p>This article explains how animated WebP images use the ANMF
+(Animation Frame) chunk to define the spatial positioning and dimensions
+of individual frames. Readers will learn the precise binary layout used
+to encode frame coordinates and sizes, including the specific byte
+lengths, arithmetic offsets, and decoding rules defined by the WebP
+container specification.</p>
+<h3 id="the-anmf-chunk-layout">The ANMF Chunk Layout</h3>
+<p>In an animated WebP file, each frame is encapsulated within an
+<code>ANMF</code> chunk defined inside the standard RIFF container. The
+chunk begins with the 4-byte ASCII FourCC identifier
+<code>'ANMF'</code>, followed by a 4-byte unsigned integer indicating
+the size of the chunk payload.</p>
+<p>Immediately following the chunk header is a fixed 16-byte frame
+header containing metadata for positioning, sizing, duration, and
+rendering flags. The first 12 bytes of this header are dedicated
+exclusively to frame offsets and dimensions, structured as four
+consecutive 24-bit (3-byte) unsigned, little-endian integers.</p>
+<h3 id="frame-offsets-frame-x-and-frame-y">Frame Offsets: Frame X and
+Frame Y</h3>
+<p>The position of a frame is defined relative to the upper-left corner
+of the global animation canvas (coordinate <code>0, 0</code>).</p>
+<ul>
+<li><strong>Frame X (Bytes 0–2):</strong> A 24-bit unsigned integer
+representing the horizontal offset. The actual pixel offset from the
+left edge of the canvas is calculated as: <span
+class="math display">\[\text{Actual X Offset} = \text{Frame X} \times
+2\]</span></li>
+<li><strong>Frame Y (Bytes 3–5):</strong> A 24-bit unsigned integer
+representing the vertical offset. The actual pixel offset from the top
+edge of the canvas is calculated as: <span
+class="math display">\[\text{Actual Y Offset} = \text{Frame Y} \times
+2\]</span></li>
+</ul>
+<p>Because both coordinates are multiplied by 2, the horizontal and
+vertical start positions are always aligned to even pixel coordinates.
+This scaling factor accommodates large canvas dimensions while
+conserving byte size in the chunk structure.</p>
+<h3 id="frame-dimensions-width-and-height">Frame Dimensions: Width and
+Height</h3>
+<p>Following the offsets, the frame header specifies the dimensions of
+the sub-frame image data.</p>
+<ul>
+<li><strong>Frame Width (Bytes 6–8):</strong> A 24-bit unsigned integer
+representing the width of the frame. Because a frame cannot have a width
+of zero pixels, the value is 1-based: <span
+class="math display">\[\text{Actual Frame Width} = 1 + \text{Frame
+Width}\]</span></li>
+<li><strong>Frame Height (Bytes 9–11):</strong> A 24-bit unsigned
+integer representing the height of the frame, also 1-based: <span
+class="math display">\[\text{Actual Frame Height} = 1 + \text{Frame
+Height}\]</span></li>
+</ul>
+<h3 id="canvas-boundary-constraints">Canvas Boundary Constraints</h3>
+<p>The decoded offsets and dimensions must adhere to the boundaries of
+the canvas declared in the file's primary <code>VP8X</code> chunk. A
+parser verifies that the sub-frame fits entirely within the total canvas
+area using the following rules:</p>
+<ol type="1">
+<li><span class="math inline">\(\text{Actual X Offset} + \text{Actual
+Frame Width} \le \text{Canvas Width}\)</span></li>
+<li><span class="math inline">\(\text{Actual Y Offset} + \text{Actual
+Frame Height} \le \text{Canvas Height}\)</span></li>
+</ol>
+<p>By allowing individual frames to have independent offsets and
+dimensions smaller than the full canvas, WebP supports partial-frame
+updates. Instead of redrawing the entire screen on each frame, the
+format only transmits and renders the bounding rectangle containing the
+changed pixels.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Detection via User-Agent Sniffing on Legacy Systems - webp</title>
+    <meta name="description" content="While server-side user-agent sniffing can theoretically infer WebP support by cross-referencing browser version tokens against feature-support databases, it is fundamentally unreliable when dealing with legacy systems. This article explores the mechanica">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-detection-via-user-agent-sniffing-on-legacy-systems">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Detection via User-Agent Sniffing on Legacy Systems - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-detection-via-user-agent-sniffing-on-legacy-systems" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While server-side user-agent sniffing can theoretically infer WebP support by cross-referencing browser version tokens against feature-support databases, it is fundamentally unreliable when dealing with legacy systems. This article explores the mechanica" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-detection-via-user-agent-sniffing-on-legacy-systems">WebP
+Detection via User-Agent Sniffing on Legacy Systems</h1>
+<p>While server-side user-agent sniffing can theoretically infer WebP
+support by cross-referencing browser version tokens against
+feature-support databases, it is fundamentally unreliable when dealing
+with legacy systems. This article explores the mechanical limitations of
+parsing user-agent strings for WebP compatibility, highlighting issues
+such as partial feature rollouts, browser spoofing, proxy interference,
+and the severe caching penalties associated with user-agent
+fragmentation.</p>
+<h3 id="the-inconsistency-of-legacy-user-agent-strings">The
+Inconsistency of Legacy User-Agent Strings</h3>
+<p>User-agent (UA) strings are notoriously brittle and non-standardized.
+Historically, desktop and mobile browsers have copied tokens from
+competitors to prevent sites from blocking them, producing bloated
+identifiers.</p>
+<p>On legacy systems—such as older Android versions, early WebKit
+builds, and customized embedded browsers—these strings frequently
+misreport capabilities:</p>
+<ul>
+<li><strong>Custom WebViews and Embedded Apps:</strong> Many legacy
+mobile apps wrapped system WebViews without updating the UA string to
+reflect the embedded engine's true capabilities.</li>
+<li><strong>Spoofing and "Desktop Mode":</strong> Mobile browsers on
+older devices often allowed users to request the "Desktop site,"
+changing the UA to mimic a desktop browser (like desktop Safari or
+Internet Explorer) that historically lacked WebP support, despite the
+underlying mobile engine being capable of rendering it (or vice
+versa).</li>
+<li><strong>Forked Browsers:</strong> Many regional and device-specific
+browsers modified version strings, causing UA regex parsers to fall back
+to generic rules that misidentified the rendering engine.</li>
+</ul>
+<h3 id="the-problem-of-partial-webp-support">The Problem of Partial WebP
+Support</h3>
+<p>WebP is not a single, monolithic specification; it evolved across
+multiple releases that introduced distinct features:</p>
+<ul>
+<li><strong>Lossy Compression:</strong> Supported early on.</li>
+<li><strong>Lossless and Alpha (Transparency):</strong> Added later in
+the specification (libwebp 0.2.0).</li>
+<li><strong>Animated WebP:</strong> Added even later (libwebp
+0.1.4/0.2.0+).</li>
+</ul>
+<p>Legacy platforms reflect this fragmented rollout. For example,
+Android 4.0 added native support for lossy WebP, but it did not support
+WebP with transparency or lossless compression until Android 4.2.1. A
+server-side UA sniffer that identifies an "Android 4.0" device as
+"WebP-capable" will deliver broken, blank, or black-background images if
+the requested asset relies on transparency or lossless encoding.
+Maintaining an internal database capable of tracking these sub-format
+nuances across every legacy operating system and patch level requires
+immense operational overhead and remains prone to false positives.</p>
+<h3 id="cache-fragmentation-and-cdn-degradation">Cache Fragmentation and
+CDN Degradation</h3>
+<p>Implementing server-side image negotiation via UA sniffing causes
+severe issues at the caching layer:</p>
+<ul>
+<li><strong>Cache Hit Ratios:</strong> Caching proxies and Content
+Delivery Networks (CDNs) rely on HTTP headers to partition cache keys.
+If dynamic image variants are tied to the <code>User-Agent</code> header
+via <code>Vary: User-Agent</code>, the cache key becomes fragmented
+across thousands of unique UA string permutations, effectively
+neutralizing the CDN.</li>
+<li><strong>Intermediary Proxies:</strong> Corporate and mobile carrier
+proxies on legacy networks frequently stripped, shortened, or modified
+UA headers to optimize mobile traffic, leading to incorrect detection
+outcomes at the origin server.</li>
+</ul>
+<h3 id="the-standard-mechanism-http-content-negotiation">The Standard
+Mechanism: HTTP Content Negotiation</h3>
+<p>The correct method for server-side image negotiation is reading the
+standard HTTP <code>Accept</code> request header. When a browser
+natively supports WebP, it explicitly declares this capability by
+appending <code>image/webp</code> to the request:</p>
+<pre class="http"><code>Accept: image/webp,image/apng,image/*,*/*;q=0.8</code></pre>
+<p>This approach allows servers and CDNs to use
+<code>Vary: Accept</code>, maintaining optimal cache efficiency by
+categorizing requests into broad format capabilities rather than
+individual client signatures.</p>
+<p>However, some legacy browsers capable of decoding WebP failed to send
+the <code>image/webp</code> token in their <code>Accept</code> header.
+While UA sniffing was often proposed as a workaround to target these
+specific edge cases, the risk of serving unrenderable assets to
+incorrectly identified clients far outweighs the bandwidth savings.</p>
+<h3 id="better-client-side-alternatives">Better Client-Side
+Alternatives</h3>
+<p>For legacy compatibility, modern web engineering avoids server-side
+UA sniffing in favor of native HTML fallbacks and client-side feature
+detection:</p>
+<ul>
+<li><strong>The <code>&lt;picture&gt;</code> Element:</strong> Using
+<code>&lt;picture&gt;</code> with nested <code>&lt;source&gt;</code>
+tags allows the browser itself to evaluate format support at runtime.
+Unsupported formats are ignored safely without risk of broken
+assets:</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> srcset</span><span class="op">=</span><span class="st">&quot;image.webp&quot;</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;image.jpg&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;Description&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span></code></pre></div>
+<ul>
+<li><strong>Targeted Polyfills:</strong> Legacy systems lacking both
+<code>&lt;picture&gt;</code> and WebP support can safely fall back to
+JPEG or PNG defaults, or decode WebP using lightweight client-side
+JavaScript decoders where strictly necessary.</li>
+</ul>
+<p>Server-side user-agent sniffing should not be used to detect WebP
+capabilities on legacy systems. The technical debt, high rate of false
+positives, partial format incompatibilities, and CDN cache degradation
+make it an unsuitable solution compared to standard HTTP content
+negotiation and native HTML fallbacks.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

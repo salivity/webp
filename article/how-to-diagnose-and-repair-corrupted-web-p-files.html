@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Diagnose and Repair Corrupted WebP Files - webp</title>
+    <meta name="description" content="WebP files rely on the Resource Interchange File Format (RIFF) container structure, which divides image data into distinct headers and payload chunks such as VP8, VP8L, or VP8X. When a WebP file becomes corrupted, the failure typically stems from truncat">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-to-diagnose-and-repair-corrupted-web-p-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Diagnose and Repair Corrupted WebP Files - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-to-diagnose-and-repair-corrupted-web-p-files" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP files rely on the Resource Interchange File Format (RIFF) container structure, which divides image data into distinct headers and payload chunks such as VP8, VP8L, or VP8X. When a WebP file becomes corrupted, the failure typically stems from truncat" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-diagnose-and-repair-corrupted-webp-files">How to Diagnose
+and Repair Corrupted WebP Files</h1>
+<p>WebP files rely on the Resource Interchange File Format (RIFF)
+container structure, which divides image data into distinct headers and
+payload chunks such as VP8, VP8L, or VP8X. When a WebP file becomes
+corrupted, the failure typically stems from truncated chunk sizes,
+damaged payload bits, or invalid header tags that prevent image decoders
+from reading the data. Diagnosing and recovering these damaged files
+requires inspecting the RIFF hierarchy, validating chunk headers with
+diagnostic utilities, and manually or programmatically reconstructing
+broken byte streams.</p>
+<h2 id="understanding-the-webp-riff-structure">Understanding the WebP
+RIFF Structure</h2>
+<p>To identify corrupted segments, you must understand the standard
+layout of a WebP file:</p>
+<ol type="1">
+<li><strong>RIFF Header (12 bytes):</strong>
+<ul>
+<li>Bytes 0–3: <code>RIFF</code> (FourCC identifier)</li>
+<li>Bytes 4–7: Total file size minus 8 bytes (32-bit little-endian
+integer)</li>
+<li>Bytes 8–11: <code>WEBP</code> (FourCC format identifier)</li>
+</ul></li>
+<li><strong>Chunk Header (8 bytes per chunk):</strong>
+<ul>
+<li>Bytes 0–3: FourCC identifier specifying the chunk type (e.g.,
+<code>VP8 </code>, <code>VP8L</code>, <code>VP8X</code>,
+<code>ALPH</code>, <code>EXIF</code>)</li>
+<li>Bytes 4–7: Chunk payload size (32-bit little-endian integer)</li>
+</ul></li>
+<li><strong>Payload Data:</strong> The raw data for that specific chunk.
+If the payload size is odd, a 1-byte padding <code>0x00</code> must
+follow to ensure 2-byte alignment.</li>
+</ol>
+<h2 id="step-1-diagnosing-corrupted-chunks">Step 1: Diagnosing Corrupted
+Chunks</h2>
+<p>Diagnosing a damaged WebP file involves determining whether the issue
+lies in the container metadata or the underlying compressed image
+bitstream.</p>
+<h3 id="diagnostic-tool-webpinfo">Diagnostic Tool:
+<code>webpinfo</code></h3>
+<p>The official <code>libwebp</code> library provides the command-line
+utility <code>webpinfo</code>, which parses and prints the internal
+structure of a WebP file while highlighting abnormalities:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">webpinfo</span> <span class="at">-diag</span> broken_image.webp</span></code></pre></div>
+<p>Common error outputs include:</p>
+<ul>
+<li><strong><code>Premature end of file</code></strong>: The file was
+cut short during transfer or saving, making the actual byte length
+smaller than specified in the RIFF or chunk header.</li>
+<li><strong><code>Corrupt bitstream</code></strong>: The structural
+chunk headers are readable, but the raw VP8/VP8L entropy-encoded data
+contains invalid codes.</li>
+<li><strong><code>Unrecognized chunk</code></strong>: A FourCC tag
+contains invalid or null bytes due to disk corruption.</li>
+</ul>
+<h3 id="diagnostic-tool-hex-inspection">Diagnostic Tool: Hex
+Inspection</h3>
+<p>Using a hex editor (such as HxD, ImHex, or <code>xxd</code>), inspect
+the first 30 bytes:</p>
+<ul>
+<li>Verify that the file begins with <code>52 49 46 46</code>
+(<code>RIFF</code>).</li>
+<li>Verify bytes 8–11 are <code>57 45 42 50</code>
+(<code>WEBP</code>).</li>
+<li>Read bytes 12–15 to identify the primary chunk type
+(<code>VP8 </code> for lossy, <code>VP8L</code> for lossless,
+<code>VP8X</code> for extended).</li>
+</ul>
+<h2 id="step-2-repair-strategies-for-common-corruptions">Step 2: Repair
+Strategies for Common Corruptions</h2>
+<h3 id="1-correcting-truncated-file-size-mismatches">1. Correcting
+Truncated File Size Mismatches</h3>
+<p>If a download drops before completion, the RIFF size field in bytes
+4–7 often advertises the intended full size rather than the actual size
+on disk. Most decoders reject this discrepancy outright.</p>
+<p><strong>Fix:</strong></p>
+<ol type="1">
+<li>Determine the exact size of the damaged file in bytes using your
+operating system.</li>
+<li>Subtract 8 bytes from this total.</li>
+<li>Convert this value to a 32-bit hexadecimal number in little-endian
+format (e.g., a resulting size of 45,120 bytes is
+<code>0x0000B040</code>, which becomes <code>40 B0 00 00</code>).</li>
+<li>Overwrite bytes 4 through 7 in the hex editor with your calculated
+value.</li>
+<li>Locate the final incomplete chunk and adjust its corresponding
+4-byte size header to match the remaining bytes left in the file.</li>
+</ol>
+<h3 id="2-stripping-corrupted-non-essential-metadata-chunks">2.
+Stripping Corrupted Non-Essential Metadata Chunks</h3>
+<p>Extended WebP images use a <code>VP8X</code> chunk that signals the
+presence of auxiliary chunks like <code>EXIF</code> (metadata),
+<code>ICCP</code> (color profiles), <code>ALPH</code> (alpha channels),
+or <code>ANIM</code> (animation frames). Corruption frequently occurs
+within non-image chunks.</p>
+<p><strong>Fix:</strong></p>
+<ul>
+<li><strong>Corrupt EXIF/ICCP:</strong> If the image bitstream
+(<code>VP8 </code> or <code>VP8L</code>) is intact, use a hex editor to
+delete the <code>EXIF</code> or <code>ICCP</code> FourCC header and
+payload entirely.</li>
+<li><strong>Update the VP8X Flags:</strong> The 13th byte of the file
+(the first byte of the <code>VP8X</code> payload) contains binary flags:
+<ul>
+<li>Bit 1: Animation</li>
+<li>Bit 2: XMP metadata</li>
+<li>Bit 3: EXIF metadata</li>
+<li>Bit 4: Alpha channel</li>
+<li>Bit 5: ICC profile</li>
+</ul></li>
+<li>Clear the bit corresponding to the removed chunk (e.g., change the
+EXIF flag bit to <code>0</code>) and reduce the main RIFF size field by
+the number of bytes deleted.</li>
+</ul>
+<h3 id="3-recovering-lossless-vp8l-data-with-missing-end-codes">3.
+Recovering Lossless (VP8L) Data with Missing End Codes</h3>
+<p>Lossless WebP images use an entropy stream that terminates with an
+explicit end-of-image code. If the file is truncated, decoders fail to
+render the image.</p>
+<p><strong>Fix:</strong> Append trailing zero-bytes (<code>0x00</code>)
+to the end of the file using a hex editor. While this may cause visual
+artifacts or solid-color banding at the bottom of the recovered image,
+it allows decoders such as ImageMagick or <code>dwebp</code> to parse
+the available data without throwing an unexpected EOF error:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dwebp</span> damaged_padded_image.webp <span class="at">-o</span> recovered_image.png</span></code></pre></div>
+<h2 id="automating-chunk-recovery-via-scripting">Automating Chunk
+Recovery via Scripting</h2>
+<p>For bulk diagnostics or systematic byte realignment, a custom script
+can parse chunks linearly and discard damaged trailing segments.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> struct</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> salvage_webp(input_path, output_path):</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(input_path, <span class="st">&#39;rb&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        data <span class="op">=</span> f.read()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(data) <span class="op">&lt;</span> <span class="dv">12</span> <span class="kw">or</span> data[:<span class="dv">4</span>] <span class="op">!=</span> <span class="st">b&#39;RIFF&#39;</span> <span class="kw">or</span> data[<span class="dv">8</span>:<span class="dv">12</span>] <span class="op">!=</span> <span class="st">b&#39;WEBP&#39;</span>:</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">&quot;Invalid WebP/RIFF header&quot;</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    offset <span class="op">=</span> <span class="dv">12</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    valid_chunks <span class="op">=</span> []</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    total_size <span class="op">=</span> <span class="dv">4</span>  <span class="co"># Includes &#39;WEBP&#39;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> offset <span class="op">+</span> <span class="dv">8</span> <span class="op">&lt;=</span> <span class="bu">len</span>(data):</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        chunk_id <span class="op">=</span> data[offset:offset<span class="op">+</span><span class="dv">4</span>]</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        chunk_size <span class="op">=</span> struct.unpack(<span class="st">&#39;&lt;I&#39;</span>, data[offset<span class="op">+</span><span class="dv">4</span>:offset<span class="op">+</span><span class="dv">8</span>])[<span class="dv">0</span>]</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        payload_start <span class="op">=</span> offset <span class="op">+</span> <span class="dv">8</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        payload_end <span class="op">=</span> payload_start <span class="op">+</span> chunk_size</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        padding <span class="op">=</span> <span class="dv">1</span> <span class="cf">if</span> chunk_size <span class="op">%</span> <span class="dv">2</span> <span class="op">==</span> <span class="dv">1</span> <span class="cf">else</span> <span class="dv">0</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Check if chunk fits within the actual file payload</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> payload_end <span class="op">&gt;</span> <span class="bu">len</span>(data):</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span>  <span class="co"># Truncated chunk found; stop parsing</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        valid_chunks.append(data[offset:payload_end <span class="op">+</span> padding])</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        total_size <span class="op">+=</span> <span class="dv">8</span> <span class="op">+</span> chunk_size <span class="op">+</span> padding</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        offset <span class="op">=</span> payload_end <span class="op">+</span> padding</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    new_riff_header <span class="op">=</span> <span class="st">b&#39;RIFF&#39;</span> <span class="op">+</span> struct.pack(<span class="st">&#39;&lt;I&#39;</span>, total_size) <span class="op">+</span> <span class="st">b&#39;WEBP&#39;</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(output_path, <span class="st">&#39;wb&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        f.write(new_riff_header <span class="op">+</span> <span class="st">b&#39;&#39;</span>.join(valid_chunks))</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>salvage_webp(<span class="st">&#39;corrupt.webp&#39;</span>, <span class="st">&#39;salvaged.webp&#39;</span>)</span></code></pre></div>
+<p>This procedure reads the file sequentially, extracts all undamaged
+chunks prior to the point of corruption, recalculates the main RIFF
+container dimensions, and writes a syntactically valid WebP file that
+graphics viewers can parse.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Lossless LZ77 and Prefix Coding Explained - webp</title>
+    <meta name="description" content="WebP lossless format relies on a combination of LZ77 backward referencing, color caching, and canonical prefix (Huffman) coding to compress image data without losing fidelity. The compression pipeline first transforms the image data into an optimized int">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-lossless-lz-77-and-prefix-coding-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Lossless LZ77 and Prefix Coding Explained - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-lossless-lz-77-and-prefix-coding-explained" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP lossless format relies on a combination of LZ77 backward referencing, color caching, and canonical prefix (Huffman) coding to compress image data without losing fidelity. The compression pipeline first transforms the image data into an optimized int" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-lossless-lz77-and-prefix-coding-explained">WebP Lossless
+LZ77 and Prefix Coding Explained</h1>
+<p>WebP lossless format relies on a combination of LZ77 backward
+referencing, color caching, and canonical prefix (Huffman) coding to
+compress image data without losing fidelity. The compression pipeline
+first transforms the image data into an optimized intermediate state,
+then uses an LZ77 variant to detect repeating spatial patterns across
+pixel channels, and finally encodes the resulting symbols, lengths, and
+distances using specialized, spatially adaptive prefix-free codes.</p>
+<h3 id="the-lz77-backward-referencing-mechanism">The LZ77 Backward
+Referencing Mechanism</h3>
+<p>In WebP lossless mode, LZ77 operates on a stream of 32-bit ARGB
+pixels rather than a raw byte stream. The algorithm scans previously
+processed pixels in the image to locate matching sequences, replacing
+repetitive data with backward references defined by two values: length
+and distance.</p>
+<ul>
+<li><strong>Length:</strong> Indicates the number of pixels to copy
+sequentially. WebP supports match lengths ranging from 1 to 4096
+pixels.</li>
+<li><strong>Distance:</strong> Specifies how far back in the stream the
+match began. Because 2D images have high spatial correlation both
+horizontally and vertically, WebP uses a specialized 2D-to-1D mapping
+for distance codes. Distances corresponding to immediate 2D neighbors
+(such as the pixel directly above, to the upper-left, or to the
+upper-right) are assigned low, easily compressible distance values
+instead of purely linear scanline offsets.</li>
+</ul>
+<p>When no matching sequence of sufficient length is found, the encoder
+outputs pixel values as literals.</p>
+<h3 id="unified-symbol-alphabet">Unified Symbol Alphabet</h3>
+<p>WebP lossless consolidates literals, backward reference lengths, and
+color cache references into a single alphabet to optimize entropy
+coding. The pipeline groups image data into five separate symbol
+spaces:</p>
+<ol type="1">
+<li><strong>Green channel / Literals / Lengths / Cache:</strong> This
+primary channel carries green color literals (0–255), LZ77 copy lengths
+(256–279, followed by extra bits to express lengths up to 4096), and
+color cache references.</li>
+<li><strong>Red channel:</strong> Carries red literals (0–255).</li>
+<li><strong>Blue channel:</strong> Carries blue literals (0–255).</li>
+<li><strong>Alpha channel:</strong> Carries transparency literals
+(0–255).</li>
+<li><strong>Distance:</strong> Contains the prefix codes for backward
+reference distances (0–39), which are followed by extra literal bits to
+specify the exact offset.</li>
+</ol>
+<p>Combining the green channel literals and LZ77 match lengths into a
+single prefix tree avoids the overhead of explicitly signaling whether
+the current token is a literal or a backward reference.</p>
+<h3 id="prefix-free-canonical-huffman-coding">Prefix-Free (Canonical
+Huffman) Coding</h3>
+<p>All five symbol groups are encoded using canonical prefix-free codes.
+A prefix-free code guarantees that no code is a prefix of another,
+allowing the decoder to parse the bitstream sequentially without
+delimiters.</p>
+<ul>
+<li><strong>Code Construction:</strong> Symbol frequencies determine the
+bit lengths of the codes. Canonical codes are generated directly from
+these lengths, ensuring that the decoder only needs to know the code
+lengths rather than the full tree topology.</li>
+<li><strong>Header Compression:</strong> The bit lengths of the prefix
+codes are themselves compressed using an internal prefix-free code
+(similar to the DEFLATE standard). The bit-length alphabet consists of
+codes representing lengths 0–15, as well as repeat codes for repeating
+zeros or previous values.</li>
+</ul>
+<h3 id="spatially-adaptive-meta-prefix-codes">Spatially Adaptive
+Meta-Prefix Codes</h3>
+<p>Entropy varies across different regions of an image. To account for
+this, WebP lossless avoids using a single global set of prefix codes.
+Instead, it supports spatially localized entropy coding:</p>
+<ul>
+<li><strong>Grid Partitioning:</strong> The image is partitioned into
+non-overlapping blocks (typically sized as powers of two, such as 16×16
+pixels).</li>
+<li><strong>Entropy Groups:</strong> Multiple sets of prefix codes (each
+set containing the five canonical trees) are generated for different
+texture types or color profiles.</li>
+<li><strong>Meta-Code Array:</strong> A small, low-resolution index map
+assigns each block in the image grid to a specific entropy group.</li>
+</ul>
+<p>During decoding, the engine consults the meta-code array to identify
+which set of prefix-free trees to use for the current block, maximizing
+compression efficiency across both uniform and complex areas of the
+image.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

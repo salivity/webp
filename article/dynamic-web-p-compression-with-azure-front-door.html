@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic WebP Compression with Azure Front Door - webp</title>
+    <meta name="description" content="Microsoft Azure Front Door (AFD) optimizes the delivery of modern image formats like WebP to enhance web performance and reduce bandwidth consumption. While Azure Front Door does not natively transcode images from formats like JPEG or PNG into WebP on th">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/dynamic-web-p-compression-with-azure-front-door">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dynamic WebP Compression with Azure Front Door - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/dynamic-web-p-compression-with-azure-front-door" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Microsoft Azure Front Door (AFD) optimizes the delivery of modern image formats like WebP to enhance web performance and reduce bandwidth consumption. While Azure Front Door does not natively transcode images from formats like JPEG or PNG into WebP on th" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="dynamic-webp-compression-with-azure-front-door">Dynamic WebP
+Compression with Azure Front Door</h1>
+<p>Microsoft Azure Front Door (AFD) optimizes the delivery of modern
+image formats like WebP to enhance web performance and reduce bandwidth
+consumption. While Azure Front Door does not natively transcode images
+from formats like JPEG or PNG into WebP on the fly, it manages dynamic
+WebP delivery through a combination of request inspection via its Rules
+Engine, intelligent origin routing, and edge caching. By evaluating
+browser support and coordinating with origin image processors, Front
+Door ensures that clients receive the most optimized image format
+available.</p>
+<h3
+id="understanding-native-compression-vs-image-transcoding">Understanding
+Native Compression vs. Image Transcoding</h3>
+<p>Azure Front Door includes built-in edge compression, but this feature
+is restricted to file-level compression algorithms such as Gzip and
+Brotli. These algorithms primarily target text-based assets like HTML,
+CSS, and JavaScript. Raster image conversion—such as transforming a
+<code>.jpg</code> to a <code>.webp</code>—requires media transformation
+logic that operates outside of Front Door's native compression engine.
+Consequently, dynamic WebP management relies on pairing Azure Front Door
+with an image-processing origin service.</p>
+<h3 id="client-capability-detection">Client Capability Detection</h3>
+<p>The delivery workflow begins at the client browser:</p>
+<ol type="1">
+<li>When a browser requests an image, it sends an <code>Accept</code>
+HTTP request header specifying supported formats (for example,
+<code>image/webp</code>).</li>
+<li>Azure Front Door captures this header at the nearest Point of
+Presence (PoP).</li>
+</ol>
+<h3 id="azure-front-door-rules-engine-configuration">Azure Front Door
+Rules Engine Configuration</h3>
+<p>To serve WebP dynamically, administrators configure Azure Front Door
+Rules Engine to inspect incoming requests and route them
+appropriately:</p>
+<ul>
+<li><strong>Condition:</strong> Check if the <code>Request Header</code>
+named <code>Accept</code> contains the value
+<code>image/webp</code>.</li>
+<li><strong>Action:</strong> Rewrite the URL or add a query parameter
+(e.g., transforming <code>/images/photo.jpg</code> to
+<code>/images/photo.jpg?format=webp</code>) before forwarding the
+request to the origin.</li>
+<li><strong>Origin Selection:</strong> Alternatively, route the request
+to a specialized image-processing backend, such as an Azure Function, an
+Azure App Service running an image-processing library (like ImageSharp),
+or a dedicated media service.</li>
+</ul>
+<h3 id="dynamic-generation-at-the-origin">Dynamic Generation at the
+Origin</h3>
+<p>When Azure Front Door forwards the transformed request:</p>
+<ul>
+<li>The origin checks whether a WebP version of the requested asset
+already exists in storage (such as Azure Blob Storage).</li>
+<li>If it does not exist, the origin dynamically compresses and converts
+the source image to WebP format.</li>
+<li>The origin returns the WebP payload along with standard headers,
+including <code>Content-Type: image/webp</code> and appropriate
+cache-control directives.</li>
+</ul>
+<h3 id="edge-caching-and-variant-delivery">Edge Caching and Variant
+Delivery</h3>
+<p>To prevent redundant origin processing, Azure Front Door caches the
+resulting WebP asset at its edge PoPs:</p>
+<ul>
+<li><strong>Query String Caching:</strong> If format negotiation is
+handled via query parameters (e.g., <code>?format=webp</code>), Front
+Door's cache configuration should be set to "Cache every unique URL."
+This ensures distinct cache entries for the original format and the WebP
+version.</li>
+<li><strong>Cache Expiration:</strong> Standard
+<code>Cache-Control</code> headers from the origin dictate how long the
+WebP image stays resident at the edge.</li>
+<li><strong>Subsequent Requests:</strong> Future requests from any
+WebP-compatible client hitting that PoP are served directly from the
+edge cache, bypassing the compute-heavy transformation origin entirely
+and minimizing latency.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP vs MozJPEG: Visual Quality at Low Bitrates - webp</title>
+    <meta name="description" content="This article evaluates whether WebP lossy compression can match or exceed the visual quality of MozJPEG at lower bitrates. It breaks down the underlying compression architectures of both formats, compares their artifact profiles under heavy compression,">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-vs-moz-jpeg-visual-quality-at-low-bitrates">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP vs MozJPEG: Visual Quality at Low Bitrates - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-vs-moz-jpeg-visual-quality-at-low-bitrates" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article evaluates whether WebP lossy compression can match or exceed the visual quality of MozJPEG at lower bitrates. It breaks down the underlying compression architectures of both formats, compares their artifact profiles under heavy compression," />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-vs-mozjpeg-visual-quality-at-low-bitrates">WebP vs MozJPEG:
+Visual Quality at Low Bitrates</h1>
+<p>This article evaluates whether WebP lossy compression can match or
+exceed the visual quality of MozJPEG at lower bitrates. It breaks down
+the underlying compression architectures of both formats, compares their
+artifact profiles under heavy compression, examines psychovisual
+performance across different types of imagery, and provides a clear
+verdict on which encoder delivers superior visual fidelity when
+bandwidth is strictly constrained.</p>
+<h3 id="compression-architectures-vp8-vs-advanced-dct">Compression
+Architectures: VP8 vs. Advanced DCT</h3>
+<p>The visual divergence between WebP and MozJPEG stems from their core
+compression mechanisms. MozJPEG is an optimized discrete cosine
+transform (DCT) encoder built on the traditional JPEG standard. It
+achieves high compression efficiency by implementing trellis
+quantization, progressive scan optimization, and psychovisual
+rate-distortion profiling without breaking compatibility with standard
+JPEG decoders.</p>
+<p>WebP lossy is derived from the VP8 video codec's intra-frame
+encoding. It partitions images into macroblocks and predicts pixel
+values based on adjacent blocks before applying an integer DCT-like
+transform. Because WebP integrates directional spatial prediction and an
+in-loop deblocking filter, it processes image data with a fundamentally
+different approach to handling redundancy.</p>
+<h3 id="artifact-profiles-at-low-bitrates">Artifact Profiles at Low
+Bitrates</h3>
+<p>When bitrates drop significantly, the trade-offs between the two
+formats become visually apparent:</p>
+<ul>
+<li><strong>MozJPEG Artifacts:</strong> When pushed to low bitrates,
+MozJPEG exhibits high-frequency ringing around sharp edges, color
+smearing, and visible 8x8 pixel grid blocking. While its trellis
+quantization smooths non-essential variations to save bytes, the rigid
+grid structure of the JPEG specification inevitably causes structural
+grid breakdown once the bit budget is exhausted.</li>
+<li><strong>WebP Artifacts:</strong> WebP avoids grid blocking entirely
+at low bitrates due to its built-in deblocking filter. Instead, its
+primary failure mode is aggressive smoothing and posterization. WebP
+removes fine gradients, eliminates subtle noise, and smudges
+high-frequency textures into flat, plastic-looking patches.</li>
+</ul>
+<h3 id="perceptual-quality-comparison">Perceptual Quality
+Comparison</h3>
+<p>At extremely low bitrates—such as under 0.8 to 1.0 bits per pixel
+(BPP)—WebP generally matches and often exceeds MozJPEG in standardized
+perceptual tests and subjective human viewing.</p>
+<p>Human visual perception is typically more forgiving of moderate
+edge-preserving blur than of sharp, geometric block edges. In
+photographic regions with large, smooth gradients (such as skies or
+skin), WebP maintains visual coherence and clean boundaries where
+MozJPEG begins to display noticeable checkerboard patterns and mosquito
+noise around contrasting contours.</p>
+<p>However, the nature of the source content influences this
+outcome:</p>
+<ul>
+<li><strong>High-Frequency Textures (Foliage, Fabric, Grain):</strong>
+MozJPEG frequently retains more plausible texture than WebP at
+comparable low bitrates. WebP’s spatial prediction often treats complex
+grain as discardable noise, resulting in an unnatural "airbrushed"
+effect, whereas MozJPEG retains the impression of sharpness despite
+slight compression noise.</li>
+<li><strong>Mixed Content and Flat Color:</strong> For illustrations, UI
+screenshots, and photos with broad continuous tones, WebP decisively
+matches and outperforms MozJPEG at lower bitrates by cleanly encoding
+flat spaces without ringing.</li>
+</ul>
+<h3 id="the-verdict">The Verdict</h3>
+<p>WebP lossy compression can consistently match and often surpass the
+perceived visual quality of MozJPEG at lower bitrates. By leveraging
+intra-prediction and automatic deblocking, WebP avoids the visually
+jarring block boundaries characteristic of MozJPEG under extreme
+compression, making it the more efficient choice when strict byte
+budgets take precedence over microscopic surface texture.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

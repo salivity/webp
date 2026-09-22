@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Color Rendering on Wide Gamut P3 Displays - webp</title>
+    <meta name="description" content="This article examines how WebP images interact with wide color gamut (WCG) displays when configured with Display P3 color profiles. It covers the technical mechanics of the WebP container's ICC profile chunk, how modern browser color management engines t">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-color-rendering-on-wide-gamut-p-3-displays">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Color Rendering on Wide Gamut P3 Displays - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-color-rendering-on-wide-gamut-p-3-displays" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines how WebP images interact with wide color gamut (WCG) displays when configured with Display P3 color profiles. It covers the technical mechanics of the WebP container's ICC profile chunk, how modern browser color management engines t" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-color-rendering-on-wide-gamut-p3-displays">WebP Color
+Rendering on Wide Gamut P3 Displays</h1>
+<p>This article examines how WebP images interact with wide color gamut
+(WCG) displays when configured with Display P3 color profiles. It covers
+the technical mechanics of the WebP container's ICC profile chunk, how
+modern browser color management engines translate wide-gamut coordinates
+to native display spaces, the visual limitations inherent to 8-bit color
+depth, and common rendering pitfalls such as banding and color
+clipping.</p>
+<h2 id="color-profile-support-in-the-webp-container">Color Profile
+Support in the WebP Container</h2>
+<p>The WebP specification supports embedded color profiles through an
+extended file format header using an <code>ICCP</code> (ICC Profile)
+chunk. When an image is exported with a Display P3 profile, the exact
+color primaries, white point (D65), and transfer characteristics are
+stored directly within this metadata block.</p>
+<p>If the <code>ICCP</code> chunk is present:</p>
+<ul>
+<li>Compliant decoders read the embedded profile as the source color
+space.</li>
+<li>If the <code>ICCP</code> chunk is stripped or omitted during
+compression, decoders treat the WebP image as standard sRGB (Rec. 709
+primaries).</li>
+</ul>
+<h2 id="the-rendering-pipeline-on-wide-gamut-displays">The Rendering
+Pipeline on Wide Gamut Displays</h2>
+<p>When rendering an image on a wide color gamut screen (such as Apple
+Retina displays, high-end mobile screens, or calibrated desktop
+monitors), the browser relies on the operating system’s Color Management
+System (CMS) or its own internal color engine (such as Google’s
+Skia/skcms, Apple’s ColorSync, or Mozilla’s qcms).</p>
+<ol type="1">
+<li><strong>Decoding:</strong> The browser unpacks the WebP image data
+into raw RGB pixel buffers and extracts the Display P3 ICC profile.</li>
+<li><strong>Color Transform:</strong> The CMS reads the native display
+profile from the operating system. Because Display P3 covers roughly 25%
+more color volume than standard sRGB (mostly in the green and red
+spectrums), the CMS maps the source Display P3 values into the display's
+native output space.</li>
+<li><strong>Output:</strong> The display controller receives the
+transformed pixel values. Colors that fall outside the sRGB
+envelope—such as deep reds, saturated oranges, and vivid emerald
+greens—are rendered accurately without clamping.</li>
+</ol>
+<h2 id="tagged-vs-untagged-webp-behavior">Tagged vs. Untagged WebP
+Behavior</h2>
+<ul>
+<li><strong>Tagged with Display P3:</strong> The browser accurately
+represents colors up to the boundary of the display's physical
+capability. Standard tones remain natural, while wide-gamut colors
+achieve full saturation.</li>
+<li><strong>Untagged (Assumed sRGB):</strong> The CMS performs color
+space conversion from sRGB to Display P3. The colors are constrained to
+the sRGB gamut within the wider P3 space, preventing the artificial
+over-saturation that occurs on unmanaged rendering pipelines.</li>
+</ul>
+<h2 id="technical-constraints-and-limitations">Technical Constraints and
+Limitations</h2>
+<h3 id="8-bit-quantization-and-banding">8-Bit Quantization and
+Banding</h3>
+<p>WebP is strictly an 8-bit format (8 bits per channel, yielding 256
+distinct values per channel). When using an expanded color space like
+Display P3, those 256 steps must span a significantly larger chromatic
+volume than they do in sRGB. This stretching increases the perceptual
+distance between adjacent code values (<span
+class="math inline">\(\Delta E\)</span>), making color banding
+(posterization) noticeable in smooth gradients, especially in skies,
+skin tones, and subtle shadows.</p>
+<h3 id="lossy-compression-and-chroma-subsampling">Lossy Compression and
+Chroma Subsampling</h3>
+<p>Lossy WebP utilizes 4:2:0 chroma subsampling derived from the VP8
+video codec. This process reduces chroma resolution by half both
+horizontally and vertically, converting RGB data to YUV. Highly
+saturated colors defined by P3 primaries can suffer degradation at
+high-contrast edges because 4:2:0 subsampling blurs color boundaries,
+often causing chromatic bleeding or edge artifacts that are more
+apparent in wide-gamut palettes. Lossless WebP avoids this issue by
+operating directly on the ARGB color space without chroma
+subsampling.</p>
+<h2 id="browser-and-platform-consistency">Browser and Platform
+Consistency</h2>
+<p>All major modern browsers—Chrome, Safari, Edge, and Firefox—support
+color-managed WebP rendering. However, subtle differences can arise:</p>
+<ul>
+<li><strong>macOS and iOS:</strong> Handled via Apple's ColorSync, which
+provides native, hardware-accelerated mapping directly to the calibrated
+P3 display panel.</li>
+<li><strong>Windows:</strong> Rendering depends on Chromium or Gecko
+communicating with Windows Color System (WCS) or DirectWrite. Wide-gamut
+accuracy requires the OS display profile to be properly installed and
+recognized.</li>
+<li><strong>Android:</strong> Android manages wide color spaces through
+its native surface flinger and Skia engine, but behavior can vary
+depending on whether the target application has enabled wide-color-gamut
+rendering in its manifest.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

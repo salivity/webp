@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Segments Divide Images into Quality Zones - webp</title>
+    <meta name="description" content="The WebP -segments argument optimizes image compression by partitioning an image into up to four distinct macroblock clusters, allowing the encoder to apply tailored compression settings to different regions. By analyzing spatial complexity, the encoder">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-segments-divide-images-into-quality-zones">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Segments Divide Images into Quality Zones - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-segments-divide-images-into-quality-zones" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The WebP -segments argument optimizes image compression by partitioning an image into up to four distinct macroblock clusters, allowing the encoder to apply tailored compression settings to different regions. By analyzing spatial complexity, the encoder" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-segments-divide-images-into-quality-zones">How WebP
+Segments Divide Images into Quality Zones</h1>
+<p>The WebP <code>-segments</code> argument optimizes image compression
+by partitioning an image into up to four distinct macroblock clusters,
+allowing the encoder to apply tailored compression settings to different
+regions. By analyzing spatial complexity, the encoder groups visually
+similar blocks together, dynamically balancing high compression in flat
+or low-detail areas with detail preservation in complex zones. This
+targeted allocation of compression parameters directly improves
+rate-distortion performance, delivering smaller file sizes without
+sacrificing perceived visual quality.</p>
+<h3 id="macroblock-level-spatial-partitioning">Macroblock-Level Spatial
+Partitioning</h3>
+<p>WebP inherits its core lossy compression architecture from the VP8
+video codec. During encoding, the image is broken down into a grid of
+16x16 pixel macroblocks. The <code>-segments</code> parameter determines
+the maximum number of distinct clusters—ranging from 1 to 4—that the
+encoder can define across this grid.</p>
+<p>Instead of treating the entire image as a uniform canvas, the encoder
+evaluates each 16x16 macroblock's visual characteristics. Metrics such
+as spatial variance, gradient intensity, and edge frequency are
+calculated to establish the relative complexity of each block.</p>
+<h3 id="clustering-via-complexity-analysis">Clustering via Complexity
+Analysis</h3>
+<p>Once metrics are computed for all macroblocks, the encoder clusters
+them into the assigned number of segments using an internal
+classification algorithm. Blocks are grouped based on similarity:</p>
+<ul>
+<li><strong>Low-complexity zones:</strong> Solid colors, smooth
+gradients, and out-of-focus backgrounds.</li>
+<li><strong>High-complexity zones:</strong> Fine textures, text, sharp
+transitions, and intricate details.</li>
+</ul>
+<p>Each macroblock is assigned a segment ID (from 0 up to 3, depending
+on the segment limit). This assignment is stored efficiently in a
+2-bit-per-macroblock segmentation map included in the bitstream
+header.</p>
+<h3 id="per-segment-compression-customization">Per-Segment Compression
+Customization</h3>
+<p>After partitioning the macroblocks, the encoder assigns unique
+compression parameters to each segment rather than applying global
+settings. These parameters include:</p>
+<ol type="1">
+<li><strong>Quantization Levels (QP):</strong> Segments containing
+smooth areas receive higher quantization steps. The human eye is less
+sensitive to fine noise variations in uniform textures, allowing
+aggressive data reduction. Conversely, segments with sharp edges and
+intricate patterns are assigned lower quantization steps to preserve
+critical high-frequency details.</li>
+<li><strong>In-Loop Filtering and Deblocking:</strong> The VP8 loop
+filter smooths out blocking artifacts caused by discrete cosine
+transform (DCT) quantization. Highly compressed, low-detail segments
+receive stronger filtering to prevent visible block boundaries, while
+detailed segments receive lighter filtering to maintain sharpness.</li>
+</ol>
+<h3 id="practical-impact-of-the-argument">Practical Impact of the
+Argument</h3>
+<p>Setting the <code>-segments</code> argument controls the trade-off
+between encoding flexibility and computational overhead. Using the
+default maximum of <code>4</code> provides the encoder with the greatest
+latitude to adapt to mixed-content images (such as text overlaid on a
+photo), maximizing quality at lower bitrates. Reducing the value to
+<code>1</code> disables segmentation entirely, enforcing uniform
+compression across all macroblocks and speeding up encode times at the
+expense of compression efficiency.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

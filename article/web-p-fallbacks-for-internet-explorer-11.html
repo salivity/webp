@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Fallbacks for Internet Explorer 11 - webp</title>
+    <meta name="description" content="Internet Explorer 11 lacks native support for the modern WebP image format, requiring legacy enterprise systems to rely on deliberate fallback strategies. When implemented properly through HTML5 picture markup, CSS feature detection, or server-side conte">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-fallbacks-for-internet-explorer-11">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Fallbacks for Internet Explorer 11 - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-fallbacks-for-internet-explorer-11" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Internet Explorer 11 lacks native support for the modern WebP image format, requiring legacy enterprise systems to rely on deliberate fallback strategies. When implemented properly through HTML5 picture markup, CSS feature detection, or server-side conte" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-fallbacks-for-internet-explorer-11">WebP Fallbacks for
+Internet Explorer 11</h1>
+<p>Internet Explorer 11 lacks native support for the modern WebP image
+format, requiring legacy enterprise systems to rely on deliberate
+fallback strategies. When implemented properly through HTML5 picture
+markup, CSS feature detection, or server-side content negotiation, IE11
+safely bypasses WebP assets and renders standard formats like JPEG and
+PNG. Without these fallbacks, the browser fails silently, rendering
+broken image placeholders or missing background elements that degrade
+the enterprise user experience.</p>
+<h3 id="native-incompatibility-in-ie11">Native Incompatibility in
+IE11</h3>
+<p>Internet Explorer 11 has no internal decoder for WebP. If an author
+points an <code>src</code> attribute of a standard
+<code>&lt;img&gt;</code> tag or a CSS <code>background-image</code>
+property directly to a <code>.webp</code> file, IE11 cannot parse the
+binary data. The browser triggers an <code>onerror</code> event for
+inline images, displaying the legacy broken-image icon, or renders an
+empty container for CSS backgrounds.</p>
+<h3 id="interaction-with-the-html5-picture-element">Interaction with the
+HTML5 Picture Element</h3>
+<p>The standard modern approach to WebP delivery is the
+<code>&lt;picture&gt;</code> tag paired with one or more
+<code>&lt;source&gt;</code> elements and a fallback
+<code>&lt;img&gt;</code> tag:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">picture</span><span class="dt">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">source</span><span class="ot"> srcset</span><span class="op">=</span><span class="st">&quot;image.webp&quot;</span><span class="ot"> type</span><span class="op">=</span><span class="st">&quot;image/webp&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;image.jpg&quot;</span><span class="ot"> alt</span><span class="op">=</span><span class="st">&quot;Example description&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">picture</span><span class="dt">&gt;</span></span></code></pre></div>
+<p>IE11 does not support the <code>&lt;picture&gt;</code> element or the
+<code>&lt;source&gt;</code> element. However, its parsing behavior
+ensures graceful degradation:</p>
+<ol type="1">
+<li><strong>Tag Ignorance:</strong> IE11 treats unknown tags as generic
+inline elements without special styling or functional behavior.</li>
+<li><strong>Source Skipping:</strong> Because IE11 does not understand
+<code>&lt;source type="image/webp"&gt;</code>, it completely ignores
+it.</li>
+<li><strong>Fallback Execution:</strong> IE11 traverses down to the
+nested <code>&lt;img&gt;</code> element, reads the
+<code>src="image.jpg"</code> attribute, and fetches the supported legacy
+format.</li>
+</ol>
+<p>For layout consistency, developers must define
+<code>picture { display: block; }</code> in their stylesheets, as IE11
+will not treat the custom element as a block-level container by
+default.</p>
+<h3 id="css-fallbacks-via-feature-detection">CSS Fallbacks via Feature
+Detection</h3>
+<p>When handling background images in stylesheets, IE11 cannot
+automatically fallback like the <code>&lt;picture&gt;</code> element
+does. Developers must use client-side feature detection (such as
+Modernizr or a lightweight custom script) to test for WebP decoding
+capability:</p>
+<ul>
+<li>If WebP is supported, the script appends a <code>.webp</code> class
+to the <code>&lt;html&gt;</code> root.</li>
+<li>If WebP is unsupported (as in IE11), it appends a
+<code>.no-webp</code> class.</li>
+</ul>
+<p>CSS rules are structured accordingly:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.hero-banner</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&#39;hero.jpg&#39;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">.webp</span> <span class="fu">.hero-banner</span> {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&#39;hero.webp&#39;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>In IE11, the <code>.webp</code> selector is never activated, ensuring
+the browser requests only the fallback JPEG or PNG.</p>
+<h3 id="server-side-content-negotiation">Server-Side Content
+Negotiation</h3>
+<p>Another enterprise-grade method relies on the HTTP
+<code>Accept</code> request header. When modern browsers request an
+image, they explicitly list supported MIME types, including
+<code>image/webp</code>.</p>
+<p>IE11 sends a generic <code>Accept</code> header that omits
+<code>image/webp</code>. Web servers, reverse proxies, or Content
+Delivery Networks (CDNs) can inspect this header before serving the
+asset. If the header lacks the WebP declaration, the server dynamically
+rewrites the request to serve a JPEG or PNG version of the identical
+asset, eliminating the need for client-side polyfills or complex HTML
+structures.</p>
+<h3 id="enterprise-compatibility-mode-hazards">Enterprise Compatibility
+Mode Hazards</h3>
+<p>In enterprise environments, IE11 often runs under "Enterprise Mode"
+or "Compatibility View," which mimics older rendering engines such as
+IE7 or IE8 for intranet domains. In these modes:</p>
+<ul>
+<li>Parsing of modern HTML5 markup becomes even less predictable.</li>
+<li>JavaScript-based feature detection scripts may throw syntax errors
+if they use ES6 syntax.</li>
+<li>Explicit fallback <code>&lt;img&gt;</code> tags remain the most
+resilient approach, provided they do not rely on modern DOM APIs to
+render.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

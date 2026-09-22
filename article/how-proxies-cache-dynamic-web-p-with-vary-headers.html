@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Proxies Cache Dynamic WebP with Vary Headers - webp</title>
+    <meta name="description" content="Serving dynamic WebP images based on browser capabilities relies on content negotiation, requiring forward caching proxies to evaluate the HTTP Vary header correctly. This article explains how forward proxies interpret Vary: Accept directives, how they g">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-proxies-cache-dynamic-web-p-with-vary-headers">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Proxies Cache Dynamic WebP with Vary Headers - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-proxies-cache-dynamic-web-p-with-vary-headers" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Serving dynamic WebP images based on browser capabilities relies on content negotiation, requiring forward caching proxies to evaluate the HTTP Vary header correctly. This article explains how forward proxies interpret Vary: Accept directives, how they g" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-proxies-cache-dynamic-webp-with-vary-headers">How Proxies
+Cache Dynamic WebP with Vary Headers</h1>
+<p>Serving dynamic WebP images based on browser capabilities relies on
+content negotiation, requiring forward caching proxies to evaluate the
+HTTP <code>Vary</code> header correctly. This article explains how
+forward proxies interpret <code>Vary: Accept</code> directives, how they
+generate secondary cache keys, the challenge of cache fragmentation
+across different browsers, and the methods used to normalize requests to
+maintain high cache efficiency.</p>
+<h3 id="the-role-of-content-negotiation-and-the-vary-header">The Role of
+Content Negotiation and the Vary Header</h3>
+<p>When a web server dynamically serves modern formats like WebP to
+supported browsers while falling back to JPEG or PNG for others, it
+typically does so from the same URL. To notify intermediaries that the
+response body depends on the client’s capabilities, the origin server
+includes the following header:</p>
+<pre class="http"><code>Vary: Accept</code></pre>
+<p>A forward caching proxy acts as an intermediary between client
+devices (such as users within a corporate network) and the wider
+internet. Upon receiving a response with a <code>Vary</code> header, the
+proxy understands that it cannot use the URL alone to determine whether
+a cached asset can satisfy a future request.</p>
+<h3 id="secondary-cache-key-generation">Secondary Cache Key
+Generation</h3>
+<p>In a standard caching scenario, a proxy stores and retrieves assets
+using a primary cache key, usually consisting of the HTTP method and the
+request URL.</p>
+<p>When a <code>Vary: Accept</code> header is present, the proxy
+constructs a composite or secondary cache key. This key
+incorporates:</p>
+<ol type="1">
+<li>The HTTP request method (e.g., <code>GET</code>).</li>
+<li>The resource URL.</li>
+<li>The specific value of the client's <code>Accept</code> request
+header from the original transaction.</li>
+</ol>
+<p>When a subsequent client requests the same image, the forward proxy
+inspects the incoming <code>Accept</code> header. It only serves the
+cached response if the new request's <code>Accept</code> header matches
+the one stored alongside the cached variant. If the header differs, the
+proxy treats the request as a cache miss, forwards it to the origin
+server, and stores a new variant corresponding to the new header
+value.</p>
+<h3 id="the-problem-of-cache-fragmentation">The Problem of Cache
+Fragmentation</h3>
+<p>While <code>Vary: Accept</code> preserves correctness by preventing
+unsupported browsers from receiving WebP images, it frequently degrades
+cache efficiency in forward proxies due to header diversity.</p>
+<p>Different browsers and versions send varied <code>Accept</code>
+strings for image requests. For example:</p>
+<ul>
+<li><strong>Chrome:</strong>
+<code>image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8</code></li>
+<li><strong>Firefox:</strong>
+<code>image/avif,image/webp,*/*</code></li>
+<li><strong>Safari:</strong>
+<code>image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5</code></li>
+</ul>
+<p>Because these strings are not identical, a strict forward proxy
+treating the entire <code>Accept</code> string as part of the cache key
+will store separate instances of the exact same WebP image for each
+browser type. This leads to:</p>
+<ul>
+<li><strong>Low Cache Hit Ratios:</strong> A WebP image fetched by a
+Chrome user will not be served from the cache to a Firefox user, even
+though both support WebP.</li>
+<li><strong>Storage Inefficiency:</strong> The proxy retains multiple
+identical copies of an image payload simply because the requesting
+agents formatted their capability strings differently.</li>
+</ul>
+<h3 id="proxy-handling-strategies-and-normalization">Proxy Handling
+Strategies and Normalization</h3>
+<p>Modern forward caching proxies employ specific techniques to resolve
+fragmentation while respecting content negotiation:</p>
+<h4 id="1-header-normalization">1. Header Normalization</h4>
+<p>Advanced proxies normalize the <code>Accept</code> header before
+performing the cache lookup. The proxy parses the incoming
+<code>Accept</code> header to detect whether <code>image/webp</code> is
+present. Internally, the proxy maps the complex string to a simplified
+internal flag (e.g., <code>has_webp=true</code> or
+<code>has_webp=false</code>). The secondary cache key is then generated
+using this normalized value rather than the raw header string, ensuring
+that all WebP-capable browsers share the same cached object.</p>
+<h4 id="2-strict-rfc-compliance">2. Strict RFC Compliance</h4>
+<p>Standard or legacy forward proxies implement strict RFC 9111 rules
+without normalization. In these setups, any variation in whitespace,
+MIME type order, or quality values (<code>q=</code>) in the
+<code>Accept</code> header results in a distinct cache entry.</p>
+<h4 id="3-handling-proxies-that-ignore-vary">3. Handling Proxies That
+Ignore Vary</h4>
+<p>If a forward proxy is misconfigured or ignores the <code>Vary</code>
+header altogether, it uses only the URL as the cache key. This
+introduces the risk of cache poisoning:</p>
+<ul>
+<li>If the first visitor supports WebP, the proxy caches the WebP
+payload. A subsequent visitor using a legacy browser requesting the same
+URL will receive the cached WebP file, resulting in a broken image
+display.</li>
+<li>If the first visitor does not support WebP, the proxy caches the
+fallback JPEG/PNG, depriving subsequent modern browsers of the bandwidth
+savings of WebP.</li>
+</ul>
+<h3 id="best-implementation-practices">Best Implementation
+Practices</h3>
+<p>To ensure forward caching proxies handle dynamic WebP delivery
+reliably:</p>
+<ul>
+<li><strong>Always Send <code>Vary: Accept</code>:</strong> The origin
+server must attach this header to both the WebP response and the
+fallback image response.</li>
+<li><strong>Combine with Appropriate Cache-Control Directives:</strong>
+Explicit <code>max-age</code> directives guide proxies on how long
+individual variants remain valid.</li>
+<li><strong>Consider URL-Based Rewriting:</strong> For environments
+where forward proxies cannot be configured to normalize
+<code>Accept</code> headers, serving image formats via explicit file
+extensions or query parameters (e.g., <code>image.webp</code> vs.
+<code>image.jpg</code>) bypassed content negotiation altogether,
+eliminating <code>Vary</code>-induced fragmentation.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

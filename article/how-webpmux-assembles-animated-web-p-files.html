@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How webpmux Assembles Animated WebP Files - webp</title>
+    <meta name="description" content="The webpmux command-line tool, distributed as part of Google’s libwebp package, creates animated WebP files by multiplexing individual static WebP images into an extended RIFF container. This article explains how webpmux processes input frames, configu">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-webpmux-assembles-animated-web-p-files">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How webpmux Assembles Animated WebP Files - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-webpmux-assembles-animated-web-p-files" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The webpmux command-line tool, distributed as part of Google’s libwebp package, creates animated WebP files by multiplexing individual static WebP images into an extended RIFF container. This article explains how webpmux processes input frames, configu" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webpmux-assembles-animated-webp-files">How webpmux Assembles
+Animated WebP Files</h1>
+<p>The <code>webpmux</code> command-line tool, distributed as part of
+Google’s <code>libwebp</code> package, creates animated WebP files by
+multiplexing individual static WebP images into an extended RIFF
+container. This article explains how <code>webpmux</code> processes
+input frames, configures animation chunks, and defines parameters such
+as frame duration, positioning, disposal, and blending to produce a
+fully functional animated image.</p>
+<h3 id="the-webp-container-structure">The WebP Container Structure</h3>
+<p>A standard, static WebP image often uses a simple Resource
+Interchange File Format (RIFF) container wrapping raw VP8 or VP8L
+(lossless) bitstream data. When handling animations,
+<code>webpmux</code> elevates the file to the Extended WebP file format,
+signaled by a <code>VP8X</code> header chunk.</p>
+<p>This extended header sets flags indicating that the file contains
+animation data, canvas dimensions, and metadata. Within this format,
+<code>webpmux</code> injects two critical chunk types to govern
+playback:</p>
+<ul>
+<li><strong><code>ANIM</code> Chunk:</strong> Stores global animation
+parameters, such as the default canvas background color and the global
+loop count (where <code>0</code> denotes infinite looping).</li>
+<li><strong><code>ANMF</code> Chunk:</strong> Precedes every individual
+frame in the animation sequence, storing frame-specific layout and
+behavior instructions alongside the frame’s image payload.</li>
+</ul>
+<h3 id="the-assembly-syntax">The Assembly Syntax</h3>
+<p><code>webpmux</code> accepts an ordered sequence of frames through
+the <code>-frame</code> flag. The syntax specifies how each image is
+rendered onto the main canvas:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">webpmux</span> <span class="at">-frame</span> frame1.webp +di+xi+yi+mi+bi ... <span class="at">-loop</span> c <span class="at">-bgcolor</span> A,R,G,B <span class="at">-o</span> output.webp</span></code></pre></div>
+<p>The parameters appended to each frame define its temporal and spatial
+behavior:</p>
+<ul>
+<li><strong>Duration (<code>+di</code>):</strong> The display time of
+the frame in milliseconds.</li>
+<li><strong>Offset coordinates (<code>+xi+yi</code>):</strong> The
+horizontal and vertical starting positions of the frame on the global
+canvas. This allows individual frames to be smaller than the overall
+canvas, updating only the region of the image that changes.</li>
+<li><strong>Disposal method (<code>+mi</code>):</strong> Dictates how
+the canvas area occupied by the frame is treated before rendering the
+next frame. A value of <code>0</code> leaves the frame in place, while
+<code>1</code> resets the frame's area back to the background
+color.</li>
+<li><strong>Blending method (<code>+bi</code>):</strong> Governs alpha
+transparency interaction. A value of <code>+b</code> blends the new
+frame with the existing canvas pixels using alpha compositing, whereas
+<code>-b</code> overwrites the destination pixels entirely without
+blending.</li>
+</ul>
+<h3 id="step-by-step-multiplexing-process">Step-by-Step Multiplexing
+Process</h3>
+<ol type="1">
+<li><strong>Reading Input Bitstreams:</strong> <code>webpmux</code>
+reads each supplied static WebP file, verifies its integrity, and
+extracts the core image data (lossy VP8, lossless VP8L, or alpha
+chunks).</li>
+<li><strong>Global Canvas Allocation:</strong> Based on the frame
+dimensions, offsets, or explicit container sizes, the tool calculates
+the total canvas width and height, writing these values to the
+<code>VP8X</code> chunk.</li>
+<li><strong>Generating Frame Payloads:</strong> For every frame input,
+<code>webpmux</code> constructs an <code>ANMF</code> chunk. It writes
+the frame’s duration, coordinates, disposal mode, and blending mode into
+the chunk's 16-byte metadata header, followed immediately by the raw
+WebP image bitstream.</li>
+<li><strong>Serialization:</strong> <code>webpmux</code> packages the
+RIFF header, the <code>VP8X</code> chunk, the <code>ANIM</code> chunk,
+and the series of <code>ANMF</code> chunks into a single binary stream,
+updating all internal chunk sizes and padding bytes to ensure 2-byte
+alignment as required by the RIFF standard.</li>
+</ol>
+<p>Through this structural packaging, <code>webpmux</code> allows
+developers to assemble animations efficiently by reusing compressed
+image bitstreams without needing to re-encode each frame from
+scratch.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

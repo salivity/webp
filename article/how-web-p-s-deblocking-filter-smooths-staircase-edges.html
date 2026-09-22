@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP's Deblocking Filter Smooths Staircase Edges - webp</title>
+    <meta name="description" content="WebP’s lossy compression relies on transform-based block coding, which can introduce distinct "staircase" or stepping artifacts along diagonal borders and block boundaries at lower bitrates. To counteract this degradation, WebP employs an in-loop, cont">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-s-deblocking-filter-smooths-staircase-edges">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP's Deblocking Filter Smooths Staircase Edges - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-s-deblocking-filter-smooths-staircase-edges" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP’s lossy compression relies on transform-based block coding, which can introduce distinct "staircase" or stepping artifacts along diagonal borders and block boundaries at lower bitrates. To counteract this degradation, WebP employs an in-loop, cont" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webps-deblocking-filter-smooths-staircase-edges">How WebP's
+Deblocking Filter Smooths Staircase Edges</h1>
+<p>WebP’s lossy compression relies on transform-based block coding,
+which can introduce distinct "staircase" or stepping artifacts along
+diagonal borders and block boundaries at lower bitrates. To counteract
+this degradation, WebP employs an in-loop, content-aware smart
+deblocking filter that identifies these artificial boundaries and
+selectively applies targeted smoothing. By analyzing local pixel
+variance, evaluating quantization parameters, and adjusting pixel
+gradients perpendicular to block edges, the filter successfully smooths
+staircase discontinuities while preserving legitimate high-contrast
+details.</p>
+<h3 id="the-origin-of-staircase-boundary-edges">The Origin of Staircase
+Boundary Edges</h3>
+<p>Lossy WebP encodes images using macroblocks divided into smaller 4x4
+sub-blocks, which are then transformed and quantized. When an image
+contains diagonal lines, curved contours, or soft gradients, dividing
+them into a rigid square grid creates discontinuities. Quantization
+truncates high-frequency coefficients independently in adjacent blocks.
+Consequently, a smooth diagonal line breaks into discrete, step-like
+segments along block borders—commonly referred to as staircase boundary
+edges.</p>
+<h3 id="content-adaptive-boundary-evaluation">Content-Adaptive Boundary
+Evaluation</h3>
+<p>The smart deblocking filter does not apply uniform blurring across
+the image grid. Instead, it inspects adjacent pixels spanning every
+horizontal and vertical 4x4 block interface (typically evaluating
+boundary pixels labeled <span class="math inline">\(p_1, p_0\)</span> on
+one side and <span class="math inline">\(q_0, q_1\)</span> on the
+other).</p>
+<p>The filter checks whether the gradient between <span
+class="math inline">\(p_0\)</span> and <span
+class="math inline">\(q_0\)</span> represents an artificial block
+discontinuity or an intended visual edge. This decision relies on two
+key thresholds:</p>
+<ul>
+<li><strong>Filter Limit (<span
+class="math inline">\(\alpha\)</span>):</strong> Determines the maximum
+permissible difference between neighboring boundary pixels before the
+algorithm classifies the transition as an intentional edge.</li>
+<li><strong>Inner Flatness Threshold (<span
+class="math inline">\(\beta\)</span>):</strong> Measures the consistency
+of pixels on either side of the boundary (<span
+class="math inline">\(|p_1 - p_0|\)</span> and <span
+class="math inline">\(|q_1 - q_0|\)</span>). If the interior of both
+blocks is relatively flat, any sharp step at the boundary is classified
+as an artifact rather than image detail.</li>
+</ul>
+<p>Both thresholds scale dynamically with the quantization parameter
+(QP). At higher compression ratios, the filter broadens its tolerances
+to catch pronounced staircase stepping.</p>
+<h3 id="normal-vs-complex-filtering-modes">Normal vs. Complex Filtering
+Modes</h3>
+<p>WebP employs two main filter strengths depending on the severity of
+the artifact and user encoding settings:</p>
+<ol type="1">
+<li><strong>Simple Filtering:</strong> Primarily targets flat areas and
+simple luminance boundaries by adjusting only the immediate boundary
+pixels (<span class="math inline">\(p_0\)</span> and <span
+class="math inline">\(q_0\)</span>).</li>
+<li><strong>Complex Filtering:</strong> Engages when the algorithm
+detects continuous gradients or subtle diagonal edges affected by
+staircase distortion. In this mode, the filter extends up to two or
+three pixels deep into each block (<span class="math inline">\(p_2, p_1,
+p_0\)</span> and <span class="math inline">\(q_0, q_1, q_2\)</span>). By
+calculating higher-order differences, the complex mode distributes a
+linear smoothing response across the entire boundary zone, converting
+harsh 90-degree step artifacts into fluid, continuous transitions.</li>
+</ol>
+<h3 id="preserving-sharp-details-with-value-clipping">Preserving Sharp
+Details with Value Clipping</h3>
+<p>To prevent the smoothing process from degrading sharp, legitimate
+line art or natural high-contrast boundaries, the deblocking algorithm
+uses a strict clipping mechanism. When correcting boundary values, the
+calculated adjustment delta is clamped to an upper limit governed by the
+QP. If an edge transition exceeds the filter’s thresholds, filtering is
+bypassed entirely. This conditional smoothing eliminates the step-like
+distortion of staircase edges while leaving authentic high-frequency
+features crisp and defined.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Improving WebP Rendering with createImageBitmap - webp</title>
+    <meta name="description" content="Using createImageBitmap significantly accelerates WebP rendering in web applications by shifting the computationally heavy decoding process off the main execution thread and pre-preparing pixel data for the GPU. WebP delivers exceptional compression effi">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/improving-web-p-rendering-with-create-image-bitmap">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Improving WebP Rendering with createImageBitmap - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/improving-web-p-rendering-with-create-image-bitmap" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Using createImageBitmap significantly accelerates WebP rendering in web applications by shifting the computationally heavy decoding process off the main execution thread and pre-preparing pixel data for the GPU. WebP delivers exceptional compression effi" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="improving-webp-rendering-with-createimagebitmap">Improving WebP
+Rendering with createImageBitmap</h1>
+<p>Using <code>createImageBitmap</code> significantly accelerates WebP
+rendering in web applications by shifting the computationally heavy
+decoding process off the main execution thread and pre-preparing pixel
+data for the GPU. WebP delivers exceptional compression efficiency, but
+decompressing its complex predictive coding can introduce noticeable
+latency and frame drops. By asynchronously decoding WebP buffers into
+raw bitmaps, <code>createImageBitmap</code> prevents UI jank, reduces
+paint times, and streamlines asset pipelines for high-performance canvas
+and WebGL applications.</p>
+<h2 id="eliminating-main-thread-decoding-bottlenecks">Eliminating
+Main-Thread Decoding Bottlenecks</h2>
+<p>Traditional image loading via the <code>HTMLImageElement</code>
+(<code>&lt;img&gt;</code> tag) binds decoding to the main JavaScript
+thread. Even when an image is fetched asynchronously over the network,
+the browser typically defers the decoding step until the element is
+inserted into the DOM or drawn to an HTML5 canvas.</p>
+<p>WebP relies on advanced compression algorithms—such as VP8
+intra-frame prediction for lossy files and spatial transformations for
+lossless files. Decoding these formats requires substantial CPU cycles.
+When handled on the main thread, large or numerous WebP files can block
+user interactions, delay input responsiveness, and trigger noticeable
+frame drops (jank).</p>
+<p><code>createImageBitmap</code> solves this by exposing an
+asynchronous, Promise-based API that decodes the image data in the
+background. Because the decompression occurs on a separate background
+thread, the main thread remains entirely free to handle animations,
+process events, and manage layout calculations.</p>
+<h2 id="optimized-memory-transfer-and-canvas-drawing">Optimized Memory
+Transfer and Canvas Drawing</h2>
+<p>When an image is drawn using the standard <code>drawImage()</code>
+method on a canvas context, the browser must first ensure the asset is
+fully decoded into raw RGBA pixels before uploading it to the GPU. If
+the decoding has not yet taken place, a synchronous decode is triggered
+on the spot, causing immediate rendering pauses.</p>
+<p><code>createImageBitmap</code> directly resolves to an
+<code>ImageBitmap</code> object, which represents a ready-to-render
+bitmap stored in memory that is optimized for graphics hardware. When
+passing an <code>ImageBitmap</code> to
+<code>CanvasRenderingContext2D</code> or
+<code>WebGLRenderingContext</code>, the engine can upload the texture to
+the GPU instantly without runtime parsing, format conversion, or
+decompression overhead.</p>
+<h2 id="native-cropping-and-sub-region-extraction">Native Cropping and
+Sub-Region Extraction</h2>
+<p>Decoding an entire high-resolution WebP file only to display a small
+portion wastes CPU cycles and memory. <code>createImageBitmap</code>
+accepts optional crop coordinates and sizing parameters:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">createImageBitmap</span>(imageSource<span class="op">,</span> sx<span class="op">,</span> sy<span class="op">,</span> sw<span class="op">,</span> sh<span class="op">,</span> options)<span class="op">;</span></span></code></pre></div>
+<p>By specifying these dimensions upfront, the browser extracts and
+stores only the required pixel region during the initial decode phase.
+This eliminates the need to allocate intermediate offscreen canvases to
+crop or downscale WebP sprites, decreasing overall heap usage and
+garbage collection pauses.</p>
+<h2 id="full-compatibility-with-web-workers">Full Compatibility with Web
+Workers</h2>
+<p>Unlike the DOM-dependent <code>Image</code> constructor,
+<code>createImageBitmap</code> is available within the
+<code>WorkerGlobalScope</code>. This enables complete end-to-end
+offloading of the asset pipeline:</p>
+<ol type="1">
+<li>A Web Worker fetches the compressed WebP file as a <code>Blob</code>
+or <code>ArrayBuffer</code>.</li>
+<li>The Worker decodes the WebP into an <code>ImageBitmap</code> using
+<code>createImageBitmap</code>.</li>
+<li>The Worker transfers the resulting <code>ImageBitmap</code> to an
+<code>OffscreenCanvas</code> or sends it back to the main thread via
+structured cloning without copying memory buffers.</li>
+</ol>
+<p>This architecture completely isolates the network ingestion, WebP
+decompression, and rendering preparation from the application's user
+interface.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

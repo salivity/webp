@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libwebp Memory Bounds Checking in Decompression - webp</title>
+    <meta name="description" content="The libwebp library employs a multi-layered approach to memory bounds checking during bitstream decompression to prevent buffer overflows, out-of-bounds reads, and integer wrapping. When decoding WebP images—which rely on either the VP8 lossy codec, th">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/libwebp-memory-bounds-checking-in-decompression">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Libwebp Memory Bounds Checking in Decompression - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/libwebp-memory-bounds-checking-in-decompression" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The libwebp library employs a multi-layered approach to memory bounds checking during bitstream decompression to prevent buffer overflows, out-of-bounds reads, and integer wrapping. When decoding WebP images—which rely on either the VP8 lossy codec, th" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="libwebp-memory-bounds-checking-in-decompression">Libwebp Memory
+Bounds Checking in Decompression</h1>
+<p>The <code>libwebp</code> library employs a multi-layered approach to
+memory bounds checking during bitstream decompression to prevent buffer
+overflows, out-of-bounds reads, and integer wrapping. When decoding WebP
+images—which rely on either the VP8 lossy codec, the VP8L lossless
+codec, or RIFF container structures—the library constantly
+cross-references input bitstream cursors against payload limits and
+verifies decoded pixel coordinates against strictly pre-allocated canvas
+memory. Through proactive header validation, safe integer math, and
+granular cursor management in its bit-reading engines,
+<code>libwebp</code> ensures memory integrity at every phase of
+decompression.</p>
+<h3 id="header-validation-and-allocation-bounds">Header Validation and
+Allocation Bounds</h3>
+<p>Bounds management begins before any compressed pixel data is
+processed. During the parsing of RIFF containers and VP8/VP8L headers,
+<code>libwebp</code> reads the canvas dimensions (width and height) and
+runs validation checks:</p>
+<ul>
+<li><strong>Dimension Limits:</strong> The library verifies that
+dimensions do not exceed the architectural limits (16,383 × 16,383
+pixels for lossy VP8; 65,536 × 65,536 pixels for lossless VP8L).</li>
+<li><strong>Safe Allocation Math:</strong> Calculating the memory
+required for the decoded output buffer involves multiplying
+<code>width * height * bytes_per_pixel</code>. To prevent 32-bit integer
+overflows, <code>libwebp</code> performs these calculations using 64-bit
+unsigned integers (<code>uint64_t</code>) and helper functions like
+<code>CheckSizeOverflow()</code>. If the calculated size overflows or
+exceeds platform-defined limits, the allocation is rejected
+immediately.</li>
+<li><strong>Buffer Descriptors:</strong> External or internal memory is
+mapped to a <code>WebPDecBuffer</code> structure, which tracks the
+buffer's start pointer, total size, stride (pitch), and row
+capacities.</li>
+</ul>
+<h3 id="bitstream-cursor-tracking-via-bit-readers">Bitstream Cursor
+Tracking via Bit Readers</h3>
+<p>During decompression, the parser must read variable-length bit
+sequences without overrunning the compressed input array.
+<code>libwebp</code> splits this work between two main reader
+implementations:</p>
+<h4 id="1-vp8-bit-reader-lossy-decoding">1. VP8 Bit Reader (Lossy
+Decoding)</h4>
+<p>The <code>VP8BitReader</code> manages the arithmetic boolean entropy
+decoder used in lossy VP8. It maintains two primary pointers:</p>
+<ul>
+<li><code>buf_</code>: The current read pointer in the input data.</li>
+<li><code>buf_end_</code>: The boundary marker pointing to the end of
+the input buffer.</li>
+</ul>
+<p>Before fetching subsequent bytes into the internal bit reservoir (the
+<code>value_</code> register), the bit reader checks whether
+<code>buf_ &gt;= buf_end_</code>. If an attempt is made to advance past
+<code>buf_end_</code>, the reader enters an "exhausted" state,
+substituting zero bits or setting an internal status flag
+(<code>status_</code>) to indicate EOF. Macroblock parsers verify this
+state to prevent infinite loops or undefined memory reads.</p>
+<h4 id="2-vp8l-bit-reader-lossless-decoding">2. VP8L Bit Reader
+(Lossless Decoding)</h4>
+<p>The <code>VP8LBitReader</code> processes prefix-coded, byte-aligned
+data. It reads multi-bit patterns using a 32-bit or 64-bit accumulator.
+Bound checking is enforced by checking if the cursor exceeds
+<code>len</code> (the size of the input). A dedicated padding safety
+margin (typically 8 bytes of zero-padding) is often expected or
+simulated at the end of the bitstream, ensuring that broad bit-reservoir
+loads do not read invalid memory pages when fetching the final bits of a
+stream.</p>
+<h3 id="entropy-table-and-tree-validation">Entropy Table and Tree
+Validation</h3>
+<p>A critical part of bitstream decompression is constructing dynamic
+Huffman lookup tables for lossless (VP8L) streams. To guarantee bounded
+memory writes during this construction:</p>
+<ul>
+<li><strong>Prefix Code Validation:</strong> Dynamic tree codes are
+checked to confirm that the sum of the code lengths generates a
+mathematically valid, fully populated prefix tree without
+over-subscribing the table capacity.</li>
+<li><strong>Bounded Table Allocation:</strong> The tables are allocated
+based on fixed, mathematically defined limits for the maximum alphabet
+size (color, entropy, and distance codes). Any bitstream attempting to
+insert duplicate or excessive symbols into the lookup tables triggers an
+error code (<code>VP8_STATUS_BITSTREAM_ERROR</code>), terminating
+decoding before memory corruption can occur.</li>
+</ul>
+<h3 id="output-buffer-and-macroblock-clamping">Output Buffer and
+Macroblock Clamping</h3>
+<p>During the synthesis stage, decoded residuals and predictive patterns
+are written into the output raster:</p>
+<ul>
+<li><strong>Row and Stride Clamping:</strong> Writing into the
+destination memory is constrained by row-based strides. Decoded
+macroblocks (16×16 pixels) or sub-blocks (4×4 pixels) along the right
+and bottom edges of an image may extend past the logical canvas size.
+The decompression pipeline clips these edge blocks so that memory writes
+stop exactly at the valid width and height boundaries, avoiding
+out-of-bounds writes into neighboring heap memory.</li>
+<li><strong>Rescaler Safety:</strong> If scaling or post-processing
+filters (such as YUV-to-RGB conversion or alpha blending) are active,
+intermediate scanline buffers are used. The library computes
+intermediate buffer bounds using fixed-point arithmetic, enforcing that
+write indices never exceed the allocated row widths.</li>
+</ul>
+<p>Through strict separation of input cursor validation, arithmetic
+overflow checks on dimensions, and boundary clamping on destination
+buffers, <code>libwebp</code> isolates bitstream anomalies and halts
+decompression before out-of-bounds reads or writes take place.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

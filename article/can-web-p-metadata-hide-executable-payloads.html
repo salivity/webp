@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can WebP Metadata Hide Executable Payloads? - webp</title>
+    <meta name="description" content="WebP images can contain embedded scripts and executable payloads within their metadata containers, such as EXIF or XMP chunks, because these segments accept arbitrary bytes. However, an image file cannot execute code on its own. The hidden payload remain">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-web-p-metadata-hide-executable-payloads">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can WebP Metadata Hide Executable Payloads? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-web-p-metadata-hide-executable-payloads" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP images can contain embedded scripts and executable payloads within their metadata containers, such as EXIF or XMP chunks, because these segments accept arbitrary bytes. However, an image file cannot execute code on its own. The hidden payload remain" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-webp-metadata-hide-executable-payloads">Can WebP Metadata
+Hide Executable Payloads?</h1>
+<p>WebP images can contain embedded scripts and executable payloads
+within their metadata containers, such as EXIF or XMP chunks, because
+these segments accept arbitrary bytes. However, an image file cannot
+execute code on its own. The hidden payload remains completely inert
+unless an external vulnerability—such as an unpatched parser bug, an
+application reflecting unsanitized metadata into an HTML document, or a
+secondary loader script—extracts and executes it.</p>
+<h3 id="how-payloads-are-stored-in-webp">How Payloads Are Stored in
+WebP</h3>
+<p>The WebP format is based on the RIFF (Resource Interchange File
+Format) container specification, which breaks data into distinct chunks.
+Common chunks include:</p>
+<ul>
+<li><strong>EXIF:</strong> Stores camera and capture details.</li>
+<li><strong>XMP:</strong> Stores extensive XML-based metadata.</li>
+<li><strong>ICCP:</strong> Stores color profiles.</li>
+</ul>
+<p>Attackers can write arbitrary binary or text data directly into these
+chunks without corrupting the underlying image display. Tools like
+ExifTool make it simple to inject JavaScript code (such as
+<code>&lt;script&gt;alert(1)&lt;/script&gt;</code>) or binary shellcode
+into standard tags like <code>ImageDescription</code> or
+<code>UserComment</code>.</p>
+<h3 id="the-difference-between-storage-and-execution">The Difference
+Between Storage and Execution</h3>
+<p>Storing an executable payload inside a WebP file is trivial, but
+executing it requires specific conditions:</p>
+<ol type="1">
+<li><strong>Lack of Self-Execution:</strong> Standard image viewers,
+operating systems, and web browsers treat WebP files strictly as
+graphical data. They do not automatically execute embedded strings as
+code during the rendering process.</li>
+<li><strong>Application-Level Exploits (XSS):</strong> If a web
+application extracts EXIF or XMP metadata from an uploaded WebP image
+and renders that metadata on a webpage without proper sanitization, any
+embedded JavaScript will execute in the user's browser, leading to
+Stored Cross-Site Scripting (XSS).</li>
+<li><strong>Parser and Buffer Overflow Vulnerabilities:</strong> Memory
+corruption vulnerabilities in image decoding libraries (like
+<code>libwebp</code>) can allow malformed data to overwrite system
+memory. If a threat actor carefully crafts an exploit within image
+headers or chunks, reading the image can trigger remote code execution
+(RCE).</li>
+<li><strong>Polyglots and Stagers:</strong> A WebP image can be
+constructed as a "polyglot"—a file valid in multiple formats
+simultaneously (e.g., both a valid WebP and a valid HTML or ZIP file).
+Attackers often use these files to bypass file-upload filters, later
+pointing an execution context (like a malicious script or an exploit
+elsewhere in the system) to the image to extract the hidden
+payload.</li>
+</ol>
+<h3 id="how-to-mitigate-webp-metadata-risks">How to Mitigate WebP
+Metadata Risks</h3>
+<p>Securing applications against malicious metadata involves standard
+defensive controls:</p>
+<ul>
+<li><strong>Strip Metadata:</strong> Strip all unnecessary metadata
+(EXIF, XMP, ICC) during the upload and processing pipeline using
+server-side re-encoding.</li>
+<li><strong>Sanitize Displayed Data:</strong> Treat all extracted
+metadata as untrusted user input; encode it properly before rendering it
+in web pages or administrative panels.</li>
+<li><strong>Update Parsers:</strong> Regularly update core decoding
+libraries (such as <code>libwebp</code>) to patch buffer overflow and
+memory corruption vulnerabilities.</li>
+<li><strong>Enforce Content-Type Headers:</strong> Serve uploaded images
+with strict <code>Content-Type: image/webp</code> headers and the
+<code>X-Content-Type-Options: nosniff</code> header to prevent browsers
+from interpreting image files as executable scripts.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

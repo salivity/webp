@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How WebP Reduces RGB Channel Correlation - webp</title>
+    <meta name="description" content="WebP achieves superior compression efficiency by eliminating inter-channel redundancy within standard RGB data through specialized color space transformations. While lossy WebP utilizes standard YCbCr color conversion to decouple luminance from chrominan">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-web-p-reduces-rgb-channel-correlation">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How WebP Reduces RGB Channel Correlation - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-web-p-reduces-rgb-channel-correlation" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP achieves superior compression efficiency by eliminating inter-channel redundancy within standard RGB data through specialized color space transformations. While lossy WebP utilizes standard YCbCr color conversion to decouple luminance from chrominan" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-webp-reduces-rgb-channel-correlation">How WebP Reduces RGB
+Channel Correlation</h1>
+<p>WebP achieves superior compression efficiency by eliminating
+inter-channel redundancy within standard RGB data through specialized
+color space transformations. While lossy WebP utilizes standard YCbCr
+color conversion to decouple luminance from chrominance, lossless WebP
+implements an advanced, reversible cross-color transform that
+dynamically predicts red and blue values using green as a reference
+baseline. This decorrelation minimizes the entropy of the color data,
+enabling higher compression ratios without sacrificing image
+fidelity.</p>
+<h2 id="the-problem-of-inter-channel-redundancy-in-rgb">The Problem of
+Inter-Channel Redundancy in RGB</h2>
+<p>In natural imagery, the Red, Green, and Blue channels exhibit high
+statistical correlation. For instance, when a pixel becomes brighter or
+darker, all three color components generally rise or fall together.
+Storing or compressing each channel independently introduces severe
+redundancy. To optimize data storage, an image codec must decouple these
+channels so that individual channel values can be represented with
+smaller residuals (differences from predicted values) before entropy
+coding.</p>
+<h2 id="lossy-webp-the-ycbcr-transform">Lossy WebP: The YCbCr
+Transform</h2>
+<p>Lossy WebP relies on the VP8 video codec framework, which addresses
+channel correlation by transforming the RGB color space into YCbCr
+(often loosely referred to as YUV).</p>
+<ol type="1">
+<li><strong>Luminance and Chrominance Separation</strong>: The transform
+maps RGB into one luminance component (<span
+class="math inline">\(Y\)</span>), which conveys brightness and fine
+detail, and two chrominance components (<span
+class="math inline">\(Cb\)</span> and <span
+class="math inline">\(Cr\)</span>), which capture blue-difference and
+red-difference color shifts.</li>
+<li><strong>Subsampling</strong>: Because the human eye is significantly
+more sensitive to fine variations in brightness than in color, lossy
+WebP employs 4:2:0 chroma subsampling. The <span
+class="math inline">\(Cb\)</span> and <span
+class="math inline">\(Cr\)</span> channels are downsampled to half
+resolution both horizontally and vertically, immediately reducing the
+uncompressed data footprint by 50% prior to discrete cosine transforms
+(DCT) and quantization.</li>
+</ol>
+<h2 id="lossless-webp-reversible-cross-color-transform">Lossless WebP:
+Reversible Cross-Color Transform</h2>
+<p>Lossless WebP (VP8L) cannot utilize lossy downsampling and must
+retain exact color accuracy. Instead, it employs a mathematically
+reversible cross-color transform directly on the RGB channels.</p>
+<h3 id="the-role-of-the-green-channel">The Role of the Green
+Channel</h3>
+<p>In the human visual spectrum and digital imaging, the green channel
+contains the highest amount of perceived luminance and structural
+detail. Lossless WebP exploits this by treating green as the primary
+reference channel:</p>
+<ul>
+<li><strong>Green (<span class="math inline">\(G\)</span>)</strong>
+remains untouched: <span class="math inline">\(G&#39; = G\)</span></li>
+<li><strong>Red (<span class="math inline">\(R\)</span>)</strong> is
+transformed based on the value of Green.</li>
+<li><strong>Blue (<span class="math inline">\(B\)</span>)</strong> is
+transformed based on both the value of Green and the transformed
+Red.</li>
+</ul>
+<h3 id="the-mathematical-transformation">The Mathematical
+Transformation</h3>
+<p>For each pixel, the transformed components <span
+class="math inline">\(R&#39;\)</span> and <span
+class="math inline">\(B&#39;\)</span> are calculated using linear
+combinations modulated by predefined transformation multipliers:</p>
+<p><span class="math display">\[R&#39; = (R - \lfloor (C_x \times
+G&#39;) / 32 \rfloor) \pmod{256}\]</span> <span
+class="math display">\[B&#39; = (B - \lfloor (C_y \times G&#39;) / 32
+\rfloor - \lfloor (C_z \times R&#39;) / 32 \rfloor)
+\pmod{256}\]</span></p>
+<p>Here, <span class="math inline">\(C_x\)</span>, <span
+class="math inline">\(C_y\)</span>, and <span
+class="math inline">\(C_z\)</span> are signed 8-bit integer coefficients
+scaled by a factor of 32. Because the operations use integer arithmetic
+with modulo 256 wraparound, the process is completely reversible during
+decoding:</p>
+<p><span class="math display">\[R = (R&#39; + \lfloor (C_x \times
+G&#39;) / 32 \rfloor) \pmod{256}\]</span> <span class="math display">\[B
+= (B&#39; + \lfloor (C_y \times G&#39;) / 32 \rfloor + \lfloor (C_z
+\times R&#39;) / 32 \rfloor) \pmod{256}\]</span></p>
+<h3 id="spatial-adaptation-via-sub-blocks">Spatial Adaptation via
+Sub-Blocks</h3>
+<p>Color correlation is rarely uniform across an entire image. A blue
+sky has different correlation properties than green foliage or human
+skin tones.</p>
+<p>To address spatial variance, WebP divides the image into a grid of
+sub-blocks (typically powers of two, such as <span
+class="math inline">\(16 \times 16\)</span> or <span
+class="math inline">\(32 \times 32\)</span> pixels). The encoder
+calculates the optimal transformation parameters (<span
+class="math inline">\(C_x, C_y, C_z\)</span>) independently for each
+block to minimize the variance of the residuals.</p>
+<p>These transformation parameters are themselves stored as an auxiliary
+image map. The decoder reads this parameter image first, identifies
+which coefficients apply to which block, and reverses the transformation
+to reconstruct the original RGB pixel data bit-for-bit.</p>
+<h2 id="impact-on-entropy-encoding">Impact on Entropy Encoding</h2>
+<p>By removing cross-channel correlation, the resulting <span
+class="math inline">\(R&#39;\)</span> and <span
+class="math inline">\(B&#39;\)</span> residuals cluster tightly around
+zero. When combined with WebP's spatial prediction, color indexing, and
+Huffman or LZ77 entropy encoding, these low-variance residuals require
+significantly fewer bits to store, directly contributing to WebP's
+compact file sizes compared to formats like PNG and JPEG.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

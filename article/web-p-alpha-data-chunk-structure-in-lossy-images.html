@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Alpha Data Chunk Structure in Lossy Images - webp</title>
+    <meta name="description" content="An alpha data chunk (ALPH) in a lossy WebP image provides transparency information for a lossy VP8 bitstream, which natively does not support an alpha channel. Stored inside an extended WebP container (VP8X), the ALPH chunk consists of a standard RIFF ch">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-alpha-data-chunk-structure-in-lossy-images">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Alpha Data Chunk Structure in Lossy Images - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-alpha-data-chunk-structure-in-lossy-images" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="An alpha data chunk (ALPH) in a lossy WebP image provides transparency information for a lossy VP8 bitstream, which natively does not support an alpha channel. Stored inside an extended WebP container (VP8X), the ALPH chunk consists of a standard RIFF ch" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-alpha-data-chunk-structure-in-lossy-images">WebP Alpha Data
+Chunk Structure in Lossy Images</h1>
+<p>An alpha data chunk (<code>ALPH</code>) in a lossy WebP image
+provides transparency information for a lossy VP8 bitstream, which
+natively does not support an alpha channel. Stored inside an extended
+WebP container (<code>VP8X</code>), the <code>ALPH</code> chunk consists
+of a standard RIFF chunk header, a one-byte configuration flag field,
+and the encoded alpha bitstream. This article details the specific byte
+layout, bit-level flags, filtering techniques, and compression
+mechanisms used within the <code>ALPH</code> chunk.</p>
+<h2 id="container-placement">Container Placement</h2>
+<p>In an extended WebP file, the presence of transparency alongside a
+lossy stream is indicated by setting the Alpha flag (bit 4) in the
+<code>VP8X</code> chunk. When present, the <code>ALPH</code> chunk must
+appear immediately before the <code>VP8 </code> (lossy bitstream)
+chunk.</p>
+<p>The outer layout follows standard RIFF conventions:</p>
+<ul>
+<li><strong>FourCC:</strong> 4 bytes containing the ASCII string
+<code>'ALPH'</code>.</li>
+<li><strong>Chunk Size:</strong> 4 bytes (32-bit unsigned integer,
+little-endian) representing the total size of the chunk payload in
+bytes, excluding the FourCC and size fields.</li>
+<li><strong>Payload:</strong> The 1-byte header followed by the alpha
+bitstream.</li>
+<li><strong>Padding:</strong> If the Chunk Size is odd, a single padding
+byte of <code>0x00</code> is appended to align the chunk to an even
+2-byte boundary (not counted in Chunk Size).</li>
+</ul>
+<h2 id="the-header-byte-flags">The Header Byte (Flags)</h2>
+<p>The first byte of the <code>ALPH</code> chunk payload defines how the
+subsequent alpha bitstream is processed, filtered, and compressed. It is
+partitioned into four 2-bit fields:</p>
+<h3 id="bits-01-compression-method">Bits 0–1: Compression Method</h3>
+<p>Specifies the compression algorithm used for the alpha payload:</p>
+<ul>
+<li><code>0</code>: No compression. The data contains raw alpha
+samples.</li>
+<li><code>1</code>: Compressed using the WebP lossless format
+(VP8L).</li>
+<li><code>2–3</code>: Reserved for future use (must be written as
+<code>0</code> and ignored by decoders).</li>
+</ul>
+<h3 id="bits-23-filtering-method">Bits 2–3: Filtering Method</h3>
+<p>Applies a spatial prediction filter to decorrelate alpha values
+before compression:</p>
+<ul>
+<li><code>0</code>: None.</li>
+<li><code>1</code>: Horizontal filter (predicts pixel value based on the
+pixel immediately to the left).</li>
+<li><code>2</code>: Vertical filter (predicts pixel value based on the
+pixel immediately above).</li>
+<li><code>3</code>: Gradient filter (predicts pixel value using a
+combination of left, top, and top-left neighbor values:
+<code>Clip(Left + Top - TopLeft)</code>).</li>
+</ul>
+<h3 id="bits-45-pre-processing">Bits 4–5: Pre-processing</h3>
+<p>Specifies optional pre-processing applied to the alpha channel to
+improve compression efficiency:</p>
+<ul>
+<li><code>0</code>: None.</li>
+<li><code>1</code>: Level reduction (quantizes alpha levels to reduce
+unique symbols).</li>
+<li><code>2–3</code>: Reserved (must be <code>0</code>).</li>
+</ul>
+<h3 id="bits-67-reserved">Bits 6–7: Reserved</h3>
+<p>These 2 bits are reserved and must be set to <code>0</code>.</p>
+<h2 id="alpha-bitstream-payload">Alpha Bitstream Payload</h2>
+<p>The remaining bytes of the <code>ALPH</code> chunk contain the alpha
+values for an image of dimensions <span class="math inline">\(W \times
+H\)</span>, as defined in the container or VP8 bitstream.</p>
+<h3 id="uncompressed-bitstream-method-0">Uncompressed Bitstream (Method
+0)</h3>
+<p>When the compression method is <code>0</code>, the payload contains
+raw 8-bit alpha samples in scanline order (row by row, left to right).
+The payload length equals <span class="math inline">\(W \times
+H\)</span> bytes (plus any applied filtering transformations).</p>
+<h3 id="compressed-bitstream-method-1">Compressed Bitstream (Method
+1)</h3>
+<p>When the compression method is <code>1</code>, the data is stored
+using a headless WebP lossless (VP8L) stream:</p>
+<ul>
+<li>The lossless stream does not contain the standard 5-byte VP8L
+signature header or dimension fields; dimensions are inferred from the
+parent image.</li>
+<li>The 8-bit alpha values are packed into the green channel of the VP8L
+bitstream, while the other color channels are ignored.</li>
+<li>The decoder reconstructs the green channel values, inverts any
+spatial filtering specified in bits 2–3, and maps the resulting data
+directly to the reconstructed lossy VP8 color canvas.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

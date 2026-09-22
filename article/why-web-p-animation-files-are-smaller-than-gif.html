@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why WebP Animation Files Are Smaller Than GIF - webp</title>
+    <meta name="description" content="WebP typically produces significantly smaller animation files than the legacy Graphics Interchange Format (GIF) due to its modern compression architecture, superior color handling, and support for both lossy and lossless encoding. While GIF relies on 198">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-web-p-animation-files-are-smaller-than-gif">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why WebP Animation Files Are Smaller Than GIF - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-web-p-animation-files-are-smaller-than-gif" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP typically produces significantly smaller animation files than the legacy Graphics Interchange Format (GIF) due to its modern compression architecture, superior color handling, and support for both lossy and lossless encoding. While GIF relies on 198" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-webp-animation-files-are-smaller-than-gif">Why WebP
+Animation Files Are Smaller Than GIF</h1>
+<p>WebP typically produces significantly smaller animation files than
+the legacy Graphics Interchange Format (GIF) due to its modern
+compression architecture, superior color handling, and support for both
+lossy and lossless encoding. While GIF relies on 1980s technology that
+struggles with complex visuals and motion, WebP leverages video-grade
+intra-frame prediction and efficient inter-frame difference tracking.
+This article examines the technical mechanisms that allow animated WebP
+to drastically reduce file sizes while maintaining or exceeding the
+visual quality of GIF.</p>
+<h3 id="advanced-compression-algorithms">Advanced Compression
+Algorithms</h3>
+<p>GIF relies exclusively on the Lempel-Ziv-Welch (LZW) algorithm, a
+lossless compression technique standardized in 1987. LZW operates by
+finding repeated byte patterns in a single stream of data, which works
+well for simple graphics with large flat areas of color, but fails to
+efficiently compress complex, moving imagery.</p>
+<p>Animated WebP uses modern compression technologies derived from the
+VP8 video codec (for lossy frames) and VP8L (for lossless frames). These
+algorithms employ spatial prediction, variable-sized transform blocks,
+and arithmetic entropy encoding. By predicting pixel values from
+neighboring blocks before encoding the remaining differences, WebP
+requires far fewer bits to represent the exact same visual
+information.</p>
+<h3 id="lossy-compression-support">Lossy Compression Support</h3>
+<p>A primary limitation of the GIF specification is that it only
+supports lossless encoding. Every pixel must be stored exactly as
+represented within its limited palette.</p>
+<p>WebP natively supports lossy compression for animations. By
+discarding high-frequency visual details that the human eye cannot
+easily detect, lossy WebP can shrink file sizes by 60% to 80% compared
+to GIF. This allows animated WebP to approach the data efficiency of
+modern video formats while retaining the plug-and-play behavior of
+traditional image formats.</p>
+<h3 id="color-depth-and-elimination-of-dithering">Color Depth and
+Elimination of Dithering</h3>
+<p>GIF is restricted to an 8-bit color palette, meaning an individual
+frame can only display up to 256 unique colors. To display
+continuous-tone images or gradients, GIF encoders must use dithering—a
+technique that scatters alternating colored pixels to create the
+illusion of a broader color range. Dithering introduces heavy visual
+noise, which disrupts repeating patterns and severely degrades LZW
+compression efficiency, resulting in inflated file sizes.</p>
+<p>WebP supports full 24-bit RGB color alongside an 8-bit alpha channel
+(transparency). Because WebP can represent millions of colors natively,
+it completely eliminates the need for dithering. The smooth color
+transitions compress far more efficiently than the noisy, high-contrast
+pixel clusters produced by GIF.</p>
+<h3 id="superior-inter-frame-temporal-compression">Superior Inter-Frame
+(Temporal) Compression</h3>
+<p>Animations consist of multiple consecutive frames, many of which
+share identical backgrounds or static elements. While GIF can define
+transparent regions to overlay only the changes between frames, its
+implementation is rigid and primitive.</p>
+<p>WebP uses advanced frame disposal and blending techniques borrowed
+from video codecs:</p>
+<ul>
+<li><strong>Sub-frame Updates:</strong> WebP can define rectangular
+sub-regions for frame updates, updating only the specific macroblocks
+that changed rather than processing full-canvas layers.</li>
+<li><strong>Alpha Blending:</strong> WebP allows fine-grained control
+over how new frames blend with previous ones, enabling partial updates
+with variable transparency without redrawing existing assets.</li>
+</ul>
+<h3 id="full-alpha-transparency">Full Alpha Transparency</h3>
+<p>GIF supports only binary transparency, meaning a pixel is either 100%
+opaque or 100% transparent. To blend edges smoothly against dynamic
+backgrounds, GIF exports often bake in a background color (matting) or
+dither the edges, which bloats the file.</p>
+<p>WebP supports true 8-bit alpha transparency, enabling 256 levels of
+opacity per pixel. This creates smooth, anti-aliased edges without the
+need to generate complex workarounds that inflate data size.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

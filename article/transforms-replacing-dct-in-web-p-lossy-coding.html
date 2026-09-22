@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transforms Replacing DCT in WebP Lossy Coding - webp</title>
+    <meta name="description" content="WebP lossy compression diverges from traditional JPEG architecture by replacing the classic 8x8 floating-point Discrete Cosine Transform (DCT) with smaller, integer-based mathematical operations inherited from the VP8 video codec. Instead of computing st">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/transforms-replacing-dct-in-web-p-lossy-coding">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Transforms Replacing DCT in WebP Lossy Coding - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/transforms-replacing-dct-in-web-p-lossy-coding" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP lossy compression diverges from traditional JPEG architecture by replacing the classic 8x8 floating-point Discrete Cosine Transform (DCT) with smaller, integer-based mathematical operations inherited from the VP8 video codec. Instead of computing st" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="transforms-replacing-dct-in-webp-lossy-coding">Transforms
+Replacing DCT in WebP Lossy Coding</h1>
+<p>WebP lossy compression diverges from traditional JPEG architecture by
+replacing the classic 8x8 floating-point Discrete Cosine Transform (DCT)
+with smaller, integer-based mathematical operations inherited from the
+VP8 video codec. Instead of computing standard continuous cosine
+functions, WebP relies on an integer-approximated 4x4 DCT alongside a
+secondary 4x4 Walsh-Hadamard Transform (WHT) for handling DC
+coefficients in macroblocks. This article details the mechanics of these
+two transforms, their mathematical underpinnings, and why they replace
+the conventional DCT in modern image compression.</p>
+<h3 id="the-4x4-integer-dct-approximation">The 4x4 Integer DCT
+Approximation</h3>
+<p>Standard JPEG uses an 8x8 block-based DCT that relies on
+floating-point arithmetic or complex scaling matrices. In contrast, WebP
+lossy compression breaks residual prediction blocks into smaller 4x4
+pixel matrices and processes them using a 4x4 integer approximation of
+the DCT.</p>
+<p>The core 1D forward transform kernel used in VP8 and WebP is an
+integer matrix approximation of the Type-II DCT, scaled to maintain
+precision using fixed-point integer math:</p>
+<p><span class="math display">\[\begin{bmatrix}
+a &amp; a &amp; a &amp; a \\
+b &amp; c &amp; -c &amp; -b \\
+a &amp; -a &amp; -a &amp; a \\
+c &amp; -b &amp; b &amp; -c
+\end{bmatrix}\]</span></p>
+<p>Where the integer coefficients are typically implemented as:</p>
+<ul>
+<li><span class="math inline">\(a = 23170\)</span> (approximating <span
+class="math inline">\(\cos(\pi/4) \times 2^{15}\)</span>)</li>
+<li><span class="math inline">\(b = 30274\)</span> (approximating <span
+class="math inline">\(\cos(\pi/8) \times 2^{15}\)</span>)</li>
+<li><span class="math inline">\(c = 12540\)</span> (approximating <span
+class="math inline">\(\sin(\pi/8) \times 2^{15}\)</span>)</li>
+</ul>
+<p>By applying this 1D kernel horizontally across the rows and
+vertically down the columns of a 4x4 residual block, WebP decorrelates
+spatial image data into frequency components without requiring any
+floating-point arithmetic.</p>
+<h3 id="the-4x4-walsh-hadamard-transform-wht">The 4x4 Walsh-Hadamard
+Transform (WHT)</h3>
+<p>When a WebP macroblock is encoded using 16x16 intra-prediction mode
+(applicable to the luminance channel), the macroblock is partitioned
+into sixteen individual 4x4 sub-blocks. Each of these sub-blocks
+produces a DC coefficient (the zero-frequency component representing the
+average block intensity).</p>
+<p>To eliminate redundancy between these adjacent DC components, WebP
+extracts the 16 DC values into a separate 4x4 matrix and subjects them
+to a secondary transform: the 4x4 Walsh-Hadamard Transform.</p>
+<p>The normalized 4x4 WHT matrix <span
+class="math inline">\(H_4\)</span> consists entirely of <span
+class="math inline">\(+1\)</span> and <span
+class="math inline">\(-1\)</span> entries:</p>
+<p><span class="math display">\[H_4 = \begin{bmatrix}
+1 &amp; 1 &amp; 1 &amp; 1 \\
+1 &amp; 1 &amp; -1 &amp; -1 \\
+1 &amp; -1 &amp; -1 &amp; 1 \\
+1 &amp; -1 &amp; 1 &amp; -1
+\end{bmatrix}\]</span></p>
+<p>The forward WHT is applied to the DC block before quantization:</p>
+<p><span class="math display">\[\text{Output} = (H_4 \times \text{DC}
+\times H_4 + 3) \gg 3\]</span></p>
+<p>Because the transform contains only <span
+class="math inline">\(+1\)</span> and <span
+class="math inline">\(-1\)</span>, it can be computed using only basic
+addition, subtraction, and bitwise shift operations, avoiding costly
+hardware multipliers entirely.</p>
+<h3 id="key-advantages-over-the-traditional-8x8-dct">Key Advantages Over
+the Traditional 8x8 DCT</h3>
+<ol type="1">
+<li><strong>Elimination of Floating-Point Drift:</strong> The classic
+JPEG DCT standard permits floating-point variations, leading to subtle
+decoding discrepancies between different CPU architectures. WebP's
+integer transform guarantees bit-exact output across all decoders.</li>
+<li><strong>Reduced Ringing Artifacts:</strong> The smaller 4x4 block
+footprint minimizes the high-frequency "ringing" noise commonly found
+along high-contrast edges in 8x8 DCT implementations.</li>
+<li><strong>Execution Speed:</strong> Operating on 4x4 blocks using
+16-bit integer math enables straightforward acceleration via SIMD
+(Single Instruction, Multiple Data) processor extensions like SSE and
+NEON.</li>
+</ol></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

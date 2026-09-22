@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serving WebP Backgrounds with CSS @supports or Modernizr - webp</title>
+    <meta name="description" content="Serving modern, lightweight WebP background images significantly improves webpage performance, but ensuring compatibility for environments that do not support the format requires a solid fallback strategy. While developers frequently turn to native CSS @">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/serving-web-p-backgrounds-with-css-supports-or-modernizr">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Serving WebP Backgrounds with CSS @supports or Modernizr - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/serving-web-p-backgrounds-with-css-supports-or-modernizr" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Serving modern, lightweight WebP background images significantly improves webpage performance, but ensuring compatibility for environments that do not support the format requires a solid fallback strategy. While developers frequently turn to native CSS @" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="serving-webp-backgrounds-with-css-supports-or-modernizr">Serving
+WebP Backgrounds with CSS @supports or Modernizr</h1>
+<p>Serving modern, lightweight WebP background images significantly
+improves webpage performance, but ensuring compatibility for
+environments that do not support the format requires a solid fallback
+strategy. While developers frequently turn to native CSS
+<code>@supports</code> rules or JavaScript-based Modernizr classes to
+handle this conditionally, each approach functions differently under the
+hood. This guide examines how both methods work to deliver WebP
+background images dynamically, highlighting their strengths,
+limitations, and practical implementation.</p>
+<h3 id="the-limitation-of-basic-css-supports">The Limitation of Basic
+CSS <code>@supports</code></h3>
+<p>A common misconception is that you can test WebP support using a
+straightforward CSS declaration such as:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">@supports</span> <span class="fu">(</span><span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;test.webp&quot;</span><span class="fu">))</span> {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.hero</span> {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;test.webp&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>This approach does not work as expected. The CSS
+<code>@supports</code> rule checks whether a browser parses the CSS
+<em>syntax</em> of a property and value, not whether the browser's
+rendering engine can decode the underlying image format. Because
+<code>url("test.webp")</code> is syntactically valid CSS in every modern
+browser, the rule evaluates to <code>true</code> even on browsers that
+cannot render WebP, breaking the fallback.</p>
+<h3 id="serving-webp-via-css-image-set">Serving WebP via CSS
+<code>image-set()</code></h3>
+<p>To conditionally load WebP backgrounds using pure CSS, you must use
+the <code>image-set()</code> function within
+<code>background-image</code>. The <code>image-set()</code> function
+allows you to specify the MIME type of an image, which browsers
+<em>do</em> evaluate before downloading:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.hero</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* Fallback for legacy browsers */</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;hero.jpg&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">/* Modern browsers negotiate the format */</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">image-set(</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">url(</span><span class="st">&quot;hero.webp&quot;</span><span class="fu">)</span> type<span class="fu">(</span><span class="st">&quot;image/webp&quot;</span><span class="fu">)</span><span class="op">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">url(</span><span class="st">&quot;hero.jpg&quot;</span><span class="fu">)</span> type<span class="fu">(</span><span class="st">&quot;image/jpeg&quot;</span><span class="fu">)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">)</span><span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>If a browser supports <code>image-set()</code> and the WebP format,
+it downloads the WebP version. If it does not support WebP, it defaults
+to the JPEG alternative. You can wrap this in an
+<code>@supports (background-image: image-set(...))</code> query if you
+need to isolate styles strictly for supporting browsers.</p>
+<h3 id="serving-webp-using-modernizr">Serving WebP Using Modernizr</h3>
+<p>Modernizr resolves the detection problem via client-side JavaScript.
+Instead of relying on CSS syntax parsing, Modernizr actively attempts to
+decode a base64-encoded WebP image in the browser.</p>
+<p>Upon completion of the test, Modernizr appends either a
+<code>webp</code> or <code>no-webp</code> class to the root
+<code>&lt;html&gt;</code> element. This enables precise styling directly
+through standard CSS cascading:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode css"><code class="sourceCode css"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* Default fallback */</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">.hero</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;hero.jpg&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">/* Applied only if WebP decode succeeds */</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>html<span class="fu">.webp</span> <span class="fu">.hero</span> {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-image</span><span class="ch">:</span> <span class="fu">url(</span><span class="st">&quot;hero.webp&quot;</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>This method is reliable across legacy browsers because it confirms
+actual decoding capabilities before applying the rule. However, it
+requires an external JavaScript execution step before the final
+background image can be requested, which can marginally delay the
+resource download compared to native CSS parsing.</p>
+<h3 id="which-approach-should-you-use">Which Approach Should You
+Use?</h3>
+<p>Modern browser support for WebP is virtually universal across all
+current major platforms, including modern versions of Chrome, Firefox,
+Safari, and Edge.</p>
+<ul>
+<li><strong>Use CSS <code>image-set()</code></strong> if your target
+audience uses modern browsers and you want a zero-JavaScript,
+non-render-blocking solution.</li>
+<li><strong>Use Modernizr</strong> if you must support older legacy
+browsers (such as Internet Explorer 11 or older Safari releases on
+macOS/iOS) where format negotiation is not supported natively via
+CSS.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

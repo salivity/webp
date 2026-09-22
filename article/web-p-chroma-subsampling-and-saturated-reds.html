@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Chroma Subsampling and Saturated Reds - webp</title>
+    <meta name="description" content="WebP manages compression efficiency through color space transformations that can impact high-frequency color detail, particularly with vibrant hues. While standard lossy WebP relies on 4:2:0 chroma subsampling—a mechanism notorious for causing pixelate">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-chroma-subsampling-and-saturated-reds">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Chroma Subsampling and Saturated Reds - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-chroma-subsampling-and-saturated-reds" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="WebP manages compression efficiency through color space transformations that can impact high-frequency color detail, particularly with vibrant hues. While standard lossy WebP relies on 4:2:0 chroma subsampling—a mechanism notorious for causing pixelate" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-chroma-subsampling-and-saturated-reds">WebP Chroma
+Subsampling and Saturated Reds</h1>
+<p>WebP manages compression efficiency through color space
+transformations that can impact high-frequency color detail,
+particularly with vibrant hues. While standard lossy WebP relies on
+4:2:0 chroma subsampling—a mechanism notorious for causing pixelated
+bleeding and haloing around high-contrast saturated reds—the format
+mitigates these artifacts using specialized techniques like the "Sharp
+YUV" conversion filter and lossless RGB encoding. This article breaks
+down why saturated red edges degrade under standard WebP compression and
+the specific algorithms the format uses to eliminate or reduce these
+artifacts.</p>
+<h3 id="the-problem-420-subsampling-on-red-boundaries">The Problem:
+4:2:0 Subsampling on Red Boundaries</h3>
+<p>Lossy WebP is based on the VP8 video codec, which operates natively
+in the YUV 4:2:0 color space. In this space, the image is split into one
+full-resolution luma (brightness, Y) channel and two chroma (color, U
+and V) channels that are downsampled by half both horizontally and
+vertically.</p>
+<p>The human visual system is far less sensitive to color detail than to
+brightness detail. However, this physiological assumption breaks down
+around saturated reds against dark or complementary (cyan, green)
+backgrounds. Saturated pure red has a relatively low luminance
+contribution compared to its chrominance intensity. When the chroma
+channel is downsampled using simple averaging filters (such as box
+filtering or bilinear downsampling), the boundary between the red object
+and its background is averaged across a <span class="math inline">\(2
+\times 2\)</span> pixel grid.</p>
+<p>During decoding, the chroma plane is upsampled back to full
+resolution. Because the luminance edge remains sharp while the chroma
+edge is blurred, the red color "bleeds" past the physical edge of the
+object, creating dark fringes, noticeable ringing, or pixelated
+stair-stepping.</p>
+<h3 id="the-lossy-mitigation-sharp-yuv-conversion">The Lossy Mitigation:
+Sharp YUV Conversion</h3>
+<p>To resolve red bleeding without abandoning the high compression
+ratios of 4:2:0, the official WebP encoder (<code>libwebp</code>)
+introduced an advanced preprocessing algorithm known as <strong>Sharp
+YUV</strong> (invoked via the <code>-sharp_yuv</code> flag).</p>
+<p>Standard RGB-to-YUV downsampling processes pixels independently:</p>
+<ol type="1">
+<li>Convert RGB pixels to full-resolution YUV.</li>
+<li>Downsample U and V channels using fixed mathematical averaging.</li>
+</ol>
+<p>This feedforward approach does not check how the downsampled chroma
+will actually look once reconstructed.</p>
+<p>In contrast, WebP's Sharp YUV uses an iterative, closed-loop
+optimization process:</p>
+<ol type="1">
+<li>It creates an initial downsampled chroma map.</li>
+<li>It immediately simulates the decoder's upsampling process back to
+the original resolution.</li>
+<li>It compares the reconstructed RGB image against the original RGB
+source to measure spatial error.</li>
+<li>It iteratively adjusts the downsampled U and V values to minimize
+the difference between the reconstructed color boundary and the original
+sharp boundary.</li>
+</ol>
+<p>By intentionally biasing the subsampled chroma values near edges,
+Sharp YUV compensates for the blur introduced during decoder upsampling.
+The resulting 4:2:0 lossy WebP image maintains clean, crisp boundaries
+on pure red text, logos, and high-contrast lines without increasing the
+file's dimensions or switching to an unsupported color profile.</p>
+<h3 id="the-absolute-solution-lossless-webp">The Absolute Solution:
+Lossless WebP</h3>
+<p>When artifacts cannot be tolerated—such as in pixel art, UI icons, or
+sharp vector graphics containing vibrant red elements—WebP bypasses
+chroma subsampling entirely through <strong>WebP Lossless</strong>.</p>
+<p>Lossless WebP does not convert images into YUV 4:2:0. Instead, it
+processes data in the native ARGB color space (equivalent to 4:4:4
+chroma sampling). Every individual pixel retains its full color
+resolution. The lossless format relies on spatial transformation
+algorithms, including:</p>
+<ul>
+<li><strong>Subtract Green Transform:</strong> Decorrelates red and blue
+values by subtracting the green channel from them, eliminating color
+redundancies without losing edge sharpness.</li>
+<li><strong>Spatial Predictors:</strong> Predicts pixel values using
+neighboring pixels, encoding only the difference (residual).</li>
+<li><strong>Color Indexing / Palette Transform:</strong> Identifies if
+only a few unique shades of red and background colors exist, mapping
+them directly to indexed values.</li>
+</ul>
+<p>Because no spatial downsampling occurs on the color planes, lossless
+WebP completely eliminates chroma bleeding, color fringing, and edge
+blur around saturated reds.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

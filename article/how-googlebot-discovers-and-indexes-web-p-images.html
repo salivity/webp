@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Googlebot Discovers and Indexes WebP Images - webp</title>
+    <meta name="description" content="Web crawlers like Googlebot discover and index WebP images through standard HTML parsing, headless browser rendering, XML image sitemaps, and HTTP content negotiation. Because WebP is natively supported by modern search engine crawlers, the indexing pipe">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-googlebot-discovers-and-indexes-web-p-images">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Googlebot Discovers and Indexes WebP Images - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-googlebot-discovers-and-indexes-web-p-images" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Web crawlers like Googlebot discover and index WebP images through standard HTML parsing, headless browser rendering, XML image sitemaps, and HTTP content negotiation. Because WebP is natively supported by modern search engine crawlers, the indexing pipe" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-googlebot-discovers-and-indexes-webp-images">How Googlebot
+Discovers and Indexes WebP Images</h1>
+<p>Web crawlers like Googlebot discover and index WebP images through
+standard HTML parsing, headless browser rendering, XML image sitemaps,
+and HTTP content negotiation. Because WebP is natively supported by
+modern search engine crawlers, the indexing pipeline for WebP files
+functions similarly to traditional formats like JPEG and PNG, provided
+the images are implemented using crawlable markup and accessible
+URLs.</p>
+<h3 id="standard-html-elements-and-responsive-markup">Standard HTML
+Elements and Responsive Markup</h3>
+<p>The primary way search crawlers find WebP images is by parsing the
+Document Object Model (DOM) for standard HTML tags.</p>
+<ul>
+<li><strong>The <code>&lt;img&gt;</code> Tag:</strong> When a WebP image
+is referenced directly via the <code>src</code> attribute (e.g.,
+<code>&lt;img src="image.webp" alt="Description"&gt;</code>), crawlers
+extract the URL during the initial HTML parsing phase. Googlebot also
+reads the <code>srcset</code> attribute to identify various responsive
+resolutions.</li>
+<li><strong>The <code>&lt;picture&gt;</code> Tag:</strong> To provide
+backward compatibility for older browsers, developers often wrap WebP
+images in <code>&lt;picture&gt;</code> elements with fallback formats.
+Googlebot supports the <code>&lt;picture&gt;</code> tag and evaluates
+the child <code>&lt;source&gt;</code> elements. It recognizes the
+<code>type="image/webp"</code> attribute and will crawl the specified
+<code>srcset</code> URL if it chooses to index the modern format.</li>
+</ul>
+<h3 id="javascript-rendering-and-lazy-loading">JavaScript Rendering and
+Lazy Loading</h3>
+<p>Googlebot uses a two-wave indexing system: an initial crawl of the
+raw HTML followed by a rendering phase using an evergreen Chromium-based
+Web Rendering Service (WRS).</p>
+<p>If WebP images are injected into the page via client-side JavaScript
+or dynamically updated frameworks, Googlebot discovers the image URLs
+once the rendering phase executes the scripts. For lazy-loaded WebP
+images, crawlers natively understand the standard
+<code>loading="lazy"</code> attribute. However, if custom JavaScript
+libraries are used for lazy loading, the implementation must rely on the
+Intersection Observer API or ensure the image URLs reside in fallback
+attributes (like <code>data-src</code>) that the script moves to
+<code>src</code> upon execution.</p>
+<h3 id="xml-image-sitemaps">XML Image Sitemaps</h3>
+<p>To ensure discovery of WebP images that might otherwise be
+missed—such as those loaded via complex scripts or deep within site
+architecture—webmasters declare them in XML sitemaps. By utilizing the
+Google image sitemap extension, you can explicitly point crawlers to the
+file:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">url</span>&gt;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">loc</span>&gt;https://example.com/page.html&lt;/<span class="kw">loc</span>&gt;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">image:image</span>&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">image:loc</span>&gt;https://example.com/images/photo.webp&lt;/<span class="kw">image:loc</span>&gt;</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">image:image</span>&gt;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">url</span>&gt;</span></code></pre></div>
+<p>Image sitemaps bypass DOM traversal constraints and provide Googlebot
+with a direct URL list, accelerating the discovery and re-crawling
+phases.</p>
+<h3 id="http-content-negotiation-and-the-accept-header">HTTP Content
+Negotiation and the Accept Header</h3>
+<p>Some web servers serve WebP images dynamically at the same URL as a
+JPEG or PNG depending on the user agent's capabilities. Googlebot sends
+an HTTP <code>Accept</code> header that explicitly includes
+<code>image/webp</code>.</p>
+<p>When a crawler requests a resource, the server checks the
+<code>Accept</code> header, serves the WebP variant, and returns a
+<code>Vary: Accept</code> HTTP response header. The
+<code>Vary: Accept</code> header is critical because it signals to
+Googlebot that the cached version of the content changes depending on
+the requester, preventing caching conflicts and ensuring the crawler
+correctly associates the WebP asset with the page.</p>
+<h3 id="indexation-criteria-and-search-visibility">Indexation Criteria
+and Search Visibility</h3>
+<p>Discovery does not guarantee indexation in Google Images. For a
+discovered WebP image to be indexed, it must meet Google's technical and
+quality criteria:</p>
+<ul>
+<li><strong>Crawlability:</strong> The image URL and the host page must
+not be blocked by <code>robots.txt</code> or restricted by
+<code>noindex</code> directives.</li>
+<li><strong>Contextual Relevance:</strong> Googlebot pairs the image
+with textual context derived from the page title, surrounding text,
+image captions, and the image's <code>alt</code> text attribute.</li>
+<li><strong>Structured Data:</strong> Incorporating schema markup, such
+as <code>ImageObject</code> or product schemas with embedded image URLs,
+helps Googlebot understand the context and license metadata of the WebP
+asset.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Canvas Decoding Polyfills in JavaScript - webp</title>
+    <meta name="description" content="Before WebP achieved universal browser adoption, developers relied on JavaScript-based polyfills to decode and display the format in non-supporting browsers such as Internet Explorer, older versions of Safari, and early Firefox releases. These solutions">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-canvas-decoding-polyfills-in-java-script">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Canvas Decoding Polyfills in JavaScript - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-canvas-decoding-polyfills-in-java-script" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Before WebP achieved universal browser adoption, developers relied on JavaScript-based polyfills to decode and display the format in non-supporting browsers such as Internet Explorer, older versions of Safari, and early Firefox releases. These solutions" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-canvas-decoding-polyfills-in-javascript">WebP Canvas
+Decoding Polyfills in JavaScript</h1>
+<p>Before WebP achieved universal browser adoption, developers relied on
+JavaScript-based polyfills to decode and display the format in
+non-supporting browsers such as Internet Explorer, older versions of
+Safari, and early Firefox releases. These solutions worked by fetching
+the binary WebP data, parsing the VP8 bitstream using JavaScript ports
+of native decoders, and rendering the resulting raw pixel data directly
+onto HTML5 <code>&lt;canvas&gt;</code> elements. This article examines
+the prominent historical libraries that implemented this technique and
+how their canvas-rendering pipelines functioned.</p>
+<h3 id="libwebp-via-emscripten">libwebp via Emscripten</h3>
+<p>The foundational technology behind most early canvas-based WebP
+polyfills was Google’s native reference library, <code>libwebp</code>,
+compiled into JavaScript using Emscripten. Because WebP is based on the
+VP8 video keyframe format, writing a performant decoder purely in
+hand-written JavaScript was impractical.</p>
+<p>By compiling the official C decoder into asm.js or raw JavaScript,
+developers could pass binary arrays directly into the compiled memory
+heap, execute the C-level decoding logic in the browser's JavaScript
+engine, and receive raw RGBA pixel arrays.</p>
+<h3 id="webpjs">webpjs</h3>
+<p>One of the earliest and most widespread turnkey implementations was
+<code>webpjs</code> (developed around 2011–2012 by Dominik Homberger).
+It packaged a lightweight, Emscripten-compiled VP8/WebP decoder into a
+drop-in script designed to handle DOM replacement automatically.</p>
+<p><code>webpjs</code> operated through the following steps:</p>
+<ol type="1">
+<li>Scanning the document for <code>&lt;img&gt;</code> elements or CSS
+background declarations referencing <code>.webp</code> files.</li>
+<li>Intercepting the source URL and requesting the file as binary data
+via <code>XMLHttpRequest</code> with
+<code>overrideMimeType('text/plain; charset=x-user-defined')</code> or
+<code>responseType = 'arraybuffer'</code>.</li>
+<li>Passing the binary payload to the compiled decoder to produce an
+unpacked array of RGBA bytes.</li>
+<li>Generating a hidden or replacement <code>&lt;canvas&gt;</code>
+element matching the image's dimensions.</li>
+<li>Painting the decoded bytes to the canvas context using
+<code>putImageData()</code>, or converting the canvas to an inline PNG
+Data URL (<code>canvas.toDataURL('image/png')</code>) to assign back to
+the image tag's <code>src</code> attribute.</li>
+</ol>
+<h3 id="webp-hero">webp-hero</h3>
+<p>In later years, prior to Apple's implementation of WebP in Safari 14,
+<code>webp-hero</code> emerged as the standard modern polyfill.
+Developed by Chase Moskal, <code>webp-hero</code> modernized the canvas
+polyfill approach by leveraging WebAssembly where supported, while
+providing a pure JavaScript asm.js fallback for older targets like
+Internet Explorer 11.</p>
+<p><code>webp-hero</code> offered an API (<code>WebpMachine</code>) that
+developers could invoke programmatically or apply globally across the
+DOM. It decoded WebP images through a WebAssembly build of
+<code>libwebp</code>, extracted the raw image buffer, drew the buffer to
+an in-memory canvas context, and replaced the original elements' sources
+with PNG object URLs or Data URIs.</p>
+<h3 id="the-standard-decoding-and-canvas-pipeline">The Standard Decoding
+and Canvas Pipeline</h3>
+<p>Regardless of the specific library used, the technical execution
+pattern for canvas-based WebP decoding remained consistent:</p>
+<ol type="1">
+<li><strong>Binary Ingestion:</strong> WebP assets were retrieved
+asynchronously using <code>fetch</code> or <code>XMLHttpRequest</code>
+with an <code>arraybuffer</code> response type.</li>
+<li><strong>Buffer Allocation:</strong> The array buffer was copied into
+the decoder’s memory space (often <code>Module.HEAPU8</code> in
+Emscripten environments).</li>
+<li><strong>Bitstream Decompression:</strong> The decoder's WebP
+decoding function (such as <code>WebPDecodeRGBA</code>) parsed the
+header, unpacked the VP8/VP8L payload, and returned a pointer to the
+decoded RGBA buffer along with the image's width and height.</li>
+<li><strong>Canvas Rasterization:</strong>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> canvas <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">createElement</span>(<span class="st">&#39;canvas&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>canvas<span class="op">.</span><span class="at">width</span> <span class="op">=</span> decodedWidth<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>canvas<span class="op">.</span><span class="at">height</span> <span class="op">=</span> decodedHeight<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> ctx <span class="op">=</span> canvas<span class="op">.</span><span class="fu">getContext</span>(<span class="st">&#39;2d&#39;</span>)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> imageData <span class="op">=</span> ctx<span class="op">.</span><span class="fu">createImageData</span>(decodedWidth<span class="op">,</span> decodedHeight)<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>imageData<span class="op">.</span><span class="at">data</span><span class="op">.</span><span class="fu">set</span>(<span class="kw">new</span> <span class="bu">Uint8ClampedArray</span>(decodedRgbaBuffer))<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>ctx<span class="op">.</span><span class="fu">putImageData</span>(imageData<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span>)<span class="op">;</span></span></code></pre></div></li>
+<li><strong>DOM Injection:</strong> The library replaced the target
+<code>&lt;img&gt;</code> element with the <code>&lt;canvas&gt;</code>
+node directly, or extracted a standard data URI via
+<code>canvas.toDataURL()</code> to preserve standard image tag
+semantics.</li>
+</ol>
+<h3 id="technical-limitations-and-retirement">Technical Limitations and
+Retirement</h3>
+<p>While functional, canvas decoding polyfills introduced noticeable CPU
+overhead and memory pressure, as decoding occurred entirely on the
+browser's main JavaScript thread. Frame rates could stutter during page
+load, and animated WebP files caused severe performance drops. As native
+support was finalized across Firefox (version 65), Edge (version 18),
+and Safari (version 14/iOS 14), these polyfills were phased out in favor
+of native HTML <code>&lt;picture&gt;</code> elements with progressive
+fallbacks.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

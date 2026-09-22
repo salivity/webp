@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Convert a WebP Blob to ImageBitmap - webp</title>
+    <meta name="description" content="Converting raw WebP binary Blobs into browser ImageBitmaps is primarily achieved through the native createImageBitmap() Web API. This article explains how to directly transform WebP Blob data into ready-to-render ImageBitmap objects, detailing the core A">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-to-convert-a-web-p-blob-to-image-bitmap">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Convert a WebP Blob to ImageBitmap - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-to-convert-a-web-p-blob-to-image-bitmap" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Converting raw WebP binary Blobs into browser ImageBitmaps is primarily achieved through the native createImageBitmap() Web API. This article explains how to directly transform WebP Blob data into ready-to-render ImageBitmap objects, detailing the core A" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-convert-a-webp-blob-to-imagebitmap">How to Convert a WebP
+Blob to ImageBitmap</h1>
+<p>Converting raw WebP binary Blobs into browser ImageBitmaps is
+primarily achieved through the native <code>createImageBitmap()</code>
+Web API. This article explains how to directly transform WebP Blob data
+into ready-to-render <code>ImageBitmap</code> objects, detailing the
+core API implementation, configuration options for pixel manipulation,
+and its integration within Web Workers for asynchronous off-thread
+decoding.</p>
+<h3 id="the-primary-api-createimagebitmap">The Primary API:
+<code>createImageBitmap()</code></h3>
+<p>The standard and most efficient Web API for this conversion is
+<code>createImageBitmap()</code>. Available on both the
+<code>window</code> and <code>WorkerGlobalScope</code> contexts, this
+function accepts a <code>Blob</code> directly as an argument, decodes
+the underlying image data (including modern formats like WebP), and
+resolves to an <code>ImageBitmap</code>.</p>
+<p>Because decoding happens asynchronously without blocking the main
+execution thread, it offers significant performance benefits over older
+DOM-based methods.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Assuming &#39;webpBlob&#39; is a Blob instance with type &#39;image/webp&#39;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">convertWebPToImageBitmap</span>(webpBlob) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> imageBitmap <span class="op">=</span> <span class="cf">await</span> <span class="fu">createImageBitmap</span>(webpBlob)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> imageBitmap<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">catch</span> (error) {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(<span class="st">&quot;Failed to decode WebP Blob:&quot;</span><span class="op">,</span> error)<span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">throw</span> error<span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="acquiring-the-webp-blob-via-the-fetch-api">Acquiring the WebP
+Blob via the Fetch API</h3>
+<p>To obtain the binary WebP data initially, the Fetch API provides a
+direct path to retrieve network resources as raw Blobs using the
+<code>Response.blob()</code> method:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">loadWebPImage</span>(url) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(url)<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> blob <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">blob</span>()<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="cf">await</span> <span class="fu">createImageBitmap</span>(blob)<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>If the WebP data originates from raw memory buffers (such as an
+<code>ArrayBuffer</code> from a WebSocket or IndexedDB), it can be
+converted into a Blob using the <code>Blob</code> constructor:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> webpBlob <span class="op">=</span> <span class="kw">new</span> <span class="bu">Blob</span>([arrayBuffer]<span class="op">,</span> { <span class="dt">type</span><span class="op">:</span> <span class="st">&#39;image/webp&#39;</span> })<span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> imageBitmap <span class="op">=</span> <span class="cf">await</span> <span class="fu">createImageBitmap</span>(webpBlob)<span class="op">;</span></span></code></pre></div>
+<h3 id="cropping-and-resizing-options">Cropping and Resizing
+Options</h3>
+<p>The <code>createImageBitmap()</code> API includes overload options
+that permit spatial transformations during decoding, saving the memory
+and overhead of allocating intermediate canvas elements.</p>
+<ol type="1">
+<li><p><strong>Cropping via Coordinates</strong>: Pass
+<code>sx, sy, sw, sh</code> to extract a specific region of the WebP
+image:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> croppedBitmap <span class="op">=</span> <span class="cf">await</span> <span class="fu">createImageBitmap</span>(webpBlob<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">100</span><span class="op">,</span> <span class="dv">100</span>)<span class="op">;</span></span></code></pre></div></li>
+<li><p><strong>Configuration Dictionary</strong>: Pass an
+<code>options</code> object to control resizing, orientation, and color
+space handling:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> resizedBitmap <span class="op">=</span> <span class="cf">await</span> <span class="fu">createImageBitmap</span>(webpBlob<span class="op">,</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">resizeWidth</span><span class="op">:</span> <span class="dv">300</span><span class="op">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">resizeHeight</span><span class="op">:</span> <span class="dv">200</span><span class="op">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">resizeQuality</span><span class="op">:</span> <span class="st">&#39;high&#39;</span><span class="op">,</span> <span class="co">// &#39;pixelated&#39; | &#39;low&#39; | &#39;medium&#39; | &#39;high&#39;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">imageOrientation</span><span class="op">:</span> <span class="st">&#39;from-image&#39;</span><span class="op">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">premultiplyAlpha</span><span class="op">:</span> <span class="st">&#39;default&#39;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div></li>
+</ol>
+<h3 id="web-worker-and-offscreencanvas-integration">Web Worker and
+OffscreenCanvas Integration</h3>
+<p>A primary advantage of <code>createImageBitmap()</code> is its
+compatibility with Web Workers. Because neither <code>Blob</code> nor
+<code>ImageBitmap</code> requires access to the DOM, entire image
+processing pipelines—fetching, decoding, and rendering to an
+<code>OffscreenCanvas</code>—can run entirely in the background, keeping
+the user interface smooth and responsive. Once created, an
+<code>ImageBitmap</code> can also be transferred across threads via
+<code>postMessage()</code> using structured cloning without copying
+memory.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

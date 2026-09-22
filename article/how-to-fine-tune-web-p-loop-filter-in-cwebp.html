@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Fine-Tune WebP Loop Filter in cwebp - webp</title>
+    <meta name="description" content="Yes, the WebP loop filter strength can be fine-tuned during the cwebp encoding process. The WebP format employs an internal deblocking loop filter to eliminate macroblock edge artifacts commonly introduced during lossy compression. By using specific comm">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-to-fine-tune-web-p-loop-filter-in-cwebp">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Fine-Tune WebP Loop Filter in cwebp - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-to-fine-tune-web-p-loop-filter-in-cwebp" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Yes, the WebP loop filter strength can be fine-tuned during the cwebp encoding process. The WebP format employs an internal deblocking loop filter to eliminate macroblock edge artifacts commonly introduced during lossy compression. By using specific comm" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-to-fine-tune-webp-loop-filter-in-cwebp">How to Fine-Tune
+WebP Loop Filter in cwebp</h1>
+<p>Yes, the WebP loop filter strength can be fine-tuned during the
+<code>cwebp</code> encoding process. The WebP format employs an internal
+deblocking loop filter to eliminate macroblock edge artifacts commonly
+introduced during lossy compression. By using specific command-line
+flags in Google's <code>cwebp</code> encoder, you can adjust the
+filter's strength, sharpness, and mode to strike the desired balance
+between edge retention and artifact suppression.</p>
+<h3 id="loop-filter-strength--f">Loop Filter Strength
+(<code>-f</code>)</h3>
+<p>The primary parameter for adjusting the deblocking filter is
+<code>-f &lt;int&gt;</code>, which defines the filter strength.</p>
+<ul>
+<li><strong>Range:</strong> Accepts integer values from <code>0</code>
+to <code>100</code>.</li>
+<li><strong>Behavior:</strong> A value of <code>0</code> turns the loop
+filter off completely, preserving all raw block boundaries and
+high-frequency noise. Setting the value toward <code>100</code> applies
+maximum smoothing, effectively blurring visible blocking artifacts at
+the expense of sharp texture detail.</li>
+<li><strong>Usage Example:</strong>
+<code>cwebp -q 75 -f 40 input.png -o output.webp</code></li>
+</ul>
+<h3 id="filter-sharpness--sharpness">Filter Sharpness
+(<code>-sharpness</code>)</h3>
+<p>To complement the filter strength, <code>cwebp</code> includes the
+<code>-sharpness &lt;int&gt;</code> flag to modify how the filtering
+algorithm treats transition boundaries.</p>
+<ul>
+<li><strong>Range:</strong> Accepts integer values from <code>0</code>
+to <code>7</code>.</li>
+<li><strong>Behavior:</strong> A setting of <code>0</code> creates the
+sharpest result by minimizing smoothing around defined edges, while
+<code>7</code> provides the least sharpness, creating a smoother
+transition across the entire image.</li>
+<li><strong>Usage Example:</strong>
+<code>cwebp -q 75 -f 30 -sharpness 2 input.png -o output.webp</code></li>
+</ul>
+<h3 id="filter-mode-selection--strong-and--nostrong">Filter Mode
+Selection (<code>-strong</code> and <code>-nostrong</code>)</h3>
+<p><code>cwebp</code> allows you to select between two filtering modes:
+simple and strong.</p>
+<ul>
+<li><strong><code>-strong</code> (Default):</strong> Applies advanced
+filtering that assesses image content to smooth block boundaries
+dynamically without distorting critical gradients.</li>
+<li><strong><code>-nostrong</code>:</strong> Reverts the encoder to a
+simpler, less aggressive deblocking filter. This mode lowers processing
+time and maintains slightly sharper edges, but it may leave visible grid
+artifacts at lower quality settings.</li>
+</ul>
+<h3 id="automatic-filtering--autofilter">Automatic Filtering
+(<code>-autofilter</code>)</h3>
+<p>If you prefer not to manually calibrate the filter strength across
+varying image content, you can use the <code>-autofilter</code>
+flag.</p>
+<ul>
+<li><strong>Behavior:</strong> When enabled, the encoder spends extra
+processing cycles during compression to analyze the image content and
+automatically find the optimal <code>-f</code> filter strength based on
+the target quality (<code>-q</code>).</li>
+<li><strong>Usage Example:</strong>
+<code>cwebp -q 80 -autofilter input.png -o output.webp</code></li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

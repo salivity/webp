@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why JPEG 2000 for Archives and WebP for the Web - webp</title>
+    <meta name="description" content="While JPEG 2000 and WebP were both developed to succeed the legacy JPEG format, they were engineered for fundamentally different objectives. WebP became the dominant web format because it prioritizes aggressive lossy compression, small file payloads, and">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/why-jpeg-2000-for-archives-and-web-p-for-the-web">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Why JPEG 2000 for Archives and WebP for the Web - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/why-jpeg-2000-for-archives-and-web-p-for-the-web" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While JPEG 2000 and WebP were both developed to succeed the legacy JPEG format, they were engineered for fundamentally different objectives. WebP became the dominant web format because it prioritizes aggressive lossy compression, small file payloads, and" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="why-jpeg-2000-for-archives-and-webp-for-the-web">Why JPEG 2000
+for Archives and WebP for the Web</h1>
+<p>While JPEG 2000 and WebP were both developed to succeed the legacy
+JPEG format, they were engineered for fundamentally different
+objectives. WebP became the dominant web format because it prioritizes
+aggressive lossy compression, small file payloads, and rapid decoding
+across consumer browsers. In contrast, JPEG 2000 secured its place as
+the global standard for archival repositories—such as national
+libraries, cultural institutions, and medical databases—due to its
+mathematically reversible lossless compression, high bit-depth support,
+multi-resolution scalability, and long-term data integrity.</p>
+<h3 id="core-differences-in-design-philosophy">Core Differences in
+Design Philosophy</h3>
+<p>JPEG 2000 was developed by the Joint Photographic Experts Group and
+finalized as an ISO standard (ISO/IEC 15444) in 2000. Its goal was
+uncompromising image quality, flexibility, and longevity for scientific,
+preservation, and industrial applications.</p>
+<p>WebP was introduced by Google in 2010 with a strictly practical goal:
+speed up the modern internet. Based on the VP8 video codec, WebP focuses
+on reducing image transfer sizes for web browsers without noticeable
+degradation on consumer-grade displays.</p>
+<h3 id="why-archival-repositories-rely-on-jpeg-2000">Why Archival
+Repositories Rely on JPEG 2000</h3>
+<ul>
+<li><strong>True Lossless Wavelet Compression:</strong> JPEG 2000
+utilizes Discrete Wavelet Transform (DWT). Unlike discrete cosine
+transform (DCT) which divides an image into distinct blocks, wavelets
+analyze the image as a continuous signal. Its reversible 5/3 filter
+offers mathematically true lossless compression, preserving master scan
+data down to the exact pixel value.</li>
+<li><strong>Resolution Scalability:</strong> A single JPEG 2000 file can
+be queried to yield varying resolutions and regions of interest without
+decompressing the entire file. This is crucial for protocols like IIIF
+(International Image Interoperability Framework), allowing users to pan
+and zoom through multi-gigabyte archival scans smoothly.</li>
+<li><strong>Bit Depth and Color Precision:</strong> Archives frequently
+process scans of physical artifacts, manuscripts, and artwork requiring
+16-bit color per channel, multi-band spectral data, and custom ICC color
+profiles. JPEG 2000 accommodates dynamic ranges up to 38 bits per
+component and arbitrary numbers of color channels.</li>
+<li><strong>Standardization and Stability:</strong> Institutional
+archives prioritize formats that are internationally standardized (ISO)
+and free from shifting corporate roadmaps.</li>
+</ul>
+<h3 id="why-webp-dominated-the-web">Why WebP Dominated the Web</h3>
+<ul>
+<li><strong>Computational Efficiency:</strong> JPEG 2000's complex
+wavelet mathematics require immense computational overhead to encode and
+decode. WebP was designed to decode quickly on low-powered mobile
+devices and desktops, reducing latency and conserving battery life.</li>
+<li><strong>Aggressive File Size Reduction:</strong> WebP delivers
+significantly smaller payloads than standard JPEG and PNG at typical
+web-viewing sizes (8-bit sRGB). Smaller files translate directly to
+faster page load speeds, reduced bandwidth costs, and improved search
+engine rankings.</li>
+<li><strong>Browser Integration:</strong> Native browser support
+determines web viability. Google integrated WebP directly into Chrome
+and the broader Chromium ecosystem. Over time, Edge, Firefox, and Safari
+adopted it natively. Conversely, JPEG 2000 never achieved universal
+native browser implementation, with Apple's Safari being the only major
+engine to maintain persistent support.</li>
+<li><strong>All-in-One Web Utility:</strong> WebP provided a unified
+solution for web developers by supporting lossy compression, lossless
+compression, and transparency (alpha channel), as well as animation,
+replacing both legacy JPEGs and PNGs in a single format.</li>
+</ul>
+<h3 id="preservation-vs-distribution">Preservation vs. Distribution</h3>
+<p>The divergence between JPEG 2000 and WebP represents the separation
+of preservation masters and access derivatives:</p>
+<ul>
+<li><strong>Preservation (JPEG 2000):</strong> Repositories prioritize
+the creation of high-fidelity, future-proof master files where storage
+cost and processing time are subordinate to fidelity and data
+integrity.</li>
+<li><strong>Distribution (WebP):</strong> Web platforms prioritize
+speed, network efficiency, and universal client compatibility, rendering
+visual perfection secondary to real-time performance.</li>
+</ul>
+<p>Consequently, modern preservation workflows often combine both
+standards: digitizing and archiving master collections as lossless JPEG
+2000 files, while dynamic imaging servers generate WebP files on the fly
+for fast public access on the web.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

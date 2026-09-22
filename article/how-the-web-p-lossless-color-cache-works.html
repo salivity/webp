@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How the WebP Lossless Color Cache Works - webp</title>
+    <meta name="description" content="The WebP lossless image format relies on several advanced encoding techniques to achieve superior compression ratios compared to traditional formats like PNG, with the color cache mechanism being one of its most critical components. This article explains">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-the-web-p-lossless-color-cache-works">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How the WebP Lossless Color Cache Works - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-the-web-p-lossless-color-cache-works" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The WebP lossless image format relies on several advanced encoding techniques to achieve superior compression ratios compared to traditional formats like PNG, with the color cache mechanism being one of its most critical components. This article explains" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-the-webp-lossless-color-cache-works">How the WebP Lossless
+Color Cache Works</h1>
+<p>The WebP lossless image format relies on several advanced encoding
+techniques to achieve superior compression ratios compared to
+traditional formats like PNG, with the color cache mechanism being one
+of its most critical components. This article explains how the dynamic
+color cache functions within WebP lossless compression, the mathematical
+hashing process it uses to track recently seen colors, and how
+referencing this cache directly reduces image file sizes.</p>
+<h3 id="the-purpose-of-the-color-cache">The Purpose of the Color
+Cache</h3>
+<p>In graphic assets, user interface elements, and illustrations,
+identical colors often repeat frequently across an image, but not always
+in continuous spatial sequences that standard run-length or
+dictionary-based algorithms (like LZ77) can easily capture.</p>
+<p>While indexed formats like GIF or 8-bit PNG use a fixed global
+palette, WebP lossless compression employs a dynamic, localized color
+cache. This mechanism allows the encoder to reference recently used
+colors with a very small index code, bypassing the need to repeatedly
+store full 32-bit ARGB values or search through large backward-reference
+windows.</p>
+<h3 id="how-the-cache-operates">How the Cache Operates</h3>
+<p>The color cache is a fixed-size array of recently observed ARGB pixel
+values. The size of the cache is always a power of two, defined by a
+parameter called <code>color_cache_bits</code>, which ranges from 1 to
+11. Consequently, the cache capacity ranges from 2 (<span
+class="math inline">\(2^1\)</span>) to 2,048 (<span
+class="math inline">\(2^{11}\)</span>) color entries.</p>
+<p>Unlike conventional Least Recently Used (LRU) caches that require
+complex pointer updates, WebP uses a deterministic hash lookup. When an
+ARGB color needs to be stored or retrieved, its slot in the cache is
+calculated using a multiplicative hashing function:</p>
+<p><span class="math display">\[\text{Index} = (0x1e35a7bd \times
+\text{ARGB}) \gg (32 - \text{color\_cache\_bits})\]</span></p>
+<p>Because the index calculation relies solely on the ARGB value itself,
+both the encoder and decoder can independently maintain identical cache
+states without exchanging index-mapping tables.</p>
+<h3 id="the-encoding-and-decoding-process">The Encoding and Decoding
+Process</h3>
+<p>During compression, the encoder processes pixels sequentially and
+evaluates the cache:</p>
+<ol type="1">
+<li><strong>Lookup:</strong> The encoder computes the hash index of the
+current pixel's ARGB value.</li>
+<li><strong>Comparison:</strong> If the color stored at that hash index
+matches the current pixel, a cache hit occurs.</li>
+<li><strong>Emission:</strong> Instead of emitting a literal ARGB value
+or an LZ77 distance/length pair, the encoder outputs an index token
+pointing directly to the cache slot.</li>
+<li><strong>Update:</strong> If there is a cache miss, the pixel is
+encoded via literals or backward references, and the new color is placed
+into the cache at its calculated hash index, overwriting any previous
+color stored in that slot.</li>
+</ol>
+<p>Because the decoder processes the stream in the exact same order, it
+applies the identical hash function and continuously updates its local
+cache alongside the encoder.</p>
+<h3 id="integration-with-entropy-coding">Integration with Entropy
+Coding</h3>
+<p>WebP lossless encodes literals, LZ77 copy lengths, and color cache
+indices into a single unified alphabet. The alphabet consists of:</p>
+<ul>
+<li>256 Green literal values</li>
+<li>Variable-length LZ77 copy codes</li>
+<li>Color cache codes (ranging from 0 up to <span
+class="math inline">\(2^{\text{color\_cache\_bits}} - 1\)</span>)</li>
+</ul>
+<p>By integrating cache indices directly into this single prefix-coded
+(Huffman) alphabet, the most frequently referenced cache slots receive
+the shortest bit-lengths, maximizing entropy coding efficiency.</p>
+<h3 id="advantages-of-the-mechanism">Advantages of the Mechanism</h3>
+<p>The dynamic color cache provides substantial compression advantages
+over traditional static palettes. It requires zero file overhead to
+transmit a predefined palette at the start of the file, adapts
+seamlessly to local color shifts throughout large images, and
+complements LZ77 compression by efficiently handling colors that
+reappear outside the backward-reference window.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

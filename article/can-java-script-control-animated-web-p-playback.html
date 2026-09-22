@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Can JavaScript Control Animated WebP Playback? - webp</title>
+    <meta name="description" content="Controlling animated WebP playback directly using standard JavaScript is not natively supported through default HTML image elements. However, by leveraging the HTML5 Canvas API alongside client-side WebP decoders, or by converting the asset into a modern">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/can-java-script-control-animated-web-p-playback">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Can JavaScript Control Animated WebP Playback? - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/can-java-script-control-animated-web-p-playback" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Controlling animated WebP playback directly using standard JavaScript is not natively supported through default HTML image elements. However, by leveraging the HTML5 Canvas API alongside client-side WebP decoders, or by converting the asset into a modern" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="can-javascript-control-animated-webp-playback">Can JavaScript
+Control Animated WebP Playback?</h1>
+<p>Controlling animated WebP playback directly using standard JavaScript
+is not natively supported through default HTML image elements. However,
+by leveraging the HTML5 Canvas API alongside client-side WebP decoders,
+or by converting the asset into a modern video container, developers can
+gain complete control to pause, rewind, and jump to specific frames.</p>
+<h3 id="the-native-image-limitation">The Native Image Limitation</h3>
+<p>When an animated WebP file is embedded on a webpage using an
+<code>&lt;img&gt;</code> tag or CSS <code>background-image</code>, the
+browser's rendering engine handles the animation loop automatically. The
+DOM provides no native methods, properties, or events—such as
+<code>.play()</code>, <code>.pause()</code>, or
+<code>.currentTime</code>—to interact with the timeline of an animated
+image format. As a result, standard image elements cannot be paused,
+reversed, or scrubbed.</p>
+<h3 id="the-solution-canvas-decoding">The Solution: Canvas Decoding</h3>
+<p>To manipulate individual frames with JavaScript, the WebP file must
+be decoded into memory frame-by-frame.</p>
+<ol type="1">
+<li><strong>Fetching the Binary Data:</strong> The WebP file is fetched
+as an <code>ArrayBuffer</code> using the <code>fetch()</code> API.</li>
+<li><strong>Demuxing and Decoding:</strong> A JavaScript or
+WebAssembly-based WebP parser (such as a compiled version of Google's
+<code>libwebp</code>) demuxes the file into its constituent frames,
+extracting image data and frame delay durations.</li>
+<li><strong>Canvas Rendering:</strong> Each frame is converted into an
+<code>ImageData</code> object or <code>ImageBitmap</code>. JavaScript
+can then draw the selected frame onto an HTML5
+<code>&lt;canvas&gt;</code> element using
+<code>context.drawImage()</code>.</li>
+</ol>
+<p>Once the frames are extracted into an array, you can implement full
+timeline control:</p>
+<ul>
+<li><strong>Pause:</strong> Cancel the active
+<code>requestAnimationFrame</code> loop.</li>
+<li><strong>Jump to Frame:</strong> Render the exact array index
+representing that frame onto the canvas.</li>
+<li><strong>Rewind:</strong> Decrement the frame index on each tick
+instead of incrementing it.</li>
+</ul>
+<h3 id="the-recommended-alternative-html5-video">The Recommended
+Alternative: HTML5 Video</h3>
+<p>If your project does not strictly require the WebP format, converting
+the animation to a modern video format such as WebM or MP4 is often the
+better approach. The standard HTML5 <code>&lt;video&gt;</code> element
+natively provides robust playback controls out of the box without the
+performance overhead of custom JavaScript decoders:</p>
+<ul>
+<li><strong>Pause:</strong> <code>videoElement.pause()</code></li>
+<li><strong>Seek / Jump:</strong>
+<code>videoElement.currentTime = targetTimeInSeconds</code></li>
+<li><strong>Reverse:</strong> Decrement <code>currentTime</code> via a
+loop or change <code>playbackRate</code> where supported.</li>
+</ul>
+<p>HTML5 video also benefits from hardware acceleration, smaller file
+sizes, and significantly lower CPU and memory consumption compared to
+parsing image frames in JavaScript.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

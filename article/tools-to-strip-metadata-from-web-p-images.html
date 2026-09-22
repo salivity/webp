@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools to Strip Metadata from WebP Images - webp</title>
+    <meta name="description" content="Production WebP files often carry extraneous metadata chunks—such as EXIF camera data, XMP management data, and embedded ICC color profiles—that inflate asset payloads without contributing to image rendering. Stripping this non-visual data optimizes">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/tools-to-strip-metadata-from-web-p-images">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tools to Strip Metadata from WebP Images - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/tools-to-strip-metadata-from-web-p-images" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Production WebP files often carry extraneous metadata chunks—such as EXIF camera data, XMP management data, and embedded ICC color profiles—that inflate asset payloads without contributing to image rendering. Stripping this non-visual data optimizes" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="tools-to-strip-metadata-from-webp-images">Tools to Strip
+Metadata from WebP Images</h1>
+<p>Production WebP files often carry extraneous metadata chunks—such as
+EXIF camera data, XMP management data, and embedded ICC color
+profiles—that inflate asset payloads without contributing to image
+rendering. Stripping this non-visual data optimizes delivery speeds and
+minimizes bandwidth consumption in web environments. The following tools
+represent the most reliable and efficient methods for removing these
+chunks in production workflows.</p>
+<h3 id="1-webpmux-libwebp">1. webpmux (libwebp)</h3>
+<p>Maintained directly by Google as part of the official
+<code>libwebp</code> repository, <code>webpmux</code> is the definitive
+low-level utility for reading, adding, and stripping WebP chunks. Unlike
+general image transcoders, it operates directly on the container
+structure without re-encoding pixel data, ensuring 100% fidelity with
+zero quality degradation.</p>
+<p>To strip color profiles and metadata:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">webpmux</span> <span class="at">-strip</span> icc <span class="at">-strip</span> exif <span class="at">-strip</span> xmp input.webp <span class="at">-o</span> output.webp</span></code></pre></div>
+<p>Because it bypasses the pixel decode-encode pipeline,
+<code>webpmux</code> executes almost instantaneously, making it the
+ideal candidate for continuous integration (CI) and build-time asset
+pipelines.</p>
+<h3 id="2-cwebp-libwebp">2. cwebp (libwebp)</h3>
+<p>If WebP files are generated from source formats (such as JPEG or PNG)
+during production builds, metadata should be stripped at the point of
+encoding using <code>cwebp</code>. By default, <code>cwebp</code>
+excludes most metadata unless explicitly commanded to retain it, but you
+can explicitly enforce this behavior.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cwebp</span> <span class="at">-metadata</span> none input.png <span class="at">-o</span> output.webp</span></code></pre></div>
+<p>The <code>-metadata none</code> flag guarantees that no EXIF, XMP, or
+ICC chunks are written into the final <code>.webp</code> file.</p>
+<h3 id="3-exiftool">3. ExifTool</h3>
+<p>Phil Harvey's <code>ExifTool</code> is an industry-standard Perl
+utility for reading, writing, and manipulating metadata across hundreds
+of file formats, including WebP. It can purge all metadata chunks
+in-place while keeping the core RIFF container and VP8/VP8L bitstream
+intact.</p>
+<p>To strip all metadata from a WebP image:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">exiftool</span> <span class="at">-all</span><span class="op">=</span> <span class="at">-overwrite_original</span> image.webp</span></code></pre></div>
+<p>To batch-process an entire directory:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">exiftool</span> <span class="at">-all</span><span class="op">=</span> <span class="at">-r</span> <span class="at">-ext</span> webp <span class="at">-overwrite_original</span> ./images/</span></code></pre></div>
+<h3 id="4-imagemagick">4. ImageMagick</h3>
+<p>ImageMagick provides the <code>-strip</code> operator, which purges
+all profiles, comments, and ancillary metadata segments. This approach
+fits well into existing automated image delivery microservices.</p>
+<p>Using <code>magick</code> (ImageMagick 7):</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">magick</span> input.webp <span class="at">-strip</span> output.webp</span></code></pre></div>
+<p>To modify files in place across an entire directory:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mogrify</span> <span class="at">-strip</span> <span class="pp">*</span>.webp</span></code></pre></div>
+<p><em>Note: Depending on configuration and flags, standard ImageMagick
+conversions may re-encode the pixel stream. Ensure that compression
+flags (such as <code>-quality 100</code> or
+<code>-define webp:lossless=true</code>) match your asset requirements
+to prevent generational compression loss.</em></p>
+<h3 id="5-libvips">5. libvips</h3>
+<p><code>libvips</code> is an image-processing library optimized for
+high throughput and low memory footprint, outperforming traditional
+tools in real-time server environments. It natively supports stripping
+metadata during operations via CLI or bindings (such as
+<code>sharp</code> for Node.js or <code>pyvips</code> for Python).</p>
+<p>Using the CLI:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vips</span> webpsave input.webp output.webp <span class="at">--strip</span></span></code></pre></div>
+<p>Using Node.js (<code>sharp</code>):</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> sharp <span class="op">=</span> <span class="pp">require</span>(<span class="st">&#39;sharp&#39;</span>)<span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">await</span> <span class="fu">sharp</span>(<span class="st">&#39;input.webp&#39;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">webp</span>({ <span class="dt">effort</span><span class="op">:</span> <span class="dv">6</span> })</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">toFile</span>(<span class="st">&#39;output.webp&#39;</span>)<span class="op">;</span> <span class="co">// sharp automatically strips metadata unless .withMetadata() is called</span></span></code></pre></div></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP vs AVIF Compression Efficiency - webp</title>
+    <meta name="description" content="This article examines the compression efficiency of WebP compared to newer image formats, focusing primarily on AVIF. While WebP served as a significant upgrade over legacy formats like JPEG and PNG, modern formats like AVIF provide substantially better">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-vs-avif-compression-efficiency">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP vs AVIF Compression Efficiency - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-vs-avif-compression-efficiency" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the compression efficiency of WebP compared to newer image formats, focusing primarily on AVIF. While WebP served as a significant upgrade over legacy formats like JPEG and PNG, modern formats like AVIF provide substantially better" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-vs-avif-compression-efficiency">WebP vs AVIF Compression
+Efficiency</h1>
+<p>This article examines the compression efficiency of WebP compared to
+newer image formats, focusing primarily on AVIF. While WebP served as a
+significant upgrade over legacy formats like JPEG and PNG, modern
+formats like AVIF provide substantially better data reduction and image
+fidelity. Below is a direct comparison of how WebP stacks up against
+AVIF in terms of file size savings, visual quality at low bitrates,
+feature support, and performance trade-offs.</p>
+<h2 id="compression-performance-webp-vs-avif">Compression Performance:
+WebP vs. AVIF</h2>
+<p>AVIF consistently outperforms WebP in compression efficiency. Based
+on the AV1 video codec, AVIF generally produces files that are 20% to
+50% smaller than WebP at equivalent visual quality. While WebP
+represented an average 25% to 35% reduction over traditional JPEGs, AVIF
+pushes those boundaries further, making it the superior format for
+reducing page payload and bandwidth consumption.</p>
+<h2 id="image-quality-at-low-bitrates">Image Quality at Low
+Bitrates</h2>
+<p>The difference in efficiency becomes most apparent when images are
+compressed aggressively to achieve minimal file sizes:</p>
+<ul>
+<li><strong>WebP Artifacts:</strong> At low bitrates, WebP tends to
+introduce noticeable blurriness, loss of fine texture, and occasional
+color banding in subtle gradients.</li>
+<li><strong>AVIF Artifacts:</strong> AVIF retains structural details
+much better under heavy compression. Instead of blocky artifacts or
+aggressive blurring, it tends to slightly smooth out fine noise,
+resulting in an image that looks sharper and more natural to the human
+eye.</li>
+</ul>
+<h2 id="color-depth-and-dynamic-range">Color Depth and Dynamic
+Range</h2>
+<p>WebP is fundamentally restricted by its underlying VP8 architecture,
+limiting it to an 8-bit color depth. This limitation often causes
+visible banding in high-contrast gradients and skies.</p>
+<p>AVIF supports 10-bit and 12-bit color depths along with High Dynamic
+Range (HDR) and wide color gamuts (such as DCI-P3 and Rec. 2020). This
+allows AVIF to deliver smoother tonal transitions and superior fidelity
+without an exponential increase in file size.</p>
+<h2 id="encoding-and-decoding-speed">Encoding and Decoding Speed</h2>
+<p>While AVIF wins in file size efficiency, WebP holds an advantage in
+processing speed:</p>
+<ul>
+<li><strong>WebP:</strong> Highly mature, with extremely fast encoding
+and decoding speeds. It requires minimal CPU usage, making it efficient
+for on-the-fly image optimization on servers.</li>
+<li><strong>AVIF:</strong> Highly complex compression algorithms mean
+encoding times are substantially slower than WebP. While modern hardware
+decoding is improving on client devices, software-based AVIF decoding
+can still consume more CPU resources and battery power on older mobile
+devices.</li>
+</ul>
+<h2 id="practical-adoption">Practical Adoption</h2>
+<p>Both WebP and AVIF enjoy widespread support across modern web
+browsers. However, because of AVIF's higher computational demand during
+compression, many web architectures utilize a tiered approach: AVIF is
+delivered to compatible browsers where maximum data savings are
+critical, with WebP serving as an efficient, lightweight fallback before
+defaulting to standard JPEG or PNG.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Progressive Scan and Perceived Loading Speeds - webp</title>
+    <meta name="description" content="While the WebP image format provides superior compression and smaller file sizes compared to legacy formats, its lack of progressive scan capabilities often creates the illusion of slower load times. Although WebP files typically download faster in absol">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-progressive-scan-and-perceived-loading-speeds">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Progressive Scan and Perceived Loading Speeds - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-progressive-scan-and-perceived-loading-speeds" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="While the WebP image format provides superior compression and smaller file sizes compared to legacy formats, its lack of progressive scan capabilities often creates the illusion of slower load times. Although WebP files typically download faster in absol" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-progressive-scan-and-perceived-loading-speeds">WebP
+Progressive Scan and Perceived Loading Speeds</h1>
+<p>While the WebP image format provides superior compression and smaller
+file sizes compared to legacy formats, its lack of progressive scan
+capabilities often creates the illusion of slower load times. Although
+WebP files typically download faster in absolute terms, the sequential
+manner in which they render deprives users of immediate visual feedback.
+This article explores how image decoding mechanisms work, the divergence
+between actual and perceived performance, and why the omission of
+progressive rendering in WebP impacts user experience on the modern
+web.</p>
+<h3 id="progressive-vs-sequential-image-rendering">Progressive vs.
+Sequential Image Rendering</h3>
+<p>To understand the impact on perceived speed, one must distinguish
+between sequential and progressive image rendering:</p>
+<ul>
+<li><strong>Sequential (Baseline) Rendering:</strong> The browser reads
+the image data from top to bottom. If the network is slow or the file is
+large, the viewer sees the top slice of the image, followed gradually by
+the rest, line by line. Until the data finishes transferring, the bottom
+portion remains entirely blank.</li>
+<li><strong>Progressive Rendering:</strong> The file is structured in
+multiple passes. The browser first renders a low-resolution, blurry
+version of the entire image using a fraction of the total data. As the
+remaining data arrives, the image progressively sharpens until it
+reaches full fidelity.</li>
+</ul>
+<p>Formats like Progressive JPEG rely on this multi-pass approach,
+giving users an immediate visual representation of the final layout.</p>
+<h3 id="why-webp-lacks-native-progressive-decoding">Why WebP Lacks
+Native Progressive Decoding</h3>
+<p>WebP was developed using the VP8 video codec's intra-frame encoding
+algorithms. Because VP8 processes frames via macroblocks in a standard
+raster-scan order (from top-left to bottom-right), the resulting WebP
+format natively inherits this linear structure.</p>
+<p>Unlike JPEG, which natively supports spectral selection and
+successive approximation to spread data across multiple visual scans,
+WebP decodes sequentially. Consequently, a standard lossy WebP image
+cannot progressively resolve from a rough draft to a sharp image without
+external workarounds.</p>
+<h3 id="the-psychology-of-perceived-loading-speed">The Psychology of
+Perceived Loading Speed</h3>
+<p>Perceived performance is determined by how quickly a user feels a
+page has loaded, rather than the raw network timestamps (such as Time to
+First Byte or total download completion).</p>
+<p>Human perception relies heavily on visual stability and immediate
+feedback:</p>
+<ol type="1">
+<li><strong>Immediate Context:</strong> A blurry, progressive preview
+instantly communicates what the content is—whether it is a person, a
+product, or a landscape. The user’s brain fills in the missing details,
+making the wait time feel negligible.</li>
+<li><strong>Layout Comprehension:</strong> Seeing the full outline of an
+image confirms that the layout has settled, reducing cognitive
+friction.</li>
+<li><strong>Active vs. Passive Waiting:</strong> Watching an image
+slowly crawl down the screen pixel by pixel (sequential) draws attention
+to the delay, creating a passive waiting state. Conversely, watching an
+image pop in and sharpen (progressive) feels active and
+instantaneous.</li>
+</ol>
+<p>Because WebP lacks this behavior, a WebP image that downloads in 300
+milliseconds may actually feel slower to an end-user than a progressive
+JPEG that downloads in 400 milliseconds, simply because the JPEG
+provided a complete visual frame within the first 100 milliseconds.</p>
+<h3 id="the-consequences-for-core-web-vitals-and-user-experience">The
+Consequences for Core Web Vitals and User Experience</h3>
+<p>The absence of progressive decoding in WebP introduces specific
+design and UX hurdles:</p>
+<ul>
+<li><strong>Largest Contentful Paint (LCP):</strong> LCP measures when
+the largest visual element becomes visible. While WebP's smaller payload
+helps reduce network delivery time, the rendering phase remains an
+all-or-nothing or line-by-line event. Users stare at an empty container
+longer than they would with an interlaced or progressive format.</li>
+<li><strong>Perceived Jitter and Blank Spaces:</strong> Without
+progressive passes, developers must implement custom Low-Quality Image
+Placeholders (LQIP) or CSS blur-up techniques via JavaScript to achieve
+the same smooth experience that older formats offered natively.</li>
+</ul>
+<h3 id="modern-formats-and-the-path-forward">Modern Formats and the Path
+Forward</h3>
+<p>Web performance engineers increasingly weigh WebP's raw byte savings
+against the perceptual benefits of newer formats:</p>
+<ul>
+<li><strong>AVIF:</strong> Offers significantly better compression than
+WebP and supports limited progressive decoding modes.</li>
+<li><strong>JPEG XL:</strong> Designed with progressive decoding as a
+core architecture feature, allowing images to become recognizable at a
+fraction of their total file size while outperforming WebP in
+compression efficiency.</li>
+</ul>
+<p>Until newer formats achieve universal adoption, the trade-off with
+WebP remains clear: it optimizes bandwidth consumption and total
+transfer time, but sacrifices the psychological advantages of
+progressive rendering.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

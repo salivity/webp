@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How cwebp Handles Near-Lossless Parameters - webp</title>
+    <meta name="description" content="The cwebp command-line utility provides the -nearlossless parameter to balance the superior compression ratios of lossy encoding with the pixel precision of lossless formats. This article covers how cwebp interprets this parameter, the underlying spatial">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-cwebp-handles-near-lossless-parameters">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How cwebp Handles Near-Lossless Parameters - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-cwebp-handles-near-lossless-parameters" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The cwebp command-line utility provides the -nearlossless parameter to balance the superior compression ratios of lossy encoding with the pixel precision of lossless formats. This article covers how cwebp interprets this parameter, the underlying spatial" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-cwebp-handles-near-lossless-parameters">How cwebp Handles
+Near-Lossless Parameters</h1>
+<p>The <code>cwebp</code> command-line utility provides the
+<code>-near_lossless</code> parameter to balance the superior
+compression ratios of lossy encoding with the pixel precision of
+lossless formats. This article covers how <code>cwebp</code> interprets
+this parameter, the underlying spatial preprocessing algorithms applied
+to image data, the numerical range of the setting, and how it interacts
+with other encoding flags to optimize image file sizes.</p>
+<p>The <code>-near_lossless</code> feature is an extension of WebP’s
+lossless encoding engine (VP8L). Rather than discarding high-frequency
+information through transform coding as traditional lossy compression
+does, near-lossless mode subtly adjusts the RGB values of pixels before
+feeding them into the standard lossless compression pipeline. The goal
+is to modify pixel values just enough to maximize pattern repetition and
+spatial predictability without introducing visible artifacts.</p>
+<p>The parameter accepts an integer value ranging from <code>0</code> to
+<code>100</code>:</p>
+<ul>
+<li><strong>100:</strong> Disables all preprocessing. The image is
+compressed using standard, bit-exact WebP lossless compression.</li>
+<li><strong>0:</strong> Applies the maximum degree of pixel alteration,
+resulting in the smallest file size at the cost of noticeable image
+smoothing or color shifts.</li>
+<li><strong>Values between 1 and 99:</strong> Gradually scale the
+allowable difference between the original pixel values and the
+preprocessed values. Practical implementations typically use values
+between <code>60</code> and <code>80</code> to achieve significant file
+size reductions while retaining near-perfect visual fidelity.</li>
+</ul>
+<p>At the algorithmic level, <code>cwebp</code> analyzes spatial
+predictors—such as left, top, and cross-color predictors—across
+neighboring pixels. If a slight shift in a pixel's value allows it to
+match a predicted value or repeat an existing pattern,
+<code>cwebp</code> alters that pixel, provided the change remains within
+a threshold determined by the parameter setting. This preprocessing
+dramatically increases the efficiency of the subsequent LZ77 dictionary
+matching and entropy coding (Huffman or canonical) stages of VP8L.</p>
+<p>When using <code>-near_lossless</code>, the standard quality
+parameter <code>-q</code> changes its typical role. Instead of
+controlling visual lossiness, <code>-q</code> dictates the algorithmic
+effort and CPU time spent searching for optimal predictions and
+dictionary matches. The visual distortion is governed strictly by the
+value passed to <code>-near_lossless</code>. Consequently, command
+syntax such as
+<code>cwebp -near_lossless 70 -q 100 input.png -o output.webp</code>
+produces maximum compression efficiency at a moderate level of
+preprocessing.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP Lossless Color Indexing Transform Explained - webp</title>
+    <meta name="description" content="The color indexing transform is a crucial preprocessing step in WebP lossless compression designed to drastically reduce file sizes for images containing a limited set of unique colors. By identifying images with small color palettes—such as icons, cha">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/web-p-lossless-color-indexing-transform-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="WebP Lossless Color Indexing Transform Explained - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/web-p-lossless-color-indexing-transform-explained" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The color indexing transform is a crucial preprocessing step in WebP lossless compression designed to drastically reduce file sizes for images containing a limited set of unique colors. By identifying images with small color palettes—such as icons, cha" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="webp-lossless-color-indexing-transform-explained">WebP Lossless
+Color Indexing Transform Explained</h1>
+<p>The color indexing transform is a crucial preprocessing step in WebP
+lossless compression designed to drastically reduce file sizes for
+images containing a limited set of unique colors. By identifying images
+with small color palettes—such as icons, charts, and flat graphics—the
+WebP encoder replaces heavy 32-bit ARGB pixel representations with
+lightweight index references to a compact palette. This article breaks
+down how the color indexing transform works, how it reduces data
+entropy, and why it is essential to the performance of lossless WebP
+files.</p>
+<h3 id="the-role-of-color-indexing-in-webp-lossless">The Role of Color
+Indexing in WebP Lossless</h3>
+<p>During lossless compression, WebP utilizes four distinct image
+transforms to remove data redundancy before final entropy encoding:</p>
+<ol type="1">
+<li>Predictor transform</li>
+<li>Cross-color transform</li>
+<li>Subtract green transform</li>
+<li><strong>Color indexing transform</strong></li>
+</ol>
+<p>The color indexing transform specifically targets palette-based
+imagery. Instead of treating every pixel as a continuous combination of
+Alpha, Red, Green, and Blue channels, the encoder checks whether the
+entire image contains 256 or fewer unique ARGB values. If it does, using
+a color index table provides a much more compact representation than
+storing full color channels.</p>
+<h3 id="how-the-transform-works">How the Transform Works</h3>
+<p>The transform operates through a structured process during the
+encoding stage:</p>
+<ol type="1">
+<li><strong>Palette Creation</strong>: The encoder scans the image to
+count all unique ARGB values. If the count is 256 or fewer, the encoder
+compiles these colors into an indexed array called the color
+palette.</li>
+<li><strong>Pixel Substitution</strong>: The original 32-bit ARGB values
+at each pixel coordinate are substituted with the corresponding index
+from the palette (e.g., color <code>0xFFFFFFFF</code> becomes index
+<code>0</code>, color <code>0x00000000</code> becomes index
+<code>1</code>).</li>
+<li><strong>Channel Mapping</strong>: In the WebP bitstream, the palette
+index is stored directly in the green channel of the pixel data, while
+the other channels are zeroed or omitted.</li>
+<li><strong>Sub-Byte Packing</strong>: To maximize efficiency, WebP
+dynamically packs multiple indices into a single byte depending on the
+total palette size:
+<ul>
+<li><strong>1–2 colors</strong>: Stored using 1 bit per pixel (8 pixels
+per byte).</li>
+<li><strong>3–4 colors</strong>: Stored using 2 bits per pixel (4 pixels
+per byte).</li>
+<li><strong>5–16 colors</strong>: Stored using 4 bits per pixel (2
+pixels per byte).</li>
+<li><strong>17–256 colors</strong>: Stored using 8 bits per pixel (1
+pixel per byte).</li>
+</ul></li>
+</ol>
+<h3 id="impact-on-downstream-compression">Impact on Downstream
+Compression</h3>
+<p>By converting full ARGB values into small integer indices, the color
+indexing transform drastically simplifies the data stream:</p>
+<ul>
+<li><strong>Lower Alphabet Size</strong>: The subsequent entropy coder
+handles a symbol alphabet of at most 256 symbols instead of dealing with
+the full combinations of four separate 8-bit channels.</li>
+<li><strong>Higher Redundancy for LZ77</strong>: Repeated visual
+patterns map to identical, short byte sequences, enabling the LZ77
+backwards-referencing engine to find longer and more frequent
+matches.</li>
+<li><strong>Reduced Entropy</strong>: The overall entropy of the image
+data drops significantly, allowing the canonical Huffman coding stage to
+assign very short prefix codes to frequent colors.</li>
+</ul>
+<h3 id="decoding-the-transformed-image">Decoding the Transformed
+Image</h3>
+<p>When decoding a lossless WebP file, the process is inverted. The
+decoder first parses the embedded palette from the header data. As it
+decodes the pixel stream, it reads the packed bit values from the green
+channel and maps each index back to the full 32-bit ARGB color defined
+in the palette, completely reconstructing the original image without any
+loss of quality.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

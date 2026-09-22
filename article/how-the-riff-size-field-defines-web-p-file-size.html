@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How the RIFF Size Field Defines WebP File Size - webp</title>
+    <meta name="description" content="The WebP image format relies on the Resource Interchange File Format (RIFF) container structure, where a dedicated 4-byte field in the header defines the payload size. Rather than representing the complete file length directly, this field stores the tota">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/how-the-riff-size-field-defines-web-p-file-size">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How the RIFF Size Field Defines WebP File Size - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/how-the-riff-size-field-defines-web-p-file-size" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The WebP image format relies on the Resource Interchange File Format (RIFF) container structure, where a dedicated 4-byte field in the header defines the payload size. Rather than representing the complete file length directly, this field stores the tota" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="how-the-riff-size-field-defines-webp-file-size">How the RIFF
+Size Field Defines WebP File Size</h1>
+<p>The WebP image format relies on the Resource Interchange File Format
+(RIFF) container structure, where a dedicated 4-byte field in the header
+defines the payload size. Rather than representing the complete file
+length directly, this field stores the total byte count of the document
+minus the first eight bytes of the RIFF header. Understanding this
+offset is essential for correctly calculating and validating the total
+byte length of any WebP file.</p>
+<h3 id="the-webp-header-structure">The WebP Header Structure</h3>
+<p>A WebP file begins with a 12-byte header composed of three sequential
+elements:</p>
+<ol type="1">
+<li><strong>Chunk Header (Bytes 0–3):</strong> The ASCII characters
+<code>'RIFF'</code> (0x52 0x49 0x46 0x46).</li>
+<li><strong>File Size Field (Bytes 4–7):</strong> A 32-bit unsigned
+integer in little-endian format.</li>
+<li><strong>FourCC Identifier (Bytes 8–11):</strong> The ASCII
+characters <code>'WEBP'</code> (0x57 0x45 0x42 0x50).</li>
+</ol>
+<h3 id="how-the-riff-size-indicates-total-file-length">How the RIFF Size
+Indicates Total File Length</h3>
+<p>The 4-byte value stored at bytes 4 through 7 represents the size of
+the entire file minus 8 bytes. It measures everything in the document
+that follows the size field itself, starting with the
+<code>'WEBP'</code> signature.</p>
+<p>Because the field excludes the 4-byte <code>'RIFF'</code> signature
+and the 4-byte size field itself, the formula to derive the total byte
+length is:</p>
+<p><span class="math display">\[\text{Total File Size (in bytes)} =
+\text{RIFF Size Value} + 8\]</span></p>
+<p>For example, if the size field contains the little-endian hexadecimal
+value <code>00 20 00 00</code>, it translates to an integer value of
+8,192 bytes. Adding the 8 excluded header bytes yields a total document
+length of 8,200 bytes.</p>
+<h3 id="endianness-and-alignment-considerations">Endianness and
+Alignment Considerations</h3>
+<p>WebP uses little-endian byte ordering for the size field, meaning the
+least significant byte is stored first. Parsers must read these four
+bytes in reverse order on big-endian architectures to compute the
+correct numerical value.</p>
+<p>Additionally, the RIFF standard requires every sub-chunk within the
+file to be aligned to an even byte boundary. If an internal chunk
+contains an odd number of payload bytes, a single zero-padding byte is
+appended. This padding byte is included in the overarching RIFF size
+field, ensuring that the calculation of adding 8 bytes to the header
+value consistently reflects the exact on-disk size of a valid WebP
+document.</p></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

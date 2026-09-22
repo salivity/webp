@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cwebp -m Compression Method Settings Explained - webp</title>
+    <meta name="description" content="The -m parameter in Google’s cwebp command-line tool dictates the compression method used during WebP encoding, directly balancing CPU processing speed against final file size. This guide breaks down what the -m parameter does, details the performance">
+    <link rel="canonical" href="https://salivity.github.io/webp/article/cwebp-m-compression-method-settings-explained">
+    <link rel="search" type="application/opensearchdescription+xml" title="webp" href="/webp/opensearch.xml">
+    <link rel="icon" href="/webp/favicon.ico">
+    <link rel="stylesheet" href="/webp/css/style.css">
+    <link media="print" rel="stylesheet" href="/webp/css/print.css">
+    <script src="/webp/js/fuse.min.js"></script>
+    <script src="/webp/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <script src="/monetize/monetize.js"></script>
+    <script src="/social/social.js"></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="cwebp -m Compression Method Settings Explained - webp" />
+    <meta property="og:url" content="https://salivity.github.io/webp/article/cwebp-m-compression-method-settings-explained" />
+    <meta property="og:image" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/webp/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The -m parameter in Google’s cwebp command-line tool dictates the compression method used during WebP encoding, directly balancing CPU processing speed against final file size. This guide breaks down what the -m parameter does, details the performance" />
+    <link rel="manifest" href="/webp/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/webp/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>webp</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="/webp/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        
+    <div class="article-layout">
+        <aside id="profile-sidebar" class="profile-column" aria-label="Author Profile"></aside>
+        <div class="article-main-column">
+            <article><h1 id="cwebp--m-compression-method-settings-explained">cwebp -m
+Compression Method Settings Explained</h1>
+<p>The <code>-m</code> parameter in Google’s <code>cwebp</code>
+command-line tool dictates the compression method used during WebP
+encoding, directly balancing CPU processing speed against final file
+size. This guide breaks down what the <code>-m</code> parameter does,
+details the performance differences across its numeric scale from 0 to
+6, and explains how to choose the right value for your image processing
+workflows.</p>
+<h3 id="what-the--m-parameter-does">What the <code>-m</code> Parameter
+Does</h3>
+<p>In <code>cwebp</code>, the <code>-m</code> option controls the
+compression effort or algorithm complexity. It instructs the encoder on
+how thoroughly it should analyze the image to find patterns, optimize
+macroblock prediction modes, and adjust quantization parameters.</p>
+<p>Adjusting this setting alters the computational overhead during
+encoding: higher numbers force the encoder to evaluate more compression
+possibilities to produce the smallest possible file, while lower numbers
+skip deep analysis to finish the task faster.</p>
+<h3 id="the-scale-levels-0-through-6">The Scale: Levels 0 Through 6</h3>
+<p>The parameter accepts an integer value between <code>0</code> and
+<code>6</code>. The default setting is <code>4</code>.</p>
+<ul>
+<li><strong>Method 0 (Fastest):</strong> Employs minimal analysis and
+skips complex spatial prediction algorithms. It produces the largest
+file size among all settings, but requires the least CPU time and
+memory. This is suited for fast prototyping or systems generating images
+in real time under heavy server load.</li>
+<li><strong>Methods 1 to 3 (Fast to Moderate):</strong> Gradually
+increase the depth of intra-prediction modes and segment evaluations.
+Encoding duration scales up linearly, delivering measurable reductions
+in file size compared to Method 0.</li>
+<li><strong>Method 4 (Default / Balanced):</strong> Provides the
+standard balance recommended by the WebP development team. It delivers
+strong compression ratios while keeping processing times reasonable for
+standard build tools and general tasks.</li>
+<li><strong>Method 5 (High Efficiency):</strong> Explores nearly all
+spatial intra-prediction modes and refines macroblock division. It
+significantly increases encoding time for marginal gains in file size
+reduction compared to level 4.</li>
+<li><strong>Method 6 (Maximum Compression):</strong> Conducts an
+exhaustive search across all possible prediction modes, filtering
+mechanisms, and rate-distortion optimizations. It produces the smallest
+possible file size for the chosen quality level, but it can be several
+times slower than Method 4.</li>
+</ul>
+<h3 id="difference-between--m-method-and--q-quality">Difference Between
+<code>-m</code> (Method) and <code>-q</code> (Quality)</h3>
+<p>A common point of confusion is how <code>-m</code> interacts with
+<code>-q</code>:</p>
+<ul>
+<li><strong><code>-q</code> (Quality):</strong> Determines visual
+fidelity and compression aggressiveness (0 to 100). Lowering
+<code>-q</code> discards more image data, noticeably reducing visual
+quality.</li>
+<li><strong><code>-m</code> (Method):</strong> Determines encoding
+effort and algorithmic efficiency (0 to 6). It does not intentionally
+degrade visual quality. Instead, given a specific <code>-q</code>
+target, a higher <code>-m</code> finds a smarter mathematical way to
+store that exact visual quality in fewer bytes.</li>
+</ul>
+<h3 id="when-to-use-each-setting">When to Use Each Setting</h3>
+<ul>
+<li><strong>Choose <code>-m 0</code> to <code>-m 2</code>:</strong> When
+encoding dynamic user uploads on-the-fly where low latency and minimum
+CPU usage are critical to avoid server bottlenecks.</li>
+<li><strong>Choose <code>-m 4</code>:</strong> For general batch
+processing, continuous integration environments, and typical asset
+builds where a balanced pipeline is required.</li>
+<li><strong>Choose <code>-m 6</code>:</strong> For static web assets,
+application bundles, and high-traffic production websites. Because
+static assets are encoded once and served millions of times over CDNs,
+spending additional compute time up front to shave off extra kilobytes
+delivers long-term bandwidth savings and faster page load speeds.</li>
+</ul></article>
+        <div id="comments-container"></div>
+        <script>
+            const utterancesScript = document.createElement('script');
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/webp'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+        </div>
+    </div>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="social-links">
+            </ul>
+        </nav>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/webp/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/webp/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>
